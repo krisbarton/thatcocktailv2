@@ -1,0 +1,33 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * The big recipe search box (homepage hero, 404 page). It sends the words to /search/?q=,
+ * where the results are filtered as you type.
+ */
+interface Props {
+  /** The input's id, so the label points at it. */
+  id: string;
+  placeholder?: string;
+}
+const { id, placeholder = 'Search recipes, e.g. mojito or gin' } = Astro.props;
+---
+<form class="search" role="search" action="/search/" method="get">
+  <label class="sr-only" for={id}>Search cocktail recipes</label>
+  <Icon name="search" class="search__icon" />
+  <input id={id} name="q" type="search" placeholder={placeholder} enterkeyhint="search">
+  <button class="search__btn" type="submit">Search</button>
+</form>
+
+<style>
+  .search{margin-top:30px;display:flex;align-items:center;gap:8px;width:100%;max-width:640px;text-align:left;padding:6px 6px 6px 16px;background:#fff;border-radius:16px;box-shadow:0 0 0 4px rgba(81,229,255,.2);transition:box-shadow .15s}
+  .search:focus-within{box-shadow:0 0 0 4px var(--cyan)}
+  .search :global(.search__icon){width:20px;height:20px;flex:none;color:var(--ink-soft)}
+  .search input{flex:1;min-width:0;border:0;outline:0;background:none;color:var(--ink);font-size:1.05rem;padding:12px 4px}
+  .search input::placeholder{color:#6b6b6b}
+  .search__btn{flex:none;border:0;border-radius:12px;background:var(--pink-deep);color:#fff;font-weight:700;padding:12px 22px;cursor:pointer;transition:background-color .15s}
+  .search__btn:hover{background:var(--mag-lo)}
+  @media (max-width:599px){
+    .search__btn{padding-inline:16px}
+  }
+</style>

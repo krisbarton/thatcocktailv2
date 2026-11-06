@@ -1,0 +1,11 @@
+---
+/** Orgeat Syrup: from https://www.thatcocktail.com/snippets/orgeat-syrup/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product: Product = { name: 'Orgeat Syrup', img: '/wp-content/uploads/2023/09/orgeat-syrup.jpg.webp' };
+---
+<p>Orgeat Syrup is a sweet syrup made from almonds, sugar, and rose or orange flower water.</p>
+<p>It has a pronounced almond taste and is used to flavour many cocktails – especially Tiki cocktails.</p>
+<p>For Orgeat Syrup, we recommend:</p>
+<ProductPick product={product} />

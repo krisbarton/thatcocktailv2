@@ -1,0 +1,55 @@
+---
+import SpiritLayout from '../layouts/SpiritLayout.astro';
+import { media } from '../data/site';
+---
+<SpiritLayout
+  spirit="Champagne"
+  filter
+  title="Champagne Cocktails: Champagne & Prosecco Cocktail Recipes | ThatCocktail"
+  description="Champagne cocktails are fancy, delicious and right for any celebration. Here’s every champagne and prosecco cocktail on ThatCocktail, from the French 75 to the Kir Royale."
+  lead="Champagne evokes a feeling of class. If a party is serving champagne, it’s usually a fancy one, and champagne cocktails are no different."
+  ogImage={{ src: media('/wp-content/uploads/2022/04/Champagne-Cocktails.png'), width: 500, height: 300, alt: 'Champagne Cocktails title card' }}
+>
+  <p>Usually served in a champagne flute, there’s a certain elegance about a champagne cocktail. They’re not just for <em>any old</em> occasion.</p>
+  <p>They’re used to celebrate a special day: a Buck’s Fizz is always a big part of my Christmas morning. They’re used to celebrate a special occasion: celebrating my graduation with my family was a <a href="/cocktails/kir-royale/">Kir Royale</a> moment. They’re used to celebrate a lot of things, and rightly so. They’re delicious!</p>
+
+  <h2>Can I use sparkling wine instead of champagne?</h2>
+  <p>Okay, cut to the chase. Can you use sparkling wine instead of champagne? <strong>Yes you can, because they’re basically the same thing.</strong> Times are tough, and for a Kir Royale it’s perfectly acceptable to swap champagne for sparkling wine, in our opinion.</p>
+  <p>There’s a saying that’s relevant here: <strong><em>all champagne is sparkling wine, but not all sparkling wine is champagne.</em></strong></p>
+  <p>Champagne is a region in northern France with strict rules about which grapes and production methods can be used to make its sparkling wine, and only sparkling wine made there can be called champagne. It’s the most popular and prestigious sparkling wine, but in Spain you’ll find cava, and in Italy it’s prosecco. That’s why our list below includes prosecco cocktails too.</p>
+
+  <h2>Classic champagne cocktails</h2>
+  <p>Our list has plenty of classic champagne cocktails. Here are the highlights:</p>
+  <ul>
+    <li><a href="/cocktails/french-75/">French 75</a>, an age-old combination of gin, champagne, lemon juice and simple syrup.</li>
+    <li><a href="/cocktails/bellini/">Bellini</a>, sweet peach purée topped up with champagne. Fresh, sweet and tasty.</li>
+    <li><a href="/cocktails/mimosa/">Mimosa</a>, typically served with brunch. It mixes equal measures of champagne and fresh orange juice for a refreshing cocktail that’s far too drinkable.</li>
+    <li><a href="/cocktails/bucks-fizz/">Buck’s Fizz</a>, which uses the same two ingredients as the Mimosa in different proportions.</li>
+    <li><a href="/cocktails/kir-royale/">Kir Royale</a>, which combines champagne and crème de cassis for a rather luxurious drink.</li>
+  </ul>
+
+  <h2>What champagne should I use?</h2>
+  <p>For champagne, we recommend Bollinger.</p>
+  <aside class="pick" aria-label="Our champagne pick">
+    <span class="pick__label">Our top pick</span>
+    <img class="pick__img" src={media('/wp-content/uploads/2020/03/bollinger-champagne-1.jpg')} width="93" height="300" alt="Bottle of Bollinger champagne" loading="lazy" decoding="async">
+    <div>
+      <p class="pick__name">Bollinger Champagne</p>
+      <p class="pick__why">The champagne we recommend.</p>
+      <a class="btn btn--green btn--sm" href="https://amzn.to/39CJ8I4" target="_blank" rel="sponsored noopener">Buy now</a>
+      <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+    </div>
+  </aside>
+
+  <p>For prosecco, we recommend Martini.</p>
+  <aside class="pick" aria-label="Our prosecco pick">
+    <span class="pick__label">Our top pick</span>
+    <img class="pick__img" src={media('/wp-content/uploads/2022/01/prosecco-e1641811323107.jpg')} width="149" height="500" alt="Bottle of Martini Prosecco" loading="lazy" decoding="async">
+    <div>
+      <p class="pick__name">Martini Prosecco</p>
+      <p class="pick__why">The prosecco we recommend.</p>
+      <a class="btn btn--green btn--sm" href="https://amzn.to/3GcHpK9" target="_blank" rel="sponsored noopener">Buy now</a>
+      <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+    </div>
+  </aside>
+</SpiritLayout>

@@ -1,0 +1,42 @@
+---
+import SubscribeForm from './SubscribeForm.astro';
+import { media, freeGuide } from '../data/site';
+
+interface Props {
+  id?: string;
+  title?: string;
+  text?: string;
+}
+const { id = 'free-guide', title = freeGuide.title, text = freeGuide.text } = Astro.props;
+---
+<section class="guide on-black" id={id} aria-labelledby={`${id}-title`}>
+  <div class="wrap guide__grid">
+    <div class="guide__cover">
+      <img src={media(freeGuide.cover)} width="875" height="1221" alt={freeGuide.coverAlt} loading="lazy" decoding="async">
+    </div>
+    <div>
+      <p class="kicker">Free guide</p>
+      <h2 class="guide__title" id={`${id}-title`}>{title}</h2>
+      <p class="guide__text">{text}</p>
+      <SubscribeForm id={id} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .guide{
+    color:#fff;padding-block:clamp(56px,7vw,96px);
+    background:
+      radial-gradient(40% 70% at 18% 50%,rgba(81,229,255,.16),transparent 70%),
+      var(--black);
+  }
+  .guide__grid{display:grid;grid-template-columns:minmax(0,250px) minmax(0,1fr);gap:clamp(36px,6vw,88px);align-items:center;max-width:1040px}
+  /* The cover is nearly all black, so it gets the neon frame the recipe photos have, to stand out on the black section. */
+  .guide__cover img{width:100%;border-radius:6px;transform:rotate(-4deg);box-shadow:0 0 0 2px var(--cyan),0 0 0 8px rgba(81,229,255,.14),0 0 44px 4px rgba(81,229,255,.4),0 30px 60px -18px rgba(81,229,255,.6)}
+  .guide__title{margin-top:12px;font:800 clamp(2rem,4vw,3rem)/1.02 var(--font-display);letter-spacing:-.015em;color:var(--cyan);text-wrap:balance}
+  .guide__text{margin-top:16px;max-width:56ch;font-size:1.05rem;color:var(--on-black)}
+  @media (max-width:699px){
+    .guide__grid{grid-template-columns:minmax(0,1fr)}
+    .guide__cover{max-width:170px}
+  }
+</style>

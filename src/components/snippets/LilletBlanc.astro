@@ -1,0 +1,22 @@
+---
+/** Lillet Blanc: from https://www.thatcocktail.com/snippets/lillet-blanc/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product1: Product = { name: 'Lillet Blanc', img: '/wp-content/uploads/2022/10/lillet-blanc-e1664983828837.jpg', href: 'https://amzn.to/3USZYuq', us: { href: 'https://shrsl.com/3qcql' } };
+const product2: Product = { name: 'Martini Extra Dry White Vermouth', img: '/wp-content/uploads/2022/10/white-vermouth-e1665393528713.jpg' };
+---
+<p>Lillet Blanc is classed as an aromatic wine.</p>
+<p>It’s a blend of 85% Bordeaux wine, mostly Sémillon, and 15% macerated liqueurs, mostly citrus liqueurs using the peels of sweet Spanish/Moroccan oranges and the peels from green Haitian oranges.</p>
+<p>The mix is then stirred in oak vats until it’s properly blended.</p>
+<ProductPick product={product1} />
+<h4>What does Lillet Blanc taste like?</h4>
+<p>With its blend of wine and macerated liqueurs, Lillet Blanc has a pleasantly fruity, yet not overly sweet, taste.</p>
+<h4>What does Lillet Blanc add to a Martini?</h4>
+<p>Lillet Blanc adds a fruity contrast to the harsher Vodka and Gin ingredients. But that doesn’t mean it’s not boozy: far from it, after all Lillet Blanc is a blended wine.</p>
+<h4>What can I use instead of Lillet Blanc?</h4>
+<p>If you can’t pick up Lillet Blanc, then you should use a dry White Vermouth.</p>
+<ProductPick product={product2} />
+<h4>What’s the difference between Lillet Blanc and White Vermouth?</h4>
+<p>Lillet Blanc is a more delicate drink than White Vermouth, especially if you drink it straight like the French often do.</p>
+<p>Whilst both drinks are types of wine, Lillet Blanc has more fruity overtones and isn’t nearly as dry as most brands of White Vermouth tend to be.</p>

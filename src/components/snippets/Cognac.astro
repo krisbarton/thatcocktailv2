@@ -1,0 +1,28 @@
+---
+/** Cognac: from https://www.thatcocktail.com/snippets/cognac/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product: Product = { name: 'Hennessy VS Cognac', img: '/wp-content/uploads/2020/06/henessy-cognac.jpg', href: 'https://amzn.to/3HA25wL', us: { href: 'https://shrsl.com/39cxr' } };
+---
+<p><a href="https://amzn.to/3HA25wL" rel="sponsored noopener">Cognac</a> is a variety of Brandy.</p>
+<p>It’s named after Cognac, France and certain production methods are required to make sure the Brandy may be named <a href="https://amzn.to/3HA25wL" rel="sponsored noopener">Cognac</a>.</p>
+<p>These production methods include:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Ugni_blanc" rel="noopener">Ugni blanc</a> grapes must be used.</li>
+<li>The Brandy must be twice distilled in copper stills.</li>
+<li>The Brandy must be aged at least 2 years in Oak barrels.</li>
+</ul>
+<p>Only then can it be called <a href="https://amzn.to/3HA25wL" rel="sponsored noopener">Cognac</a>. Wowzers.</p>
+<p>And even then, there are <em>grades</em> of Cognac:</p>
+<ul>
+<li><strong>V.S.</strong> (Very Special) or 3 stars. This means that the Brandy has been aged for at least 2 years in a cask.</li>
+<li><strong>V.S.O.P.</strong> (Very Superior Old Pale) or <strong>Reserve. </strong>This is where the Brandy has been aged for at least 4 years in a cask.</li>
+<li><strong>Napoléon. </strong>This is where the Brandy is aged at least 6 years.</li>
+<li><strong>XO</strong> (Extra Old). This is where the Brandy is aged at least 10 years.</li>
+<li><strong>XXO</strong> (Extra Extra Old). This is where the Brandy is aged for at least 14 years.</li>
+<li><strong>Hors d’âge</strong> (Beyond Age). This is where the Brandy is beyond the official age scales.</li>
+</ul>
+<p>I mean, that’s some grading list. I’d wager by the end of that list you’d need to be a millionaire to sample those Cognacs.</p>
+<p>ANYWAY… the <a href="https://amzn.to/3HA25wL" rel="sponsored noopener">Cognac</a> we recommend is:</p>
+<ProductPick product={product} />

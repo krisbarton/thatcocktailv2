@@ -1,0 +1,10 @@
+---
+/** Aquafaba: from https://www.thatcocktail.com/snippets/aquafaba/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product: Product = { name: 'Aquafaba', img: '/wp-content/uploads/2023/09/aquafaba-e1694093009779.jpg' };
+---
+<p>Aquafaba is the thick water remnants of cooked legume seeds such as chickpeas.</p>
+<p>It is well established to mimic the role of egg whites in cooking and can be used in anything from meringues to cocktails as a vegan alternative.</p>
+<ProductPick product={product} />

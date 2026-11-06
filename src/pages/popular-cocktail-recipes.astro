@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHead from '../components/SectionHead.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import GuideSignup from '../components/GuideSignup.astro';
+import { SITE, media } from '../data/site';
+import { cocktailTypes } from '../data/recipes';
+import { organization, website, webPage, breadcrumbs } from '../data/schema';
+import { getCocktails, getPopular, toCard } from '../lib/cocktails';
+
+const path = '/popular-cocktail-recipes/';
+const title = 'Popular Cocktail Recipes: What Our Readers Love Most | ThatCocktail';
+const description = 'The cocktail recipes our readers love most right now, from the Pornstar Spritz and Pornstar Martini to the Fluffy Duck and the Cheeky Vimto.';
+
+// Most popular first; the list is popularSlugs in src/data/recipes.ts, shared with the homepage.
+const popular = (await getPopular()).map(toCard);
+const total = (await getCocktails()).length;
+
+const crumbs = [{ name: 'Popular cocktail recipes', href: path }];
+const browse = [
+  { name: 'Cocktails by spirit', href: '/cocktails-by-spirit/' },
+  { name: 'Types of cocktails', href: '/types-of-cocktails/' },
+  ...cocktailTypes.map((t) => ({ name: t.title, href: t.href })),
+];
+
+const schema = [
+  organization,
+  website,
+  webPage({
+    path,
+    type: 'CollectionPage',
+    name: title,
+    description,
+    extra: {
+      breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` },
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListOrder: 'https://schema.org/ItemListOrderDescending',
+        numberOfItems: popular.length,
+        itemListElement: popular.map((r, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: new URL(r.href, SITE.url).href,
+          name: r.title,
+        })),
+      },
+    },
+  }),
+  breadcrumbs(path, crumbs.map((c) => ({ name: c.name, path: c.href }))),
+];
+---
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={{ src: media('/wp-content/uploads/2021/10/Popular-Cocktail-Recipes.png'), width: 500, height: 300, alt: 'Popular cocktails on a bar, including a Piña Colada, a Blue Lagoon and two Moscow Mules' }}
+  schema={schema}
+>
+  <PageHero crumbs={crumbs} title="Popular" lead="Wanna know what cocktails people are loving right now? You’re in the right place! Here are the recipes our readers love most.">
+    <Fragment slot="script">cocktail recipes</Fragment>
+  </PageHero>
+
+  <section class="section section--mist" aria-labelledby="popular-title">
+    <div class="wrap">
+      <SectionHead id="popular-title" title="Our most popular recipes" lede="What our readers are loving right now, most popular first." />
+      <ul class="cards cards--square cards--three">
+        {popular.map((r) => <RecipeCard recipe={r} sizes="(min-width: 1000px) 370px, 45vw" />)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="more-title">
+    <div class="wrap">
+      <SectionHead id="more-title" title="Even more recipes"
+        lede={`Browse all ${total} of our cocktail recipes, newest first, or narrow them down by spirit or type.`}
+        more={{ label: 'All cocktail recipes', href: '/cocktails/' }} />
+      <ul class="chips">
+        {browse.map((l) => <li><a href={l.href}>{l.name}</a></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="question-title">
+    <div class="wrap">
+      <div class="prose">
+        <h2 id="question-title">Have a question?</h2>
+        <p>Have a question about cocktail-making or a particular cocktail, or want a recipe that isn’t on the website yet? Head over to our <a href={SITE.social.facebook} rel="noopener">Facebook page</a> and ask me anything, or <a href="/contact-us/">get in touch</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <GuideSignup />
+</BaseLayout>

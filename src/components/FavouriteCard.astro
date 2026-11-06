@@ -1,0 +1,53 @@
+---
+import Icon from './Icon.astro';
+import { media } from '../data/site';
+
+/** Kris's favourite recipe, shown as a mini recipe card on a cyan wash. */
+interface Props {
+  kicker?: string;
+  headingLevel?: 'p' | 'h2' | 'h3';
+}
+const { kicker = 'Kris’s favourite', headingLevel: Name = 'p' } = Astro.props;
+---
+<aside class="fav" aria-label="Kris’s favourite cocktail">
+  <img class="fav__img" src={media('/wp-content/uploads/2021/09/mule.png.webp')}
+       width="500" height="500" alt="Two copper mugs of Moscow Mule filled with ice and lime" decoding="async">
+  <div class="fav__body">
+    <p class="kicker">{kicker}</p>
+    <Name class="fav__name">Moscow Mule</Name>
+    <p class="fav__meta">4 ingredients · 2 mins · Copper mug</p>
+    <ul class="fav__ingredients">
+      <li><span>Vodka</span><span>50ml / 1.7oz</span></li>
+      <li><span>Lime juice</span><span>10ml / 0.3oz</span></li>
+      <li><span>Ginger beer</span><span>120ml / 4.1oz</span></li>
+      <li><span>Lime wedge</span><span>to garnish</span></li>
+    </ul>
+    <p class="fav__method">Add ice, vodka, lime juice and ginger beer to a copper mug. Stir gently and garnish with the lime wedge.</p>
+    <a class="fav__link" href="/cocktails/moscow-mule/">Get the Moscow Mule recipe <Icon name="arrow" class="arrow" /></a>
+  </div>
+</aside>
+
+<style>
+  .fav{justify-self:end;width:100%;max-width:430px;background:var(--cyan-wash);color:var(--ink);border:2px solid var(--cyan);border-radius:20px;overflow:hidden;box-shadow:0 0 0 6px rgba(81,229,255,.12),0 30px 60px -30px rgba(81,229,255,.55)}
+  .fav__img{width:100%;aspect-ratio:16/9;object-fit:cover;object-position:50% 52%;background:#1a1a1a}
+  .fav__body{padding:20px 22px 22px}
+  .fav .kicker{color:var(--pink-ink)}
+  .fav__name{margin-top:8px;font:800 1.95rem/1 var(--font-display);color:#000}
+  .fav__meta{margin-top:8px;font-size:.9rem;color:var(--ink-soft)}
+  .fav__ingredients{margin-top:14px;border-top:1px solid rgba(0,0,0,.14)}
+  .fav__ingredients li{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px dashed rgba(0,0,0,.2);font-size:.95rem}
+  .fav__ingredients li span:last-child{color:var(--ink-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .fav__method{margin-top:12px;font-size:.92rem;color:#333}
+  .fav__link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-weight:700;color:var(--teal-ink);text-decoration:none}
+  .fav__link:hover{text-decoration:underline;text-underline-offset:3px}
+  .fav__link:hover :global(.arrow){transform:translateX(3px)}
+  .fav :global(:focus-visible){outline-color:var(--pink-deep)}
+
+  @media (max-width:899px){
+    .fav{justify-self:stretch;max-width:520px}
+  }
+  @media (min-width:600px) and (max-width:899px){
+    .fav{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);max-width:none}
+    .fav__img{height:100%;aspect-ratio:auto;object-position:90% 50%}
+  }
+</style>

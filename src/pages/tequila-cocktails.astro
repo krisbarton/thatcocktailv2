@@ -1,0 +1,36 @@
+---
+import SpiritLayout from '../layouts/SpiritLayout.astro';
+import { media } from '../data/site';
+---
+<SpiritLayout
+  spirit="Tequila"
+  filter
+  title="Tequila Cocktails: Quick & Easy Tequila Cocktail Recipes | ThatCocktail"
+  description="Looking for tequila cocktails to give your day a little Mexican zest? Here’s every quick and easy tequila cocktail on ThatCocktail, from the Margarita to the Paloma."
+  lead="Tequila! It makes me happy! Tequila, it makes me feel fiiiinnnneeeee! Looking for some tequila cocktails to give your day a little Mexican zest? You’re in the right place. Let’s get mixing!"
+  ogImage={{ src: media('/wp-content/uploads/2022/03/Tequila-Cocktails.png'), width: 500, height: 300, alt: 'Tequila Cocktails title card' }}
+>
+  <h2>Famous tequila cocktails</h2>
+  <p>Our list of quick and easy tequila drinks has both famous and lesser-known cocktails, but let me tell you this: <strong><em>all of them are delicious</em></strong>.</p>
+  <p>Some of the better-known ones include:</p>
+  <ul>
+    <li><a href="/cocktails/margarita/">The Margarita</a>, a delicious tequila drink that adds lime juice and triple sec to the tequila.</li>
+    <li><a href="/cocktails/long-island-iced-tea/">The Long Island Iced Tea</a>, a tasty but incredibly boozy cocktail that combines ALL THE ALCOHOL.</li>
+    <li>The <a href="/cocktails/tequila-sunrise/">Tequila Sunrise</a>, a refreshing summer cocktail that mixes tequila and orange juice, then adds grenadine to create the sunrise effect. It’s also in our <a href="/cocktails-with-orange-juice/">cocktails with orange juice</a>.</li>
+  </ul>
+
+  <h2>What tequila should I use?</h2>
+  <p>Whatever tequila you have, or your favourite, will do the trick. Tequila in cocktails doesn’t have to be perfectly smooth and crisp, unlike when you’re sipping it or doing shots. In cocktails it’s the base, and it’s a great one.</p>
+  <p>If you’re in the market for a bottle, this is the one we recommend for cocktails.</p>
+
+  <aside class="pick" aria-label="Our tequila pick">
+    <span class="pick__label">Our top pick</span>
+    <img class="pick__img" src={media('/wp-content/uploads/2019/07/tequila.jpg')} width="235" height="300" alt="Bottle of Jose Cuervo Especial Gold tequila" loading="lazy" decoding="async">
+    <div>
+      <p class="pick__name">Jose Cuervo Especial Gold Tequila</p>
+      <p class="pick__why">The tequila we recommend for cocktails.</p>
+      <a class="btn btn--green btn--sm" href="https://amzn.to/2xJhGXO" target="_blank" rel="sponsored noopener">Buy now</a>
+      <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+    </div>
+  </aside>
+</SpiritLayout>

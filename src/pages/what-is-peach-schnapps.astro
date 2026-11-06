@@ -1,0 +1,146 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import ProductPick from '../components/ProductPick.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import Icon from '../components/Icon.astro';
+import { alcoholPick } from '../data/alcohol';
+import { kit } from '../data/products';
+import { ingredientGuides, spirits } from '../data/recipes';
+import { getCocktails, toCard, usesIngredient } from '../lib/cocktails';
+
+const cocktails = await getCocktails();
+const bySlug = new Map(cocktails.map((c) => [c.id, c]));
+const featured = ['woo-woo', 'sex-on-the-beach', 'fuzzy-navel', 'sex-in-the-driveway'].map((slug) => {
+  const c = bySlug.get(slug);
+  if (!c) throw new Error(`what-is-peach-schnapps: no recipe called ${slug}`);
+  return toCard(c);
+});
+// Counted the same way as /peach-schnapps-cocktails/, so the numbers match.
+const hub = spirits.find((s) => s.href === '/peach-schnapps-cocktails/')!;
+const withPeachSchnapps = cocktails.filter((c) => usesIngredient(c, hub.match!)).length;
+
+// Same Archers as /alcohol-recommendations/, so it keeps the US link.
+const archers = alcoholPick('peach-schnapps');
+
+const toc = [
+  { href: '#what-is-peach-schnapps', label: 'What is peach schnapps?' },
+  { href: '#cocktails-with-peach-schnapps', label: 'Cocktails with peach schnapps' },
+  { href: '#faqs', label: 'FAQs' },
+  { href: '#summary', label: 'Summary' },
+];
+
+const related = ['/what-is-blue-curacao/', '/what-is-sloe-gin/', '/what-is-triple-sec/'].map((href) => ingredientGuides.find((g) => g.href === href)!);
+---
+<ArticleLayout
+  title="What is peach schnapps?"
+  seoTitle="What is Peach Schnapps? Here’s Everything You Need to Know | ThatCocktail"
+  description="Peach schnapps is one of the most popular types of booze in the UK. Here’s what it is, how it’s made, what to mix it with and the best cocktails with peach schnapps."
+  kicker="Alcohol information"
+  lead="Peach schnapps is one of the most popular types of booze in the UK, but what is peach schnapps? Here’s what it is, the questions people ask about it most, and some of the best cocktails to make with it."
+  published={new Date('2021-01-22T11:34:21Z')}
+  updated={new Date('2021-10-07T13:28:57Z')}
+  image={{ src: '/wp-content/uploads/2021/02/What-is-Peach-Schnapps_-Heres-everything-you-need-to-know-in-our-ultimate-guide.png', width: 500, height: 300, alt: 'A bottle of Archers peach schnapps behind a bar' }}
+  crumbs={[
+    { name: 'Cocktail ingredients', href: '/cocktail-ingredients/' },
+    { name: 'Alcohol information', href: '/cocktail-ingredients/alcohol-information/' },
+    { name: 'What is peach schnapps?', href: '/what-is-peach-schnapps/' },
+  ]}
+  toc={toc}
+  facts={[
+    { icon: 'cocktail', strong: 'Peach', text: 'liqueur' },
+    { icon: 'sparkle', strong: '15–20%', text: 'ABV' },
+    { icon: 'book', strong: '1980s', text: 'boom' },
+  ]}
+  jump={{ label: 'Jump to the cocktails', href: '#cocktails-with-peach-schnapps' }}
+  related={{
+    title: 'More alcohol guides',
+    lede: 'Other bottles you’ll find in our cocktail recipes, explained.',
+    articles: related,
+    more: { label: 'All alcohol information', href: '/cocktail-ingredients/alcohol-information/' },
+  }}
+>
+  <div class="in-short">
+    <p class="kicker">In short</p>
+    <p><strong>Peach schnapps is an alcoholic drink made from neutral grain spirit flavoured with peach syrup.</strong> It’s sweet, usually 15–20% alcohol, and a favourite in cocktails.</p>
+  </div>
+
+  <p>But let’s dive a little deeper. I’m going to go into a little more detail about what peach schnapps is, answer some of the questions people ask about it most, and share some of the best cocktails with peach schnapps. Let’s get into it.</p>
+
+  <h2 id="what-is-peach-schnapps">What is peach schnapps?</h2>
+  <p>Peach schnapps is a peach-flavoured variant of schnapps. So then, what is schnapps?</p>
+
+  <h3>What is schnapps?</h3>
+  <p>The word <em>schnapps</em> is a German term for any kind of strong alcoholic drink, and over the years it’s become known as a style of drink. Schnapps can take several forms:</p>
+  <ul>
+    <li>Distilled fruit brandy.</li>
+    <li>Herbal liqueurs.</li>
+    <li>Infusions: <a href="https://en.wikipedia.org/wiki/Infusion" rel="noopener">extracting the flavour from plants</a> in a liquid such as water, oil or, in the case of schnapps, alcohol.</li>
+    <li>Flavoured liqueurs. This is where peach schnapps comes in.</li>
+  </ul>
+
+  <h3>How is schnapps made?</h3>
+  <p>Schnapps is made differently all across Europe. In Hungary, for example, there’s a tradition of making schnapps (or <em>pálinka</em>) from any fruit grown in Hungary.</p>
+  <p>In America, schnapps is made more in line with what us UK boozers are used to: a neutral grain spirit with fruit syrup, spices or other flavours. Made this way, schnapps is usually between 15% and 20% alcohol once it’s bottled.</p>
+
+  <h3>Peach schnapps gets popular</h3>
+  <p>Of the schnapps made this way, peach schnapps is by far the most popular. It exploded onto the scene in the 80s and has stayed popular ever since. In the UK, the best-known brand by a mile is Archers:</p>
+  <div class="picks picks--one"><ProductPick product={archers} /></div>
+
+  <h2 id="cocktails-with-peach-schnapps">Cocktails with peach schnapps</h2>
+  <p>There are loads of great cocktails you can make with peach schnapps. It’s a versatile ingredient that adds both booze and flavour to a drink. Here are four of the most popular:</p>
+  <ul class="cards cards--square">
+    {featured.map((r) => <RecipeCard recipe={r} />)}
+  </ul>
+  <p>Those recipes look AMAZING, right? All four go in a highball glass, and these are the ones we recommend:</p>
+  <div class="picks picks--one"><ProductPick product={kit.highballGlasses} /></div>
+
+  <h2 id="faqs">FAQs</h2>
+  <p>Now let’s take a look at some of the questions people ask most about peach schnapps.</p>
+
+  <h3>What is peach schnapps made of?</h3>
+  <p>Peach schnapps is made by mixing neutral grain spirit with peach syrup flavouring.</p>
+
+  <h3>What is peach schnapps good with?</h3>
+  <p>Peach schnapps is great with lemonade, cranberry juice and orange juice.</p>
+
+  <h3>Is peach schnapps a vodka?</h3>
+  <p>In German, schnapps just means any strong alcoholic drink, so by that definition vodka technically <em>is</em> schnapps. BUT the schnapps WE know and love almost always means a fruit-flavoured spirit.</p>
+
+  <h3>Can you drink peach schnapps straight?</h3>
+  <p>You can, but it’s so sweet that it makes a better mixer.</p>
+
+  <h3>What is peach schnapps used for?</h3>
+  <p>Peach schnapps is sweet and boozy, so it works as a great mixer or cocktail ingredient.</p>
+
+  <h3>Is peach schnapps the same as peach liqueur?</h3>
+  <p>Basically, yes.</p>
+
+  <h2 id="summary">Summary</h2>
+  <p>Let’s sum up everything we’ve covered. So, what is peach schnapps?</p>
+  <ul>
+    <li><em>Schnapps</em> is a German word meaning a strong alcoholic drink.</li>
+    <li>Peach schnapps is made from neutral grain spirit flavoured with fruit syrup.</li>
+    <li>Peach schnapps became popular in the 1980s.</li>
+    <li>Four of the most popular cocktails with peach schnapps are the Woo Woo, the Sex on the Beach, the Fuzzy Navel and the Sex in the Driveway.</li>
+  </ul>
+
+  <section class="next" aria-labelledby="next-title">
+    <h2 id="next-title">Want more peach schnapps cocktails?</h2>
+    <p>We have {withPeachSchnapps} quick and easy peach schnapps cocktails, from the Woo Woo to the Fuzzy Navel.</p>
+    <a class="btn btn--green" href="/peach-schnapps-cocktails/">See all {withPeachSchnapps} peach schnapps cocktails <Icon name="arrow" /></a>
+  </section>
+
+  <h2 id="further-reading">Further reading</h2>
+  <ul>
+    <li><a href="/what-is-blue-curacao/">What is blue curaçao?</a> (it’s in the Sex in the Driveway)</li>
+    <li><a href="/cocktails-with-orange-juice/">37 cocktails with orange juice</a></li>
+    <li><a href="/summer-cocktail-recipes/">Summer cocktail recipes</a></li>
+  </ul>
+  <p class="sources">Sources:</p>
+  <ul class="sources">
+    <li><a href="https://en.wikipedia.org/wiki/Schnapps" rel="noopener">Schnapps on Wikipedia</a></li>
+    <li><a href="https://www.thespruceeats.com/what-is-schnapps-759917" rel="noopener">The Spruce Eats: what is schnapps?</a></li>
+    <li><a href="https://www.nytimes.com/1985/10/27/magazine/schnapps-the-cordial-spirit.html" rel="noopener">The New York Times: schnapps, the cordial spirit</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Infusion" rel="noopener">Infusion on Wikipedia</a></li>
+  </ul>
+</ArticleLayout>

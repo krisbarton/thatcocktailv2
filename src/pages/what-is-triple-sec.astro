@@ -1,0 +1,191 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import ProductPick from '../components/ProductPick.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import Icon from '../components/Icon.astro';
+import { alcoholPick } from '../data/alcohol';
+import { kit } from '../data/products';
+import { ingredientGuides } from '../data/recipes';
+import { getCocktails, toCard, usesIngredient } from '../lib/cocktails';
+
+const cocktails = await getCocktails();
+const bySlug = new Map(cocktails.map((c) => [c.id, c]));
+const featured = ['kamikaze', 'long-island-iced-tea', 'cosmopolitan', 'appletini'].map((slug) => {
+  const c = bySlug.get(slug);
+  if (!c) throw new Error(`what-is-triple-sec: no recipe called ${slug}`);
+  return toCard(c);
+});
+// The search finds Cointreau recipes for "triple sec" too (see `kinds` in src/lib/cocktails.ts).
+const withTripleSec = cocktails.filter((c) => usesIngredient(c, /triple sec|cointreau/)).length;
+
+// Same Cointreau as /alcohol-recommendations/, so it keeps the US link.
+const cointreau = alcoholPick('triple-sec');
+
+const toc = [
+  { href: '#what-does-triple-sec-mean', label: 'What does triple sec mean?' },
+  { href: '#the-history-of-triple-sec', label: 'The history of triple sec' },
+  { href: '#what-is-triple-sec-made-of', label: 'What is triple sec made of?' },
+  { href: '#how-is-triple-sec-made', label: 'How is triple sec made?' },
+  { href: '#how-much-alcohol-is-in-triple-sec', label: 'How much alcohol is in triple sec?' },
+  { href: '#cocktails-with-triple-sec', label: 'Cocktails with triple sec' },
+  { href: '#summary', label: 'Summary' },
+];
+
+const related = ['/what-is-blue-curacao/', '/what-is-campari/', '/what-is-peach-schnapps/'].map((href) => ingredientGuides.find((g) => g.href === href)!);
+const amazon = { target: '_blank', rel: 'sponsored noopener' };
+---
+<ArticleLayout
+  title="What is triple sec?"
+  seoTitle="What is Triple Sec? Here’s All You Need to Know | ThatCocktail"
+  description="Triple sec is an orange liqueur you’ll see in loads of cocktail recipes. Here’s what it is, where it comes from, how it’s made, how strong it is and the best cocktails to make with it."
+  kicker="Alcohol information"
+  lead="Triple sec is an ingredient you may see in a cocktail recipe and think, what is triple sec? Don’t worry. A lot of people ask themselves that same question."
+  published={new Date('2019-09-18T16:18:56Z')}
+  updated={new Date('2022-04-04T08:29:26Z')}
+  image={{ src: '/wp-content/uploads/2019/09/cointreau.jpg', width: 500, height: 333, alt: 'A bottle of Cointreau, a premium triple sec, against a pink background' }}
+  crumbs={[
+    { name: 'Cocktail ingredients', href: '/cocktail-ingredients/' },
+    { name: 'Alcohol information', href: '/cocktail-ingredients/alcohol-information/' },
+    { name: 'What is triple sec?', href: '/what-is-triple-sec/' },
+  ]}
+  toc={toc}
+  facts={[
+    { icon: 'cocktail', strong: 'Orange', text: 'liqueur' },
+    { icon: 'sparkle', strong: '15–40%', text: 'ABV' },
+    { icon: 'book', strong: '1834', text: 'first made' },
+  ]}
+  jump={{ label: 'Jump to the cocktails', href: '#cocktails-with-triple-sec' }}
+  related={{
+    title: 'More alcohol guides',
+    lede: 'Other bottles you’ll find in our cocktail recipes, explained.',
+    articles: related,
+    more: { label: 'All alcohol information', href: '/cocktail-ingredients/alcohol-information/' },
+  }}
+>
+  <div class="in-short">
+    <p class="kicker">In short</p>
+    <p><strong>Triple sec is a style of orange liqueur.</strong> It started out as a digestif, but these days it’s mostly used in cocktails.</p>
+  </div>
+
+  <p>In this article, we’re going to take a deeper look at triple sec and answer all the questions you have (and probably a whole lot more). But if you just want a bottle, this is the one we recommend:</p>
+  <div class="picks picks--one"><ProductPick product={cointreau} /></div>
+
+  <h2 id="what-does-triple-sec-mean">What does triple sec mean?</h2>
+  <p>As mentioned above, triple sec is a style of orange liqueur.</p>
+  <p>In French, <em>sec</em> means ‘dry’, so ‘triple sec’ is thought to refer to the orange liqueur being triple distilled when it’s made.</p>
+  <p>Want to know a little bit more about it? Let’s take a deeper look!</p>
+
+  <h2 id="the-history-of-triple-sec">The history of triple sec</h2>
+  <p>The first triple sec was invented by Jean-Baptiste and Josephine Combier in Saumur, France, in 1834, and on the back of its popularity the Combier company was established.</p>
+  <p>Jean-Baptiste and Josephine worked straight out of their kitchen, sharing the dream of inventing a new liqueur with a perfectly balanced flavour. It’s said they spent years perfecting it, and their quest ended in 1834 with the invention of triple sec.</p>
+  <p>The Combier company expanded into other liqueurs and <a href="https://www.combier.fr/en/" rel="noopener">is still around today</a>.</p>
+
+  <h3>Other orange liqueurs</h3>
+  <p>The Combier triple sec is generally thought to be the first triple sec made, but it certainly wasn’t the last. Many other orange liqueurs are now widely available, including:</p>
+  <ul>
+    <li><a href="https://amzn.to/2G5CkFX" {...amazon}>Cointreau</a></li>
+    <li><a href="https://amzn.to/3apXg8w" {...amazon}>De Kuyper Triple Sec</a></li>
+    <li><a href="https://amzn.to/2NH78RJ" {...amazon}>Volare Triple Sec</a></li>
+    <li><a href="https://amzn.to/2G8O0YA" {...amazon}>Bols Triple Sec</a></li>
+    <li><a href="https://amzn.to/3auCbK0" {...amazon}>Iseo Triple Sec</a></li>
+    <li><a href="https://amzn.to/2tzroOb" {...amazon}>Soirée Triple Sec</a></li>
+  </ul>
+
+  <h3>The emergence of Cointreau</h3>
+  <p>Cointreau is the Combier triple sec’s oldest rival.</p>
+  <p>Edouard-Jean and Adolphe Cointreau first opened the doors to their distillery in 1849. They saw a rising trend in the liqueur industry and pivoted their family business away from cake-making.</p>
+  <p>In 1875, Edouard noticed that people were showing a distinct interest in oranges, which at the time were very rare and extremely precious. Seeing the value, he experimented with different recipes until he developed the orange triple sec liqueur we now know as Cointreau.</p>
+  <p>It’s widely considered the most popular brand of triple sec on the market today.</p>
+
+  <h3>So, is triple sec the same as Cointreau?</h3>
+  <p>A very popular question when it comes to triple sec is: is triple sec the same as Cointreau? Let’s run through it:</p>
+  <ul>
+    <li>Cointreau and Combier are both varieties of triple sec orange liqueur.</li>
+    <li>They have slightly different recipes.</li>
+    <li>Combier triple sec is more than 30 years older than Cointreau, but today Cointreau is the more popular brand.</li>
+    <li>Cointreau is 40% alcohol, compared with 25% for Combier triple sec.</li>
+  </ul>
+
+  <h2 id="what-is-triple-sec-made-of">What is triple sec made of?</h2>
+  <p>According to Combier, the original triple sec is made of:</p>
+  <blockquote><p>Sun-dried orange peels from the West Indies, local spices from the south of France, alcohol from France’s northwest, and secret ingredients from the Loire Valley – a formula that became the world’s first triple sec.</p></blockquote>
+  <p><a href="/what-is-campari/">Much like Campari</a>, most of the original triple sec’s ingredients are shrouded in secrecy, but we do know it was triple distilled and claims to be made of all-natural ingredients.</p>
+
+  <h2 id="how-is-triple-sec-made">How is triple sec made?</h2>
+  <p><a href="https://www.diffordsguide.com/beer-wine-spirits/category/176/triple-sec-liqueurs" rel="noopener">According to Difford’s Guide</a>, triple sec is usually based on a neutral spirit made from sugar beet. Orange peel is soaked in the spirit, which is then redistilled and blended with more neutral spirit, water and sugar.</p>
+
+  <h2 id="how-much-alcohol-is-in-triple-sec">How much alcohol is in triple sec?</h2>
+  <p>Triple sec can be anywhere between 15% and 40% alcohol. Here’s how strong the brands mentioned above are:</p>
+  <ul>
+    <li>Combier Triple Sec: 25%</li>
+    <li>Cointreau: 40%</li>
+    <li>Volare Triple Sec: 20%</li>
+    <li>De Kuyper Triple Sec: 40%</li>
+    <li>Bols Triple Sec: 38%</li>
+    <li>Iseo Triple Sec: 15%</li>
+    <li>Soirée Triple Sec: 20%</li>
+  </ul>
+
+  <h2 id="cocktails-with-triple-sec">Cocktails with triple sec</h2>
+  <p>Because of triple sec’s rich, dry orange taste, it’s a perfect alcohol to mix into delicious cocktails. Here are some of the most popular cocktails with triple sec:</p>
+  <ul class="cards cards--square">
+    {featured.map((r) => <RecipeCard recipe={r} />)}
+  </ul>
+
+  <div class="mini-recipe">
+    <h3>ThatCocktail Mimosa</h3>
+    <p>Our twist on <a href="/cocktails/mimosa/">the classic Mimosa</a>, with a splash of triple sec for extra orange.</p>
+    <h4>Ingredients</h4>
+    <ul>
+      <li>15ml / 0.5oz triple sec</li>
+      <li>45ml / 1.5oz orange juice</li>
+      <li>100ml / 3.5oz champagne</li>
+    </ul>
+    <h4>Method</h4>
+    <ol>
+      <li>Add the champagne and triple sec to a champagne flute.</li>
+      <li>Top up with the orange juice.</li>
+    </ol>
+  </div>
+
+  <h3>Perfect your cocktail-making experience</h3>
+  <p>If you’re going to make delicious cocktails, you need the right equipment for the job. No, it isn’t essential, but let me tell you: <strong><em>you’ll appreciate the difference in taste and mood.</em></strong></p>
+  <p>A cocktail shaker is a great starting point. <a href="/cocktail-sets/">We’ve written a detailed article comparing the best cocktail shaker sets</a>, but in short, these are the ones we recommend:</p>
+  <div class="picks">
+    {[kit.shakerSet, kit.highballGlasses, kit.cocktailGlasses].map((p) => <ProductPick product={p} />)}
+  </div>
+
+  <h2 id="summary">Summary</h2>
+  <p>So, what is triple sec?</p>
+  <ul>
+    <li>Triple sec is a style of orange liqueur.</li>
+    <li>It was originally intended to be a digestif, but is now more commonly used in cocktails.</li>
+    <li>It’s usually clear.</li>
+    <li>It’s between 15% and 40% alcohol.</li>
+    <li>It has a dry orange taste.</li>
+    <li>Cointreau is a type of triple sec, and the most popular one on the market today.</li>
+  </ul>
+
+  <section class="next" aria-labelledby="next-title">
+    <h2 id="next-title">Want more triple sec cocktails?</h2>
+    <p>We have {withTripleSec} quick and easy cocktail recipes that use triple sec or Cointreau, from the Margarita to the Long Island Iced Tea.</p>
+    <a class="btn btn--green" href="/search/?q=triple+sec">See all {withTripleSec} triple sec cocktails <Icon name="arrow" /></a>
+  </section>
+
+  <h2 id="further-reading">Further reading</h2>
+  <ul>
+    <li><a href="/cocktails/long-island-iced-tea/">How to make a Long Island Iced Tea</a></li>
+    <li><a href="/cocktails-with-orange-juice/">37 delicious cocktails with orange juice</a></li>
+    <li><a href="/cocktails-with-white-rum/">31 quick and easy cocktails with white rum</a></li>
+    <li><a href="/vodka-cocktails/">Quick and easy vodka cocktails</a></li>
+  </ul>
+  <p class="sources">Sources:</p>
+  <ul class="sources">
+    <li><a href="https://en.wikipedia.org/wiki/Triple_sec" rel="noopener">Triple sec on Wikipedia</a></li>
+    <li><a href="https://www.diffordsguide.com/beer-wine-spirits/category/176/triple-sec-liqueurs" rel="noopener">Difford’s Guide: triple sec liqueurs</a></li>
+    <li><a href="https://www.cointreau.com/uk/en/la-maison/history" rel="noopener">Cointreau: our history</a></li>
+    <li><a href="https://www.remy-cointreau.com/en/brands/cointreau/" rel="noopener">Rémy Cointreau: Cointreau</a></li>
+    <li><a href="https://www.barnonedrinks.com/tips/dictionary/t/triple-sec-922.html" rel="noopener">Bar None Drinks: triple sec</a></li>
+    <li><a href="https://www.combier.fr/en/" rel="noopener">Combier</a></li>
+  </ul>
+</ArticleLayout>

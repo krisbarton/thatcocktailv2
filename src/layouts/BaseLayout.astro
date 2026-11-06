@@ -1,0 +1,95 @@
+---
+import '@fontsource-variable/league-spartan/wght.css';
+import '@fontsource/yellowtail/latin-400.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE, media } from '../data/site';
+
+interface Props {
+  /** Full <title>. */
+  title: string;
+  description: string;
+  /** Title for social shares, if it should differ from <title>. */
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: { src: string; width: number; height: number; alt: string };
+  ogType?: 'website' | 'article' | 'profile';
+  /** Set for pages that shouldn't be indexed, e.g. the subscribe confirmation pages. */
+  noindex?: boolean;
+  /** One or more schema.org nodes. They're combined into a single @graph. */
+  schema?: Record<string, unknown>[];
+}
+
+const {
+  title,
+  description,
+  ogTitle = title,
+  ogDescription = description,
+  ogImage = { src: media('/wp-content/uploads/2026/09/Cranberry-Aperol-Spritz.png'), width: 500, height: 500, alt: 'Cranberry Aperol Spritz in a wine glass with an orange slice' },
+  ogType = 'website',
+  noindex = false,
+  schema = [],
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const robots = noindex
+  ? 'noindex, follow'
+  : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1';
+const jsonLd = schema.length ? JSON.stringify({ '@context': 'https://schema.org', '@graph': schema }) : null;
+---
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Every URL ends in a slash (trailingSlash in astro.config.mjs), but depending on the host,
+       /about may show the page or the 404 page. Send people to /about/ before anything else
+       loads, keeping ?query and #hash. Files (/favicon.ico) are left alone. -->
+  <script is:inline>(function (l) { if (!/\/$|\.[a-z0-9]+$/i.test(l.pathname)) l.replace(l.pathname + '/' + l.search + l.hash); })(location);</script>
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  {!noindex && <link rel="canonical" href={canonical}>}
+  <meta name="robots" content={robots}>
+  <meta name="theme-color" content="#000000">
+
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:type" content={ogType}>
+  <meta property="og:site_name" content={SITE.name}>
+  <meta property="og:title" content={ogTitle}>
+  <meta property="og:description" content={ogDescription}>
+  <meta property="og:url" content={canonical}>
+  <meta property="og:image" content={ogImage.src}>
+  <meta property="og:image:width" content={String(ogImage.width)}>
+  <meta property="og:image:height" content={String(ogImage.height)}>
+  <meta property="og:image:alt" content={ogImage.alt}>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content={SITE.twitterHandle}>
+
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href={SITE.logo}>
+  <link rel="sitemap" href="/sitemap-index.xml">
+
+  <script is:inline>document.documentElement.classList.add('js');</script>
+
+  {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+
+  <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${SITE.gaId}`}></script>
+  <script is:inline define:vars={{ gaId: SITE.gaId }}>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', gaId);
+  </script>
+
+  <slot name="head" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <Header />
+  <main id="main">
+    <slot />
+  </main>
+  <Footer />
+</body>
+</html>

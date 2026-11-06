@@ -1,0 +1,60 @@
+---
+import SpiritLayout from '../layouts/SpiritLayout.astro';
+import { media } from '../data/site';
+
+const groups = [
+  { id: 'white-rum', name: 'White rum', match: /white rum|light rum/ },
+  { id: 'dark-rum', name: 'Dark rum', match: /dark rum|demerara rum/ },
+  { id: 'spiced-rum', name: 'Spiced rum', match: /spiced rum/ },
+  { id: 'other-rum', name: 'Other rum', lede: 'Cocktails made with gold rum, coconut rum such as Malibu, or orange rum.' },
+];
+---
+<SpiritLayout
+  spirit="Rum"
+  title="Rum Cocktails: White, Dark & Spiced Rum Recipes | ThatCocktail"
+  description="Every ThatCocktail recipe with rum, split into white rum, dark rum and spiced rum cocktails, with the bottle we recommend for each."
+  lead="This is every single cocktail we have that contains rum. Pretty cool, right? But what kind of rum? There are a few types, so we’ve split them up: white, dark and spiced rum, plus a few others."
+  groups={groups}
+>
+  <Fragment slot="white-rum">
+    <p>For white rum, it HAS to be Bacardi. Why? Because Bacardi is a well-established brand that you can pick up almost anywhere, you know exactly what you’re getting in every bottle, and it’s all for a very reasonable price.</p>
+    <aside class="pick" aria-label="Our white rum pick">
+      <span class="pick__label">Our top pick</span>
+      <img class="pick__img" src={media('/wp-content/uploads/2019/07/bacardi.jpg')} width="71" height="300" alt="Bottle of Bacardi Carta Blanca white rum" loading="lazy" decoding="async">
+      <div>
+        <p class="pick__name">Bacardi Carta Blanca</p>
+        <p class="pick__why">Easy to find, consistent and reasonably priced.</p>
+        <a class="btn btn--green btn--sm" href="https://amzn.to/2FKPSH2" target="_blank" rel="sponsored noopener">Buy now</a>
+        <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+      </div>
+    </aside>
+  </Fragment>
+
+  <Fragment slot="dark-rum">
+    <p>For dark rum, we recommend Captain Morgan’s.</p>
+    <aside class="pick" aria-label="Our dark rum pick">
+      <span class="pick__label">Our top pick</span>
+      <img class="pick__img" src={media('/wp-content/uploads/2020/05/captain-morgans-dark-rum.jpg')} width="85" height="300" alt="Bottle of Captain Morgan’s Original dark rum" loading="lazy" decoding="async">
+      <div>
+        <p class="pick__name">Captain Morgan’s Original Rum</p>
+        <p class="pick__why">The dark rum we recommend.</p>
+        <a class="btn btn--green btn--sm" href="https://amzn.to/3VyIcwN" target="_blank" rel="sponsored noopener">Buy now</a>
+        <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+      </div>
+    </aside>
+  </Fragment>
+
+  <Fragment slot="spiced-rum">
+    <p>For spiced rum, we recommend Red Leg.</p>
+    <aside class="pick" aria-label="Our spiced rum pick">
+      <span class="pick__label">Our top pick</span>
+      <img class="pick__img" src={media('/wp-content/uploads/2020/05/redleg.jpg')} width="101" height="300" alt="Bottle of Red Leg spiced rum" loading="lazy" decoding="async">
+      <div>
+        <p class="pick__name">Red Leg Spiced Rum</p>
+        <p class="pick__why">The spiced rum we recommend.</p>
+        <a class="btn btn--green btn--sm" href="https://amzn.to/2LMY4t4" target="_blank" rel="sponsored noopener">Buy now</a>
+        <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+      </div>
+    </aside>
+  </Fragment>
+</SpiritLayout>

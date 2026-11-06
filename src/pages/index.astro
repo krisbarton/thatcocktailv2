@@ -1,0 +1,325 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import SectionHead from '../components/SectionHead.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import SearchForm from '../components/SearchForm.astro';
+import ProofBar from '../components/ProofBar.astro';
+import LatestRecipes from '../components/LatestRecipes.astro';
+import GuideSignup from '../components/GuideSignup.astro';
+import GuideDialog from '../components/GuideDialog.astro';
+import { SITE, kris, media } from '../data/site';
+import { spirits, ingredientGuides, cocktailTypes, browseGroups } from '../data/recipes';
+import { organization, website, krisPerson, webPage, ids } from '../data/schema';
+import { getPopular, toCard } from '../lib/cocktails';
+
+const popular = (await getPopular()).map(toCard);
+
+const title = 'Quick & Easy Cocktails You Can Make at Home | ThatCocktail';
+const description = 'Quick & easy cocktails you can make at home in minutes, with simple steps and measures in ml and oz. Browse recipes by spirit, flavour or season.';
+
+// Answers are plain text here for the FAQPage schema; the HTML versions below add links. Keep the wording identical.
+const faqs = [
+  {
+    q: 'What are the easiest cocktails to make at home?',
+    text: 'Drinks you build straight in the glass are the easiest, because you don’t need a shaker or a strainer. A gin and tonic, a Moscow Mule or a Skindy (champagne and sloe gin) each take about two minutes.',
+    html: 'Drinks you build straight in the glass are the easiest, because you don’t need a shaker or a strainer. A gin and tonic, a <a href="/cocktails/moscow-mule/">Moscow Mule</a> or a Skindy (champagne and sloe gin) each take about two minutes.',
+  },
+  {
+    q: 'What equipment do I need to make cocktails at home?',
+    text: 'A cocktail shaker, a jigger for measuring, a bar spoon and a Hawthorne strainer cover almost every recipe on ThatCocktail. Add a highball glass and a cocktail glass and you’re set. Our cocktail equipment recommendations and glassware guide list the kit we rate.',
+    html: 'A cocktail shaker, a jigger for measuring, a bar spoon and a Hawthorne strainer cover almost every recipe on ThatCocktail. Add a highball glass and a cocktail glass and you’re set. Our <a href="/cocktail-equipment/">cocktail equipment recommendations</a> and <a href="/cocktail-glassware/">glassware guide</a> list the kit we rate.',
+  },
+  {
+    q: 'Can I make a cocktail without a shaker?',
+    text: 'Yes. A clean jam jar with a tight lid works well. Add ice and your ingredients, screw the lid on and shake hard for 10 to 15 seconds, then strain into your glass through a small sieve. Highballs like the Southern Senorita are stirred in the glass, so they don’t need shaking at all.',
+  },
+  {
+    q: 'What does “1 part” mean in a cocktail recipe?',
+    text: 'A part is a ratio rather than a fixed amount. Choose one measure and use it for every part: if 1 part is 30ml, then 2 parts is 60ml. That’s why our recipes list ml, oz and parts, so you can scale a drink up for a jug or down for a smaller glass.',
+  },
+  {
+    q: 'Which spirits should I buy first for a home bar?',
+    text: 'Start with a spirit you already enjoy drinking. Between them, vodka, gin, white rum and tequila cover most popular cocktails, and a bottle of triple sec adds dozens more. Our alcohol recommendations list the brands we rate.',
+    html: 'Start with a spirit you already enjoy drinking. Between them, vodka, gin, white rum and tequila cover most popular cocktails, and a bottle of triple sec adds dozens more. Our <a href="/alcohol-recommendations/">alcohol recommendations</a> list the brands we rate.',
+  },
+  {
+    q: 'Do you have non-alcoholic cocktail recipes?',
+    text: 'Yes. Our non-alcoholic cocktails collection has booze-free drinks for designated drivers and dry nights in, including a Pornstar Martini mocktail that keeps the passion fruit flavour of the original.',
+    html: 'Yes. Our <a href="/non-alcoholic-cocktails/">non-alcoholic cocktails</a> collection has booze-free drinks for designated drivers and dry nights in, including a <a href="/cocktails/pornstar-martini-mocktail/">Pornstar Martini mocktail</a> that keeps the passion fruit flavour of the original.',
+  },
+];
+
+const schema = [
+  organization,
+  krisPerson,
+  {
+    ...website,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: { '@type': 'EntryPoint', urlTemplate: `${SITE.url}/search/?q={search_term_string}` },
+      'query-input': 'required name=search_term_string',
+    },
+  },
+  webPage({
+    path: '/',
+    type: 'CollectionPage',
+    name: title,
+    description,
+    extra: {
+      about: { '@id': ids.org },
+      primaryImageOfPage: { '@type': 'ImageObject', url: media('/wp-content/uploads/2026/09/Cranberry-Aperol-Spritz.png'), width: 500, height: 500 },
+    },
+  }),
+  {
+    '@type': 'FAQPage',
+    '@id': `${SITE.url}/#faq`,
+    url: `${SITE.url}/`,
+    inLanguage: 'en-GB',
+    mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.text } })),
+  },
+];
+---
+<BaseLayout
+  title={title}
+  description={description}
+  ogTitle="Quick & Easy Cocktails You Can Make at Home"
+  ogDescription="Simple, step-by-step cocktail recipes with measures in ml and oz. Most take about two minutes. Let’s get mixing!"
+  schema={schema}
+>
+  <!-- The only H1 on the page, aimed at "easy cocktails at home". "Cocktail recipes" is left to /cocktails/ to avoid cannibalising it. -->
+  <section class="hero neon on-black" aria-labelledby="hero-title">
+    <div class="wrap">
+      <div class="hero__copy">
+        <h1 class="neon-title hero__title" id="hero-title">Quick &amp; easy cocktails you can make <span class="neon-script">at home</span></h1>
+        <p class="hero__lead">Bar-quality cocktails without the bar. Our recipes list exact measures in ml and oz, the glass to use and a few simple steps, and most take about two minutes.</p>
+
+        <SearchForm id="hero-search" />
+
+        <p class="hero__guide">
+          <span>New to making cocktails?</span>
+          <a class="btn btn--green" href="#free-guide" aria-haspopup="dialog" data-guide-dialog>Get my FREE guide</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <ProofBar />
+
+  <!-- Highest-value links on the page: one descriptive anchor per spirit hub. -->
+  <section class="section" aria-labelledby="spirits-title">
+    <div class="wrap">
+      <SectionHead id="spirits-title" title="Cocktails by spirit"
+        lede="Start with the bottle you already have and see what you can make with it tonight."
+        more={{ label: 'All cocktails by spirit', href: '/cocktails-by-spirit/' }} />
+      <ul class="spirits">
+        {spirits.map((s) => (
+          <li class="spirit">
+            <a class="spirit__link" href={s.href}>{s.name} <span>cocktails</span></a>
+            <div class="spirit__foot"><p class="spirit__eg">{s.eg}</p><Icon name="arrow" class="arrow" /></div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="popular-title">
+    <div class="wrap">
+      <SectionHead id="popular-title" title="Most popular cocktail recipes"
+        lede="The recipes our readers come back to most."
+        more={{ label: 'All popular cocktail recipes', href: '/popular-cocktail-recipes/' }} />
+      <ul class="cards cards--square cards--three">
+        {popular.map((r) => <RecipeCard recipe={r} sizes="(min-width: 1000px) 370px, 45vw" />)}
+      </ul>
+    </div>
+  </section>
+
+  <LatestRecipes />
+
+  <!-- The old hero, moved here. -->
+  <GuideSignup />
+  <GuideDialog />
+
+  <section class="section" aria-labelledby="ingredients-title">
+    <div class="wrap">
+      <SectionHead id="ingredients-title" title="Cocktail ingredients explained"
+        lede="Not sure what triple sec actually is? Our ingredient guides explain what’s in the bottle and how to use it in cocktails."
+        more={{ label: 'All ingredient guides', href: '/cocktail-ingredients/alcohol-information/' }} />
+      <ul class="minis">
+        {ingredientGuides.map((g) => (
+          <li class="mini">
+            <div class="mini__media"><img src={media(g.img)} width={g.width} height={g.height} alt={g.alt} loading="lazy" decoding="async"></div>
+            <div class="mini__body">
+              <h3 class="mini__title"><a href={g.href}>{g.title}</a></h3>
+              <p class="mini__desc">{g.desc}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="types-title">
+    <div class="wrap">
+      <SectionHead id="types-title" title="Types of cocktails"
+        lede="Browse by style, flavour or season, or jump straight to a cocktail family."
+        more={{ label: 'All types of cocktails', href: '/types-of-cocktails/' }} />
+      <ul class="types">
+        {cocktailTypes.map((t) => (
+          <li class="type">
+            <img src={media(t.img)} width="500" height="500" alt={t.alt} loading="lazy" decoding="async">
+            <h3 class="type__title"><a href={t.href}>{t.title}</a></h3>
+          </li>
+        ))}
+      </ul>
+
+      <div class="browse">
+        {browseGroups.map((g) => (
+          <div>
+            <h3 class="kicker browse__label">{g.label}</h3>
+            <ul class="chips">
+              {g.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- E-E-A-T -->
+  <section class="section founder" aria-labelledby="founder-title">
+    <div class="wrap founder__grid">
+      <img class="portrait"
+           src={media(kris.photo)}
+           srcset={`${media(kris.photo)} 300w, ${media(kris.photoLarge)} 1080w`}
+           sizes="(min-width: 700px) 250px, 200px" width="300" height="300"
+           alt="Kris Barton, founder of ThatCocktail, enjoying a cocktail" loading="lazy" decoding="async">
+      <div>
+        <h2 class="h2" id="founder-title">Meet Kris Barton, founder of ThatCocktail</h2>
+        <p class="founder__text">Kris has been making, and sometimes inventing, cocktails for more than 20 years. ThatCocktail started in 2019 as a place to share simple, quick and easy recipes, each with a little extra detail on the drink, its ingredients and the kit you need to make it at home.</p>
+        <ul class="facts">
+          {kris.facts.map((f) => <li>{f}</li>)}
+        </ul>
+        <p class="founder__links">
+          <a class="more" href="/about/">More about ThatCocktail <Icon name="arrow" class="arrow" /></a>
+          <a class="more" href={kris.url}>Kris’s author profile <Icon name="arrow" class="arrow" /></a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Answers match the FAQPage JSON-LD word for word. -->
+  <section class="section section--wash" aria-labelledby="faq-title">
+    <div class="wrap faq__grid">
+      <div class="faq__intro">
+        <h2 class="h2" id="faq-title">Questions about making cocktails at home</h2>
+        <p>Quick answers to common questions. Can’t see yours? <a href="/contact-us/">Contact us</a> and we’ll help.</p>
+      </div>
+      <div class="faq__list">
+        {faqs.map((f, i) => (
+          <details open={i === 0}>
+            <summary>{f.q}</summary>
+            <div class="faq__answer"><p set:html={f.html ?? f.text} /></div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero{padding-block:clamp(40px,6vw,88px) clamp(48px,7vw,96px)}
+  .hero__copy{max-width:920px;margin-inline:auto;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .hero__title{font-size:clamp(2.6rem,5.8vw,4.6rem)}
+  .hero__lead{margin-top:24px;max-width:60ch;font-size:clamp(1.05rem,1.4vw,1.22rem);line-height:1.55;color:var(--on-black)}
+
+  .hero__guide{margin-top:26px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px 18px;color:var(--on-black-soft)}
+
+  /* ---------- Spirit tiles: the brand's magenta quick-link style ---------- */
+  .spirits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+  .spirit{
+    position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:20px;
+    min-height:156px;padding:20px 20px 18px;border-radius:var(--radius);border:1px solid var(--mag-edge);
+    background:radial-gradient(160px at 50% -50%,var(--mag-hi) 0%,var(--mag-lo) 100%);
+    color:#fff;box-shadow:0 18px 30px -22px rgba(117,11,62,.9);transition:transform .15s ease,box-shadow .15s ease;
+  }
+  .spirit:hover{transform:translateY(-3px);box-shadow:0 26px 36px -22px rgba(117,11,62,1)}
+  .spirit__link{color:#fff;text-decoration:none;font:800 1.7rem/1 var(--font-display);letter-spacing:-.01em}
+  .spirit__link span{display:block;margin-top:7px;font:700 .75rem/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase}
+  .spirit__link::after{content:"";position:absolute;inset:0;border-radius:inherit}
+  .spirit__link:focus-visible{outline:none}
+  .spirit__link:focus-visible::after{outline:3px solid var(--black);outline-offset:3px}
+  .spirit__foot{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+  .spirit__eg{font-size:.875rem;line-height:1.4}
+  .spirit :global(.arrow){width:22px;height:22px}
+  .spirit:hover :global(.arrow){transform:translateX(3px)}
+
+  /* ---------- Ingredient guides ---------- */
+  .minis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .mini{position:relative;display:flex;align-items:center;gap:16px;padding:12px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);transition:border-color .15s,box-shadow .15s}
+  .mini:hover{border-color:var(--pink);box-shadow:0 12px 26px -18px rgba(0,0,0,.45)}
+  .mini__media{flex:none;width:116px;aspect-ratio:5/3;border-radius:10px;overflow:hidden;background:#222}
+  .mini__media img{width:100%;height:100%;object-fit:cover}
+  .mini__body{min-width:0}
+  .mini__title{font:700 1.15rem/1.15 var(--font-display);color:#000}
+  .mini__title a{color:inherit;text-decoration:none}
+  .mini__title a::after{content:"";position:absolute;inset:0;border-radius:inherit}
+  .mini:hover .mini__title a{text-decoration:underline;text-underline-offset:3px}
+  .mini__desc{margin-top:4px;font-size:.875rem;line-height:1.45;color:var(--ink-soft)}
+
+  /* ---------- Types, flavours, seasons ---------- */
+  .types{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+  .type{position:relative;display:flex;align-items:flex-end;aspect-ratio:1;padding:18px;border-radius:var(--radius);overflow:hidden;background:#222}
+  .type img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.04);transition:transform .4s ease}
+  .type::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(0,0,0,.82) 0%,rgba(0,0,0,.25) 45%,transparent 70%)}
+  .type:hover img{transform:scale(1.09)}
+  .type__title{z-index:2;font:800 1.4rem/1.05 var(--font-display);color:#fff}
+  .type__title a{color:inherit;text-decoration:none}
+  .type__title a::after{content:"";position:absolute;inset:0}
+  .type:hover .type__title a{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+
+  .browse{margin-top:36px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 32px}
+  .browse__label{margin-bottom:12px}
+
+  /* ---------- Founder ---------- */
+  .founder__grid{display:grid;grid-template-columns:minmax(0,280px) minmax(0,1fr);gap:clamp(32px,6vw,80px);align-items:center}
+  .founder__text{margin-top:16px;max-width:60ch;font-size:1.05rem;color:#333}
+  .founder .facts{margin-top:18px}
+  .founder__links{margin-top:20px;display:flex;flex-wrap:wrap;gap:10px 28px}
+
+  /* ---------- FAQ ---------- */
+  .faq__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.65fr);gap:clamp(28px,5vw,72px);align-items:start}
+  .faq__intro p{margin-top:14px;color:#333}
+  .faq__list{border-top:2px solid #000}
+  .faq__list details{border-bottom:1px solid rgba(0,0,0,.16)}
+  .faq__list summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;list-style:none;font:700 1.18rem/1.25 var(--font-display);color:#000}
+  .faq__list summary::-webkit-details-marker{display:none}
+  .faq__list summary::after{content:"+";flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#fff;border:1px solid rgba(0,0,0,.2);color:var(--pink-ink);font:600 1.25rem/1 var(--font-body);transition:transform .2s ease}
+  .faq__list details[open] summary::after{transform:rotate(45deg)}
+  .faq__answer{padding:0 48px 20px 0;color:#333}
+  .faq__answer :global(a){font-weight:600}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:999px){
+    .minis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media (max-width:899px){
+    .spirits,.types{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .browse{grid-template-columns:minmax(0,1fr)}
+    .faq__grid{grid-template-columns:minmax(0,1fr)}
+  }
+  @media (max-width:699px){
+    .founder__grid{grid-template-columns:minmax(0,1fr)}
+  }
+  @media (max-width:599px){
+    .minis{grid-template-columns:minmax(0,1fr)}
+    .spirit{min-height:0;padding:16px}
+    .spirit__link{font-size:1.4rem}
+    .spirit__eg{font-size:.82rem}
+    .spirit :global(.arrow){display:none}
+    .type{padding:14px}
+    .type__title{font-size:1.15rem}
+    .faq__answer{padding-right:0}
+  }
+</style>

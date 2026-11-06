@@ -1,0 +1,28 @@
+---
+import CollectionLayout from '../layouts/CollectionLayout.astro';
+
+const path = '/summer-cocktail-recipes/';
+const seasons = [
+  { name: 'Winter cocktails', href: '/winter-cocktail-recipes/' },
+  { name: 'Spring cocktails', href: '/spring-cocktail-recipes/' },
+  { name: 'Autumn cocktails', href: '/autumn-cocktail-recipes/' },
+];
+---
+<CollectionLayout
+  path={path}
+  collection="Summer"
+  heading="Summer"
+  title="Summer Cocktails: Our Full List of Summer Cocktail Recipes | ThatCocktail"
+  description="Our full list of summer cocktail recipes, from the Caipirinha to the Cranberry Aperol Spritz, with measures in ml and oz."
+  lead="A change of weather calls for a change of cocktail. Here’s our full list of summer cocktail recipes."
+  listLede="Every ThatCocktail recipe for summer, newest first."
+  parent={[
+    { name: 'Types of cocktails', href: '/types-of-cocktails/' },
+    { name: 'Seasonal cocktails', href: '/seasonal-cocktails/' },
+  ]}
+  siblings={{
+    title: 'Cocktails for other seasons',
+    links: seasons,
+    more: { label: 'All seasonal cocktails', href: '/seasonal-cocktails/' },
+  }}
+/>

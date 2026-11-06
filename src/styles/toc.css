@@ -1,0 +1,68 @@
+/*
+  Two-column page body with a sticky "On this page" rail, shared by recipe pages and
+  /cocktails-by-spirit/. On narrow screens the rail becomes a sticky, sideways-scrolling bar.
+
+  <div class="wrap r-body">
+    <aside class="r-aside"><div class="r-aside__inner"><nav class="toc">…</nav></div></aside>
+    <div class="r-main">…</div>
+  </div>
+*/
+.r-body{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:clamp(32px,5vw,64px);padding-block:clamp(44px,6vw,80px)}
+.r-main{grid-column:1;grid-row:1;min-width:0}
+.r-aside{grid-column:2;grid-row:1}
+.r-aside__inner{position:sticky;top:24px;display:grid;gap:18px}
+/* A long list plus the recipe buttons can be taller than a laptop screen, so let the rail scroll.
+   The padding keeps the green button's offset shadow from being clipped. */
+@media (min-width:1000px){
+  .r-aside__inner{max-height:calc(100vh - 48px);overflow-y:auto;scrollbar-width:thin;padding:0 6px 8px 0;margin-right:-6px}
+}
+.r-aside .toc{border:1px solid var(--line);border-radius:var(--radius);padding:18px 14px 12px}
+.r-aside .toc .kicker{padding-left:8px}
+.r-aside .toc ol{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:2px;counter-reset:toc}
+.r-aside .toc a{display:flex;align-items:baseline;gap:10px;padding:9px 10px;border-radius:10px;color:var(--ink);font-weight:600;text-decoration:none;transition:background-color .15s}
+.r-aside .toc a::before{counter-increment:toc;content:counter(toc);min-width:1.1em;font:800 .85rem/1 var(--font-display);color:var(--pink-ink)}
+.r-aside .toc a:hover{background:var(--cyan-wash)}
+.toc__cta{width:100%}
+/* Recipe pages: the buttons under the list (or on their own, see r-aside--actions). */
+.toc__all{background:#fff;color:var(--ink);border:2px solid var(--black)}
+.toc__all svg{color:var(--pink-ink);transition:transform .15s ease}
+.toc__all:hover{border-color:var(--pink-deep);color:var(--pink-ink)}
+.toc__all:hover svg{transform:translateX(3px)}
+.toc__guide{display:flex;align-items:center;gap:16px;padding:14px 16px 14px 14px;border-radius:16px;background:radial-gradient(70px 70px at 42px 50%,rgba(81,229,255,.28),transparent 70%),var(--black);color:#fff;font-weight:800;line-height:1.2;text-decoration:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);transition:box-shadow .15s}
+/* The cover is nearly all black, so it gets a lit backdrop (above) and a neon edge to stand out on the black card. */
+.toc__guide img{width:56px;height:auto;flex:none;border-radius:3px;transform:rotate(-4deg);box-shadow:0 0 0 1.5px var(--cyan),0 0 14px 2px rgba(81,229,255,.55),0 10px 20px -6px rgba(81,229,255,.6)}
+.toc__guide>span{flex:1;min-width:0}
+.toc__guide-kicker{display:block;margin-bottom:4px;font:700 .7rem/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--pink)}
+.toc__guide svg{width:20px;height:20px;flex:none;color:var(--cyan);transition:transform .15s ease}
+.toc__guide:hover{box-shadow:inset 0 0 0 2px var(--cyan)}
+.toc__guide:hover svg{transform:translateX(3px)}
+.toc__guide:focus-visible{outline-color:var(--cyan)}
+/* Optional recipe count at the end of a rail link. */
+.toc__count{margin-left:auto;font-size:.8rem;font-weight:700;color:var(--ink-soft)}
+
+/* Hub pages: one <section class="r-section"> per rail link, with three cards a row beside the rail. */
+/* The same space either side of the dividing line. ~ skips sections the recipe search has hidden. */
+.r-section:not([hidden])~.r-section{margin-top:clamp(52px,6vw,76px);padding-top:clamp(52px,6vw,76px);border-top:1px solid var(--line)}
+@media (min-width:1000px){
+  .r-section .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+@media (max-width:999px){
+  .r-body{grid-template-columns:minmax(0,1fr);gap:0;padding-top:0}
+  .r-body--actions{padding-top:clamp(36px,6vw,56px)}
+  /* With no list to scroll there's no sticky bar on phones; the buttons are desktop-only. */
+  .r-aside--actions{display:none}
+  .r-main,.r-aside{grid-column:auto;grid-row:auto}
+  .r-aside{margin-inline:calc(-1 * clamp(16px,4vw,32px));padding:12px clamp(16px,4vw,32px);border-bottom:1px solid var(--line);margin-bottom:clamp(36px,6vw,56px);position:sticky;top:0;z-index:5;background:rgba(255,255,255,.96);backdrop-filter:blur(6px)}
+  .r-aside__inner{position:static;display:block}
+  .r-aside .toc{border:0;padding:0;display:flex;align-items:center;gap:12px}
+  .r-aside .toc .kicker{padding:0;white-space:nowrap}
+  .r-aside .toc ol{margin:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0}
+  .r-aside .toc ol::-webkit-scrollbar{display:none}
+  .r-aside .toc a{white-space:nowrap;padding:7px 12px;border:1px solid var(--line);border-radius:999px;font-size:.9rem}
+  .r-aside .toc a::before{display:none}
+  .toc__cta{display:none}
+  .toc__count{display:none}
+  /* Keep headings clear of the sticky bar when jumping to them. */
+  .r-main [id]{scroll-margin-top:84px}
+}

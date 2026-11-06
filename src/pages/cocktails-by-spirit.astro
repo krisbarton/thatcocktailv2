@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import HubSections, { type HubSection } from '../components/HubSections.astro';
+import GuideSignup from '../components/GuideSignup.astro';
+import { SITE, media } from '../data/site';
+import { spirits } from '../data/recipes';
+import { organization, website, webPage, breadcrumbs } from '../data/schema';
+import { getCocktails, toCard, usesIngredient, pickFresh, type Cocktail } from '../lib/cocktails';
+
+const path = '/cocktails-by-spirit/';
+const title = 'Cocktails by Spirit: Vodka, Gin, Rum & More | ThatCocktail';
+const description = 'Cocktail recipes grouped by spirit: vodka, gin, rum, tequila, champagne, amaretto, peach schnapps and Passoa. Pick the bottle you have and find a drink to make tonight.';
+
+const PER_SECTION = 6;
+const cocktails = await getCocktails();
+
+// Shared across sections so the page doesn't keep repeating the same drinks
+// (an Electric Watermelon uses vodka, gin, rum and tequila).
+const shown = new Set<Cocktail>();
+const sections: (HubSection & { href: string })[] = spirits.map((s) => {
+  const all = cocktails.filter((c) => usesIngredient(c, s.match));
+  const picks = pickFresh(all, shown, PER_SECTION);
+  const id = s.href.replace(/\//g, '').replace(/-cocktails$/, '');
+  return {
+    id,
+    name: s.name,
+    href: s.href,
+    title: `${s.name} cocktails`,
+    lede: `${all.length} of our recipes use ${s.noun ?? s.name.toLowerCase()}. Here are some of the newest.`,
+    count: all.length,
+    more: { label: `All ${s.name.toLowerCase()} cocktails`, href: s.href },
+    cards: picks.map(toCard),
+  };
+});
+
+const schema = [
+  organization,
+  website,
+  webPage({
+    path,
+    type: 'CollectionPage',
+    name: title,
+    description,
+    extra: {
+      breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: sections.length,
+        itemListElement: sections.map((s, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: new URL(s.href, SITE.url).href,
+          name: `${s.name} cocktails`,
+        })),
+      },
+    },
+  }),
+  breadcrumbs(path, [{ name: 'Cocktails by spirit', path }]),
+];
+---
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={{ src: media('/wp-content/uploads/2023/11/cocktails-by-sprirt.png'), width: 500, height: 500, alt: 'Illustration of popular cocktails from the ThatCocktail recipe index' }}
+  schema={schema}
+>
+  <PageHero kicker="Pick a bottle" title="Cocktails by"
+    lead="Looking for a new cocktail to try, or one you’ve had before but can’t remember the name of? Narrow it down by the spirit that’s in it.">
+    <Fragment slot="script">spirit</Fragment>
+  </PageHero>
+
+  <HubSections sections={sections} cta={{ label: 'All cocktail recipes', href: '/cocktails/' }} />
+
+  <GuideSignup />
+</BaseLayout>
+

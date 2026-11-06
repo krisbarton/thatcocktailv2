@@ -1,0 +1,31 @@
+---
+import SectionHead from './SectionHead.astro';
+import RecipeCard from './RecipeCard.astro';
+import { getCocktails, toCard } from '../lib/cocktails';
+
+interface Props {
+  title?: string;
+  lede?: string;
+  limit?: number;
+  mist?: boolean;
+  id?: string;
+}
+const {
+  title = 'Latest cocktail recipes',
+  lede = 'Our newest recipes. Each one takes about two minutes to make.',
+  limit = 8,
+  mist = false,
+  id = 'latest-title',
+} = Astro.props;
+
+// Newest first, straight from src/content/cocktails/.
+const latest = (await getCocktails()).slice(0, limit).map(toCard);
+---
+<section class:list={['section', { 'section--mist': mist }]} aria-labelledby={id}>
+  <div class="wrap">
+    <SectionHead id={id} title={title} lede={lede} more={{ label: 'All cocktail recipes', href: '/cocktails/' }} />
+    <ul class="cards cards--square">
+      {latest.map((r) => <RecipeCard recipe={r} />)}
+    </ul>
+  </div>
+</section>

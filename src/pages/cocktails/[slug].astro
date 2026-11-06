@@ -1,0 +1,269 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import CocktailRecipeCard from '../../components/CocktailRecipeCard.astro';
+import CocktailFaqs from '../../components/CocktailFaqs.astro';
+import WhatYouNeed from '../../components/WhatYouNeed.astro';
+import VideoEmbed from '../../components/VideoEmbed.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import GuideSignup from '../../components/GuideSignup.astro';
+import GuideDialog from '../../components/GuideDialog.astro';
+import Icon from '../../components/Icon.astro';
+import NeonPlaceholder from '../../components/NeonPlaceholder.astro';
+import { SITE, kris, media, freeGuide } from '../../data/site';
+import { organization, website, krisPerson, breadcrumbs, ids } from '../../data/schema';
+import { getCocktails, cocktailUrl, cocktailImage, ingredientText, toCard, type Cocktail } from '../../lib/cocktails';
+import { cocktailFaqs } from '../../lib/cocktail-faqs';
+import { recipeNeeds } from '../../lib/recipe-snippets';
+import '../../styles/recipe.css';
+
+export async function getStaticPaths() {
+  const all = await getCocktails();
+  return all.map((cocktail) => ({ params: { slug: cocktail.id }, props: { cocktail, all } }));
+}
+
+interface Props {
+  cocktail: Cocktail;
+  all: Cocktail[];
+}
+const { cocktail: c, all } = Astro.props;
+const d = c.data;
+const { Content, headings } = await render(c);
+const hasBody = Boolean(c.body?.trim());
+const path = cocktailUrl(c);
+const url = new URL(path, SITE.url).href;
+const img = cocktailImage(c);
+const total = d.prepMins + d.makeMins;
+const ukDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const isoDate = (date: Date) => date.toISOString().slice(0, 10);
+
+// "Up" link into the first collection (reverse-silo plan, Change #2).
+const hub = d.collections[0];
+const hubName = hub ? (/s$/i.test(hub.label) ? hub.label.toLowerCase() : `${hub.label.toLowerCase()} cocktails`) : null;
+
+// Related: the cocktails that share the most collections, newest first.
+const labels = new Set(d.collections.map((t) => t.label));
+const related = all
+  .filter((o) => o.id !== c.id)
+  .map((o) => ({ o, score: o.data.collections.filter((t) => labels.has(t.label)).length }))
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 4)
+  .map(({ o }) => ({ cocktail: o, card: toCard(o) }));
+
+// The ingredient and equipment explainers before the recipe card. Where the article has its own
+// ingredients or equipment section, ours for that is left out.
+const needs = recipeNeeds(c, headings);
+const showIngredients = needs.ingredients.length > 0 && !needs.article.ingredients;
+const showEquipment = needs.equipment.length > 0 && !needs.article.equipment;
+
+const toc = [
+  ...headings.filter((h) => h.depth === 2).map((h) => ({ href: `#${h.slug}`, label: h.text })),
+  ...(d.video ? [{ href: '#video', label: 'Watch how it’s made' }] : []),
+  ...(showIngredients ? [{ href: '#ingredients-you-need', label: 'Ingredients you need' }] : []),
+  ...(showEquipment ? [{ href: '#equipment-you-need', label: 'Equipment you need' }] : []),
+  { href: '#recipe', label: 'Recipe' },
+];
+// Every recipe has the sticky rail. The "On this page" list only shows when there's something
+// before the recipe to skip (article sections, a video or the ingredients and equipment sections);
+// otherwise the rail is just the buttons.
+const showToc = toc.length > 1;
+
+const faqs = cocktailFaqs(c, needs);
+if (showToc && faqs.length) toc.push({ href: '#faqs', label: 'FAQs' });
+
+const title = `${d.title} Recipe | ${SITE.name}`;
+const description = d.summary;
+
+const schema = [
+  organization,
+  website,
+  krisPerson,
+  {
+    '@type': 'Recipe',
+    '@id': `${url}#recipe`,
+    name: d.title,
+    description: d.summary,
+    ...(img && { image: [img.png] }),
+    author: { '@id': ids.kris },
+    publisher: { '@id': ids.org },
+    datePublished: d.published.toISOString(),
+    dateModified: d.updated.toISOString(),
+    prepTime: `PT${d.prepMins}M`,
+    cookTime: `PT${d.makeMins}M`,
+    totalTime: `PT${total}M`,
+    ...(d.calories && { nutrition: { '@type': 'NutritionInformation', calories: `${d.calories} calories` } }),
+    recipeYield: `${d.serves} drink${d.serves === 1 ? '' : 's'}`,
+    recipeCategory: 'Cocktail',
+    keywords: [d.title, 'cocktail', ...d.collections.map((t) => t.label.toLowerCase())].join(', '),
+    recipeIngredient: d.ingredients.map(ingredientText),
+    recipeInstructions: d.method.map((step, n) => ({
+      '@type': 'HowToStep',
+      position: n + 1,
+      text: step.replace(/<[^>]+>/g, ''),
+      url: `${url}#${c.id}-step-${n + 1}`,
+    })),
+    mainEntityOfPage: url,
+  },
+  ...(faqs.length
+    ? [{
+        '@type': 'FAQPage',
+        '@id': `${url}#faqs`,
+        url,
+        inLanguage: 'en-GB',
+        mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.text } })),
+      }]
+    : []),
+  breadcrumbs(path, [{ name: 'Cocktails', path: '/cocktails/' }, { name: d.title, path }]),
+];
+---
+<BaseLayout
+  title={title}
+  description={description}
+  ogType="article"
+  ogImage={img ? { src: img.png, width: 500, height: 500, alt: img.alt } : undefined}
+  schema={schema}
+>
+  {img && <link slot="head" rel="preload" as="image" href={img.src} imagesrcset={`${img.src300} 300w, ${img.src} 500w`} imagesizes="(min-width: 900px) 440px, calc(100vw - 32px)" fetchpriority="high">}
+
+  <article>
+    <header class="r-hero">
+      <div class="wrap">
+        <Breadcrumbs items={[{ name: 'Cocktails', href: '/cocktails/' }, { name: d.title, href: path }]} />
+
+        <div class="r-hero__grid">
+          <div>
+            <h1 class="neon-title r-hero__title">{d.title} <span class="neon-script">recipe</span></h1>
+            <p class="r-hero__lead">{d.summary}</p>
+
+            <div class="byline">
+              <span class="byline__who">
+                <img src={media('/wp-content/uploads/2020/11/kris-cocktail-96x96.jpg')} width="96" height="96" alt="">
+                <span>By <a href={kris.url}>{kris.name}</a> · Updated <time datetime={isoDate(d.updated)}>{ukDate(d.updated)}</time></span>
+              </span>
+            </div>
+
+            <ul class="r-facts" aria-label="Recipe at a glance">
+              <li><Icon name="clock" /><span><strong>{total} mins</strong> total</span></li>
+              <li><Icon name="glass" /><span><strong>{d.ingredients.length}</strong> ingredients</span></li>
+              <li><Icon name="cocktail" /><span>{d.glass}</span></li>
+              {d.calories && <li><Icon name="sparkle" /><span><strong>{d.calories}</strong> kcal</span></li>}
+            </ul>
+
+            <div class="r-hero__actions">
+              <a class="btn btn--green" href="#recipe">Jump to recipe
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+              {d.video && (
+                <a class="btn btn--ghost" href="#video">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch the video</a>
+              )}
+            </div>
+
+            {d.collections.length > 0 && (
+              <ul class="r-tags" aria-label="Collections">
+                {d.collections.map((t) => <li><a href={t.href}>{t.label}</a></li>)}
+              </ul>
+            )}
+          </div>
+
+          <figure class="r-hero__media">
+            {img ? (
+              <img src={img.src} srcset={img.src300 !== img.src ? `${img.src300} 300w, ${img.src} 500w` : undefined}
+                   sizes="(min-width: 900px) 440px, calc(100vw - 32px)" width="500" height="500"
+                   alt={img.alt} fetchpriority="high" decoding="async">
+            ) : <NeonPlaceholder name={d.title} />}
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    <div class:list={['wrap r-body', { 'r-body--actions': !showToc }]}>
+      <aside class:list={['r-aside', { 'r-aside--actions': !showToc }]}>
+        <div class="r-aside__inner">
+          {showToc && (
+            <nav class="toc" aria-label="On this page">
+              <p class="kicker">On this page</p>
+              <ol>
+                {toc.map((t) => <li><a href={t.href}>{t.label}</a></li>)}
+              </ol>
+            </nav>
+          )}
+          <a class="btn btn--green toc__cta" href="#recipe">Jump to recipe</a>
+          <a class="btn toc__cta toc__all" href="/cocktails/">View all recipes <Icon name="arrow" /></a>
+          <a class="toc__cta toc__guide" href="#free-guide" aria-haspopup="dialog" data-guide-dialog>
+            <img src={media(freeGuide.cover)} width="875" height="1221" alt="" loading="lazy" decoding="async">
+            <span><span class="toc__guide-kicker">Free guide</span> Get my FREE guide</span>
+            <Icon name="arrow" />
+          </a>
+          <AdSlot place="rail" />
+        </div>
+      </aside>
+
+      <div class="r-main">
+        {hasBody && (
+          <div class="r-article">
+            <Content />
+          </div>
+        )}
+
+        {d.video && (
+          <section id="video" aria-labelledby="video-title">
+            <h2 class="r-h2" id="video-title">How to make a {d.title}</h2>
+            <VideoEmbed id={d.video.id} title={d.video.title} />
+          </section>
+        )}
+
+        {(showIngredients || showEquipment) && <WhatYouNeed name={d.title} needs={needs} />}
+
+        <AdSlot place="recipe" />
+
+        <CocktailRecipeCard cocktail={c} />
+
+        <p class="silo-link">
+          {hub
+            ? <>Want more like this? Browse our full collection of <a href={hub.href}>{hubName}</a>.</>
+            : <>Want more like this? Browse <a href="/cocktails/">all our cocktail recipes</a>.</>}
+        </p>
+
+        <CocktailFaqs title={d.title} faqs={faqs} />
+
+        <section class="author" aria-labelledby="author-title">
+          <img class="author__photo" src={media(kris.photo)} width="300" height="300" alt="Kris Barton, founder of ThatCocktail, enjoying a cocktail" loading="lazy" decoding="async">
+          <div>
+            <p class="kicker">About the author</p>
+            <h2 class="author__name" id="author-title">{kris.name}</h2>
+            <p class="author__bio">Kris has been making, and sometimes inventing, cocktails for more than 20 years, and founded ThatCocktail in 2019 to share quick and easy recipes you can make at home.</p>
+            <a class="more" href={kris.url}>More recipes by Kris <Icon name="arrow" class="arrow" /></a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </article>
+
+  {related.length > 0 && (
+    <section class="section section--mist" aria-labelledby="related-title">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2 class="h2" id="related-title">You might also like</h2>
+            <p class="section-head__lede">More quick and easy cocktails to try next.</p>
+          </div>
+          <a class="more" href="/cocktails/">All cocktail recipes <Icon name="arrow" class="arrow" /></a>
+        </div>
+        <ul class="neon-grid">
+          {related.map(({ cocktail: o, card }) => (
+            <li class="neon-card">
+              <p class="neon-card__kicker">{o.data.collections[0]?.label ?? 'Cocktail'}</p>
+              <h3 class="neon-card__name"><a href={card.href}>{o.data.title}</a></h3>
+              <p class="neon-card__spec">{card.ingredients}</p>
+              <p class="neon-card__meta"><span>{card.meta}</span><Icon name="arrow" /></p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <GuideSignup />
+  <GuideDialog />
+</BaseLayout>

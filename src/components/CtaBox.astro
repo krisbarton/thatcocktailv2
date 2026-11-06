@@ -1,0 +1,29 @@
+---
+/** An outlined box with a heading, a line of copy, a green button and an optional text link. */
+import Icon from './Icon.astro';
+
+interface Props {
+  id: string;
+  title: string;
+  lede: string;
+  primary: { label: string; href: string };
+  secondary?: { label: string; href: string };
+}
+const { id, title, lede, primary, secondary } = Astro.props;
+---
+<div class="cta-box">
+  <div>
+    <h2 class="h2" id={id}>{title}</h2>
+    <p class="cta-box__lede">{lede}</p>
+  </div>
+  <div class="cta-box__links">
+    <a class="btn btn--green" href={primary.href}>{primary.label}</a>
+    {secondary && <a class="more" href={secondary.href}>{secondary.label} <Icon name="arrow" class="arrow" /></a>}
+  </div>
+</div>
+
+<style>
+  .cta-box{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px 40px;padding:clamp(26px,4vw,40px);border:1px solid var(--line);border-radius:var(--radius)}
+  .cta-box__lede{margin-top:10px;max-width:58ch;color:var(--ink-soft)}
+  .cta-box__links{display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px}
+</style>

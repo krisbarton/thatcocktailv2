@@ -1,0 +1,233 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import ProductPick from '../components/ProductPick.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import Icon from '../components/Icon.astro';
+import { alcoholProduct } from '../data/alcohol';
+import { media } from '../data/site';
+import { alcoholReviews, ingredientGuides, spirits } from '../data/recipes';
+import { getCocktails, toCard, usesIngredient, pickFresh } from '../lib/cocktails';
+
+const cocktails = await getCocktails();
+// The white rum group on /rum-cocktails/, worked out the same way so the numbers match.
+const rum = spirits.find((s) => s.href === '/rum-cocktails/')!;
+const whiteRum = cocktails.filter((c) => usesIngredient(c, rum.match!) && usesIngredient(c, /white rum|light rum/));
+const featured = pickFresh(whiteRum, new Set(), 4).map(toCard);
+
+// Same Bacardi as /alcohol-recommendations/, so it keeps the US link.
+const bacardi = { ...alcoholProduct('Bacardi Carta Blanca'), label: 'Best overall' };
+
+// The comparison's links, from WordPress. Bacardi's went to /affiliates/white-rum/, which was never finished.
+const rums = {
+  bacardi: { name: 'Bacardi', href: bacardi.href! },
+  captainMorgan: { name: 'Captain Morgan', href: 'https://amzn.to/3GG7YXv' },
+  duppy: { name: 'Duppy White', href: 'https://amzn.to/3BjRraz' },
+  brugal: { name: 'Brugal Blanco Supremo', href: 'https://amzn.to/34xzuJx' },
+  deadMans: { name: 'Dead Man’s Fingers', href: 'https://amzn.to/3rEhKF8' },
+  pampero: { name: 'Pampero Blanco', href: 'https://amzn.to/3ssF6Nn' },
+  cuerpo: { name: 'Cuerpo', href: 'https://amzn.to/3697i0l' },
+};
+const amazon = { target: '_blank', rel: 'sponsored noopener' };
+// [rum, position, figure], February 2022.
+const byPrice: [keyof typeof rums, string, string][] = [
+  ['captainMorgan', '1', '£14.99'], ['bacardi', '2', '£15.00'], ['cuerpo', '3', '£16.53'], ['duppy', '4', '£19.75'],
+  ['pampero', '=5', '£19.95'], ['brugal', '=5', '£19.95'], ['deadMans', '7', '£20.00'],
+];
+const byRating: [keyof typeof rums, string, string][] = [
+  ['bacardi', '1', '4.8 (557 reviews)'], ['duppy', '2', '4.8 (17 reviews)'], ['deadMans', '3', '4.8 (9 reviews)'],
+  ['captainMorgan', '4', '4.7 (191 reviews)'], ['pampero', '5', '4.6 (360 reviews)'], ['brugal', '6', '4.6 (101 reviews)'], ['cuerpo', '7', '4.4 (16 reviews)'],
+];
+
+const toc = [
+  { href: '#best-white-rum-at-a-glance', label: 'Best white rum at a glance' },
+  { href: '#what-is-white-rum', label: 'What is white rum?' },
+  { href: '#the-criteria', label: 'The criteria' },
+  { href: '#contenders-for-the-best-white-rum', label: 'The contenders' },
+  { href: '#best-price', label: 'Best price' },
+  { href: '#amazon-ratings', label: 'Amazon ratings' },
+  { href: '#amazon-best-sellers-list', label: 'Amazon best sellers' },
+  { href: '#well-known-brands', label: 'Well-known brands' },
+  { href: '#the-verdict', label: 'The verdict' },
+];
+
+const related = [
+  ...alcoholReviews.filter((a) => a.href !== '/best-white-rum/'),
+  ingredientGuides.find((g) => g.href === '/what-is-gold-rum/')!,
+];
+---
+<ArticleLayout
+  title="The best white rum for cocktails"
+  seoTitle="Best White Rum for Cocktails: Our Complete Guide | ThatCocktail"
+  description="What’s the best white rum for cocktails? We compared seven white rums on price, Amazon ratings, best sellers and brand recognition. Here’s the winner, and the runner-up."
+  kicker="Alcohol review"
+  lead="White rum is a great base for cocktails, and you can mix it with pretty much anything. But which white rum should you buy to mix with? What’s the best white rum for cocktails? Those are great questions, and in this review we’re gonna answer them."
+  published={new Date('2022-02-10T16:29:26Z')}
+  updated={new Date('2022-02-14T10:54:48Z')}
+  image={{ src: '/wp-content/uploads/2022/02/Whats-the-best-white-rum-for-cocktails-1.png', width: 500, height: 300, alt: 'A line-up of white rum bottles on a bar' }}
+  crumbs={[
+    { name: 'Cocktail ingredients', href: '/cocktail-ingredients/' },
+    { name: 'Alcohol reviews', href: '/cocktail-ingredients/alcohol-reviews/' },
+    { name: 'Best white rum', href: '/best-white-rum/' },
+  ]}
+  toc={toc}
+  facts={[
+    { icon: 'cocktail', strong: '7', text: 'white rums compared' },
+    { icon: 'book', strong: '4', text: 'tests' },
+    { icon: 'sparkle', strong: 'Bacardi', text: 'wins' },
+  ]}
+  jump={{ label: 'Jump to our pick', href: '#best-white-rum-at-a-glance' }}
+  related={{
+    title: 'More alcohol reviews and guides',
+    lede: 'Which brand to buy, and what’s actually in the bottle.',
+    articles: related,
+    more: { label: 'All alcohol reviews', href: '/cocktail-ingredients/alcohol-reviews/' },
+  }}
+>
+  <h2 id="best-white-rum-at-a-glance">Best white rum at a glance</h2>
+  <p>Before we get into any detail, let’s get right to our findings. <strong>The best white rum for cocktails is Bacardi.</strong> It aced a couple of our tests (see the results below) and narrowly got the win.</p>
+  <div class="picks picks--one"><ProductPick product={bacardi} /></div>
+  <p>But before we get into the findings, let’s take a little look at what we’re dealing with here.</p>
+
+  <h2 id="what-is-white-rum">What is white rum?</h2>
+  <p>Put simply, rum is a liquor. All rum is made by fermenting and then distilling sugar cane molasses or sugar cane juice, and there are lots of different kinds:</p>
+  <ul>
+    <li>Dark rum</li>
+    <li>Flavoured rum</li>
+    <li><a href="/what-is-gold-rum/">Gold rum</a> (AKA amber rum)</li>
+    <li>White rum (AKA light or silver rum)</li>
+    <li>Overproof rum: rums with much more than the standard 40% ABV</li>
+    <li>Premium rum: carefully produced and aged rums</li>
+    <li>Spiced rum: rum blended with various spices, and often caramel, for more flavour</li>
+    <li>Brown rum: rum made in heavily charred barrels or on wood chips</li>
+  </ul>
+
+  <h3>Why is white rum clear?</h3>
+  <p>Pretty much all the other rums on that list have some kind of colour, so why is white rum clear? That’s a great question. The answer: <strong><em>it’s down to how it’s aged</em></strong>.</p>
+  <p>Rum is usually aged for at least a year, and what it’s aged in decides its colour. In bourbon or wooden casks, rum turns a dark brown, but in stainless steel tanks it stays colourless. Essentially, <strong><em>white rum is clear because it’s aged in stainless steel.</em></strong></p>
+  <p>Now let’s get into the comparison, to find the best white rum for cocktails.</p>
+
+  <h2 id="the-criteria">The criteria</h2>
+  <p>The aim here is to find the best white rum <em>for cocktails</em>, not the best white rum overall. Those are two very different things. Sure, white rum for cocktails needs to be decent quality, but it needs to be a decent price too.</p>
+  <p>After all, you shouldn’t feel guilty about mixing expensive white rum into a <a href="/cocktails/long-island-iced-tea/">Long Island Iced Tea</a>, should you? I mean, that kind of guilt could lead you to drinking… wait. Never mind.</p>
+  <p>A couple of other rules for this one.</p>
+
+  <h3>No overproof white rum</h3>
+  <p>The white rums in the running must be the standard 40% ABV or below. Overproof rums can overpower most cocktails with their sheer strength, so they’re out. Don’t get me wrong, these bad boys are as good as they are dangerous, but we want to keep a level playing field.</p>
+
+  <h3>No flavoured white rum</h3>
+  <p>A major player in the white rum game is <a href="https://amzn.to/3GGewp3" {...amazon}>Malibu</a>, BUT as you probably already know, Malibu is a coconut-flavoured rum. It’s a fantastic cocktail ingredient if you want coconutty undertones, but adding flavoured rums wouldn’t make for a fair comparison, so it’s out too.</p>
+
+  <h3>How I’m going to judge</h3>
+  <p>So we know which white rums are in the running, but how will they be compared? There are four tests:</p>
+  <ul>
+    <li><a href="#best-price">Price</a>: is it value for money?</li>
+    <li><a href="#amazon-ratings">Amazon ratings</a>: how do people actually rate it?</li>
+    <li><a href="#amazon-best-sellers-list">Amazon best sellers</a>: how many people actually buy it?</li>
+    <li><a href="#well-known-brands">Brand recognition</a>: how popular is the brand?</li>
+  </ul>
+  <p>Pretty straightforward, right?</p>
+
+  <h2 id="contenders-for-the-best-white-rum">The contenders</h2>
+  <p>So which white rums are we comparing? Let’s take a look at the list:</p>
+  <ul>
+    {Object.values(rums).map((r) => <li><a href={r.href} {...amazon}>{r.name}</a></li>)}
+  </ul>
+  <p>The figures below are from when we ran the comparison in <strong>February 2022</strong>. Prices, ratings and rankings change all the time, so check the latest before you buy.</p>
+
+  <h2 id="best-price">Best price</h2>
+  <p>First off, how do they compare on price? For some people, the best white rum for cocktails might just be whatever’s cheapest, and <strong><em>that’s perfectly okay</em></strong>.</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Prices on Amazon UK, February 2022.</caption>
+      <thead><tr><th scope="col">#</th><th scope="col">White rum</th><th scope="col">Price</th></tr></thead>
+      <tbody>
+        {byPrice.map(([key, pos, price]) => <tr><td>{pos}</td><td><a href={rums[key].href} {...amazon}>{rums[key].name}</a></td><td>{price}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+  <p>There was just 1p in it at the top, but the top two (or maybe three?) were quite a distance ahead of the rest on price. I can understand Bacardi and Captain Morgan being so far in front: they’re bigger brands with refined production set-ups, which probably cuts down their costs.</p>
+
+  <h2 id="amazon-ratings">Amazon ratings</h2>
+  <p>Next, the Amazon ratings for each white rum. This should give us a good idea of what people who’ve actually bought it think of it.</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Star ratings out of 5 on Amazon UK, February 2022.</caption>
+      <thead><tr><th scope="col">#</th><th scope="col">White rum</th><th scope="col">Rating</th></tr></thead>
+      <tbody>
+        {byRating.map(([key, pos, rating]) => <tr><td>{pos}</td><td><a href={rums[key].href} {...amazon}>{rums[key].name}</a></td><td>{rating}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+  <p>Some interesting results here. I’d be tempted to take Duppy White and Dead Man’s Fingers out of the reckoning, because they have far fewer reviews but a higher rating than Captain Morgan. But I suppose you could say the same about Captain Morgan and Pampero. If I started basing my judgements on what <em>I think</em> the order should be, that wouldn’t be very fair. Those <em>are</em> the ratings, so that’s the order.</p>
+
+  <h2 id="amazon-best-sellers-list">Amazon best sellers</h2>
+  <p>Amazon has best sellers lists for all sorts of things. For <a href="/best-vodka-for-cocktails/">the best vodka for cocktails</a>, we used <a href="https://amzn.to/3LcBcRj" {...amazon}>Amazon’s vodka best sellers</a> to see which vodka sells best.</p>
+  <p>We’re doing something similar here, BUT Amazon doesn’t have a best sellers list just for white rum. What it does have is a <a href="https://amzn.to/3JbT78R" {...amazon}>rum best sellers list</a>, so we’ll see how our white rums fare on that.</p>
+  <p>Why this test? It’s a great way to tell how many people actually buy each white rum.</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Position in Amazon UK’s top 100 rums, February 2022.</caption>
+      <thead><tr><th scope="col">#</th><th scope="col">White rum</th><th scope="col">Best sellers position</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><a href={rums.bacardi.href} {...amazon}>Bacardi</a></td><td>9th</td></tr>
+        <tr><td>2</td><td><a href={rums.duppy.href} {...amazon}>Duppy White</a></td><td>77th</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>As you can see, out of 100 rums on the list, only two white rums make it. Spiced rums, dark rums, flavoured rums and even coconut rum were selling a lot more on Amazon than white rum. But it also tells us Bacardi sells the most white rum by a long shot.</p>
+
+  <h2 id="well-known-brands">Well-known brands</h2>
+  <p>Another good way to find the best white rum is to see how well known each brand is. A well-known brand is usually a popular one that’s been around for decades, and that’s a good thing: it tells you the brand knows what it’s doing, and its white rum is most likely good.</p>
+  <p>For this test, we used <a href="https://yougov.co.uk/ratings/food/popularity/alcohol-brands/all" rel="noopener">YouGov’s ranking of the most popular alcohol brands</a>. YouGov is an international research and data company based in London, and one of the most quoted market research sources in the UK, so it’s a reliable place to get data from. However, its list is for <strong><em>all types of alcohol, not just white rum</em></strong>.</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Position in YouGov’s list of 192 alcohol brands, February 2022.</caption>
+      <thead><tr><th scope="col">#</th><th scope="col">Brand</th><th scope="col">YouGov position</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><a href={rums.captainMorgan.href} {...amazon}>Captain Morgan</a></td><td>5th</td></tr>
+        <tr><td>2</td><td><a href={rums.bacardi.href} {...amazon}>Bacardi</a></td><td>10th</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Yeah… that isn’t a mistake. Only two of our white rums are on the list. I definitely thought Dead Man’s Fingers, Pampero and Duppy would be on there somewhere, but no.</p>
+  <p>It’s also interesting that Captain Morgan came higher than Bacardi, and there’s a reason for that. The list covers all alcohol brands, <strong><em>not just white rum</em></strong>, and Captain Morgan makes a whole variety of rums, most notably its spiced rum. So <strong><em>Captain Morgan’s spiced rum has probably pushed the brand above Bacardi.</em></strong></p>
+  <p>That’s backed up by Amazon’s rum best sellers list. The highest white rum on it was Bacardi, at number 9. Captain Morgan’s white rum didn’t make the list, but <a href="https://amzn.to/3uGB1rl" {...amazon}>Captain Morgan Spiced Rum</a> did, and high up: 5th, in fact.</p>
+
+  <h2 id="the-verdict">The verdict</h2>
+  <figure class="a-figure">
+    <img src={media('/wp-content/uploads/2022/02/bacardio-1024x576.jpg')} width="1024" height="576" alt="A bottle of Bacardi, the best white rum for cocktails" loading="lazy" decoding="async">
+  </figure>
+  <p>Looking at all of these comparisons, there’s a strong winner: <strong>Bacardi</strong>. It had the best reviews, it was the highest white rum on Amazon’s rum best sellers list, and it’s the most well-known white rum. It came second on price too, but only by 1p. Those are three strong results that push Bacardi to the front of a pile of really nice white rums.</p>
+  <div class="picks picks--one"><ProductPick product={{ ...bacardi, label: 'Our verdict' }} /></div>
+
+  <h3>A strong second place</h3>
+  <figure class="a-figure">
+    <img src={media('/wp-content/uploads/2022/02/captain-morgan.jpg')} width="611" height="469" alt="A bottle of Captain Morgan white rum" loading="lazy" decoding="async">
+  </figure>
+  <p>I also think <a href={rums.captainMorgan.href} {...amazon}>Captain Morgan White Rum</a> had a strong showing. It was second in a lot of the tests, and the brand’s other rums top the Amazon best sellers list and boost its brand recognition. You can pick up a bottle at a really great price, too, and it has decent reviews.</p>
+
+  <h2 id="white-rum-cocktails">Ready for some white rum cocktails?</h2>
+  <p>Now that we know the best white rum around, let’s put it to use. Here are some of our newest white rum cocktails:</p>
+  <ul class="cards cards--square">
+    {featured.map((r) => <RecipeCard recipe={r} />)}
+  </ul>
+
+  <section class="next" aria-labelledby="next-title">
+    <h2 id="next-title">Want more white rum cocktails?</h2>
+    <p>We have {whiteRum.length} quick and easy white rum cocktails, all in one place on our rum cocktails page.</p>
+    <a class="btn btn--green" href="/rum-cocktails/#white-rum">See all {whiteRum.length} white rum cocktails <Icon name="arrow" /></a>
+  </section>
+
+  <h2 id="further-reading">Further reading</h2>
+  <ul>
+    <li><a href="/rum-cocktails/">All our rum cocktails</a></li>
+    <li><a href="/cocktails-with-white-rum/">The best cocktails with white rum</a></li>
+    <li><a href="/popular-cocktail-recipes/">Our most popular cocktail recipes</a></li>
+    <li><a href="/what-is-gold-rum/">What is gold rum?</a></li>
+  </ul>
+  <p class="sources">Sources:</p>
+  <ul class="sources">
+    <li><a href="https://yougov.co.uk/ratings/food/popularity/alcohol-brands/all" rel="noopener">YouGov: the most popular alcohol brands</a></li>
+    <li><a href="https://amzn.to/3oCzcYE" {...amazon}>Amazon UK: best sellers in rum</a></li>
+  </ul>
+</ArticleLayout>

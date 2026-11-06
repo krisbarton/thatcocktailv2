@@ -1,0 +1,301 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import ProductPick from '../components/ProductPick.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import Icon from '../components/Icon.astro';
+import { alcoholPick } from '../data/alcohol';
+import { SITE } from '../data/site';
+import { alcoholReviews, spirits } from '../data/recipes';
+import { getCocktails, toCard, usesIngredient } from '../lib/cocktails';
+
+const cocktails = await getCocktails();
+const bySlug = new Map(cocktails.map((c) => [c.id, c]));
+const featured = ['pornstar-martini', 'cosmopolitan', 'sex-on-the-beach', 'moscow-mule'].map((slug) => {
+  const c = bySlug.get(slug);
+  if (!c) throw new Error(`best-vodka-for-cocktails: no recipe called ${slug}`);
+  return toCard(c);
+});
+const vodka = spirits.find((s) => s.href === '/vodka-cocktails/')!;
+const withVodka = cocktails.filter((c) => usesIngredient(c, vodka.match!)).length;
+
+// Same Smirnoff as /alcohol-recommendations/, so it keeps the US link.
+const smirnoff = alcoholPick('vodka');
+const amazon = { target: '_blank', rel: 'sponsored noopener' };
+
+// The 12 vodkas and their links, from WordPress. Where a test used the 1-litre bottle, so does the link.
+const vodkas = {
+  smirnoff: { name: 'Smirnoff Red Label', href: 'https://amzn.to/39xbFz4', litre: 'https://amzn.to/2Ipj879' },
+  absolut: { name: 'Absolut', href: 'https://amzn.to/2PRBn9C', litre: 'https://amzn.to/3cEbBz9' },
+  greyGoose: { name: 'Grey Goose', href: 'https://amzn.to/32USRHr' },
+  skyy: { name: 'Skyy Premium', href: 'https://amzn.to/2Tu8sL2' },
+  reyka: { name: 'Reyka', href: 'https://amzn.to/2TI6bL9' },
+  crystalHead: { name: 'Crystal Head', href: 'https://amzn.to/2THz9e6' },
+  haku: { name: 'Haku', href: 'https://amzn.to/2uZzKiN' },
+  ciroc: { name: 'Cîroc', href: 'https://amzn.to/2wBX5ra' },
+  russianStandard: { name: 'Russian Standard', href: 'https://amzn.to/2TvWGzQ' },
+  wyborowa: { name: 'Wyborowa', href: 'https://amzn.to/32X8Ftl' },
+  zubrowka: { name: 'Żubrówka Bison Grass', href: 'https://amzn.to/2VX8Pz4' },
+  belvedere: { name: 'Belvedere', href: 'https://amzn.to/3azFejC' },
+};
+type Key = keyof typeof vodkas;
+// Each test: best first, with the figure shown and whether the 1-litre bottle was the one tested.
+type Row = { key: Key; figure?: string; litre?: boolean };
+const tests: Record<'price' | 'reputation' | 'bestsellers' | 'rating', Row[]> = {
+  price: [
+    { key: 'russianStandard', figure: '£12.00' }, { key: 'smirnoff', figure: '£13.00' }, { key: 'wyborowa', figure: '£16.69' },
+    { key: 'skyy', figure: '£17.99' }, { key: 'absolut', figure: '£18.00' }, { key: 'zubrowka', figure: '£20.00' },
+    { key: 'reyka', figure: '£22.00' }, { key: 'ciroc', figure: '£27.09' }, { key: 'haku', figure: '£29.99' },
+    { key: 'belvedere', figure: '£31.99' }, { key: 'greyGoose', figure: '£32.99' }, { key: 'crystalHead', figure: '£39.89' },
+  ],
+  // Only six brands were on YouGov's list; the rest score nothing.
+  reputation: [{ key: 'smirnoff' }, { key: 'absolut' }, { key: 'greyGoose' }, { key: 'ciroc' }, { key: 'russianStandard' }, { key: 'zubrowka' }],
+  bestsellers: [
+    { key: 'smirnoff', litre: true }, { key: 'absolut', litre: true }, { key: 'russianStandard' }, { key: 'greyGoose' },
+    { key: 'ciroc' }, { key: 'reyka' }, { key: 'crystalHead' }, { key: 'belvedere' }, { key: 'haku' }, { key: 'skyy' },
+    { key: 'wyborowa' }, { key: 'zubrowka' },
+  ],
+  rating: [
+    { key: 'haku', figure: '4.9 (46 reviews)' }, { key: 'greyGoose', figure: '4.8 (740 reviews)' }, { key: 'absolut', figure: '4.8 (492 reviews)', litre: true },
+    { key: 'ciroc', figure: '4.8 (396 reviews)' }, { key: 'smirnoff', figure: '4.8 (304 reviews)', litre: true }, { key: 'crystalHead', figure: '4.6 (845 reviews)' },
+    { key: 'wyborowa', figure: '4.6 (497 reviews)' }, { key: 'belvedere', figure: '4.6 (290 reviews)' }, { key: 'skyy', figure: '4.6 (184 reviews)' },
+    { key: 'zubrowka', figure: '4.6 (164 reviews)' }, { key: 'russianStandard', figure: '4.6 (6 reviews)' }, { key: 'reyka', figure: '4.5 (160 reviews)' },
+  ],
+};
+// 12 points for first place, down to 1 for twelfth.
+const points = (rows: Row[], key: Key) => {
+  const i = rows.findIndex((r) => r.key === key);
+  return i < 0 ? 0 : 12 - i;
+};
+const link = (r: Row) => (r.litre ? vodkas[r.key].litre! : vodkas[r.key].href);
+const label = (r: Row) => `${vodkas[r.key].name}${r.litre ? ' 1L' : ''}`;
+const allKeys = Object.keys(vodkas) as Key[];
+const leaderboard = (names: (keyof typeof tests)[]) => {
+  const rows = allKeys
+    .map((key) => ({ key, total: names.reduce((sum, t) => sum + points(tests[t], key), 0) }))
+    .sort((a, b) => b.total - a.total);
+  // Joint places share a number, e.g. =3.
+  return rows.map((r) => {
+    const place = rows.findIndex((o) => o.total === r.total) + 1;
+    const joint = rows.filter((o) => o.total === r.total).length > 1;
+    return { ...r, place: `${joint ? '=' : ''}${place}` };
+  });
+};
+const withReputation = leaderboard(['price', 'reputation', 'bestsellers', 'rating']);
+const withoutReputation = leaderboard(['price', 'bestsellers', 'rating']);
+const place = (i: number) => String(i + 1);
+
+const toc = [
+  { href: '#the-brands-of-vodka-in-contention', label: 'The vodkas in contention' },
+  { href: '#how-i-m-gonna-choose-the-best-vodka-for-cocktails', label: 'How I’m gonna choose' },
+  { href: '#best-vodka-for-cocktails-by-value-for-money', label: 'Value for money' },
+  { href: '#best-vodka-for-cocktails-by-brand-reputation', label: 'Brand reputation' },
+  { href: '#best-vodka-for-cocktails-by-amazon-bestseller-list', label: 'Amazon best sellers' },
+  { href: '#best-vodka-for-cocktails-by-amazon-rating', label: 'Amazon ratings' },
+  { href: '#overall-best-vodka-for-cocktails', label: 'The final scores' },
+  { href: '#our-verdict', label: 'Our verdict' },
+];
+
+const related = alcoholReviews.filter((a) => a.href !== '/best-vodka-for-cocktails/');
+---
+<ArticleLayout
+  title="The best vodka for cocktails"
+  seoTitle="The Best Vodka for Cocktails: Everything You Need to Know | ThatCocktail"
+  description="What’s the best vodka for cocktails? We compared 12 vodkas on value for money, reputation, Amazon best sellers and Amazon ratings. Here’s the winner, the best budget vodka and the best rated."
+  kicker="Alcohol review"
+  lead="Vodka is a fantastic base for cocktails. Why? Because it has a neutral flavour that mixes well with other flavours. It’s the chameleon of the cocktail world. But what is the best vodka for cocktails?"
+  published={new Date('2020-03-25T09:21:00Z')}
+  updated={new Date('2022-02-11T14:43:11Z')}
+  image={{ src: '/wp-content/uploads/2020/03/the-best-vodka-for-cocktails.png', width: 500, height: 300, alt: 'A bottle of vodka behind a bar' }}
+  crumbs={[
+    { name: 'Cocktail ingredients', href: '/cocktail-ingredients/' },
+    { name: 'Alcohol reviews', href: '/cocktail-ingredients/alcohol-reviews/' },
+    { name: 'Best vodka for cocktails', href: '/best-vodka-for-cocktails/' },
+  ]}
+  toc={toc}
+  facts={[
+    { icon: 'cocktail', strong: '12', text: 'vodkas compared' },
+    { icon: 'book', strong: '4', text: 'tests' },
+    { icon: 'sparkle', strong: 'Smirnoff', text: 'wins' },
+  ]}
+  jump={{ label: 'Jump to the verdict', href: '#our-verdict' }}
+  related={{
+    title: 'More alcohol reviews',
+    lede: 'Which brand to buy, and whether the one you’ve got is any good.',
+    articles: related,
+    more: { label: 'All alcohol reviews', href: '/cocktail-ingredients/alcohol-reviews/' },
+  }}
+>
+  <div class="in-short">
+    <p class="kicker">Our verdict</p>
+    <p><strong>The best vodka for cocktails is Smirnoff Red Label.</strong></p>
+  </div>
+  <ul>
+    <li><strong>Best overall:</strong> <a href={vodkas.smirnoff.href} {...amazon}>Smirnoff Red Label</a></li>
+    <li><strong>Best budget vodka:</strong> <a href={vodkas.russianStandard.href} {...amazon}>Russian Standard</a></li>
+    <li><strong>Best value for money:</strong> <a href={vodkas.smirnoff.litre} {...amazon}>Smirnoff Red Label 1L</a></li>
+    <li><strong>The vodka people buy most:</strong> <a href={vodkas.smirnoff.litre} {...amazon}>Smirnoff Red Label 1L</a></li>
+    <li><strong>Best rated:</strong> <a href={vodkas.haku.href} {...amazon}>Haku</a></li>
+    <li><strong>Honourable mention:</strong> <a href={vodkas.greyGoose.href} {...amazon}>Grey Goose</a></li>
+  </ul>
+  <div class="picks picks--one"><ProductPick product={{ ...smirnoff, label: 'Best overall' }} /></div>
+  <p>BUT if you want to know <em>why</em> we think it’s the best, keep reading. You’ll find out which vodka is the best value for money, which has the biggest and best reputation, which sells best on Amazon, and which is highest rated. That’s a lot to unpack, so let’s dive right in.</p>
+
+  <h2 id="the-brands-of-vodka-in-contention">The vodkas in contention</h2>
+  <p>So which vodkas are we comparing? Here’s the list:</p>
+  <ul>
+    {allKeys.map((k) => <li><a href={vodkas[k].href} {...amazon}>{vodkas[k].name}</a></li>)}
+  </ul>
+  <p>Are there any vodkas you think should be on this list, but aren’t? Let us know on <a href={SITE.social.x} rel="noopener">X</a> or <a href={SITE.social.facebook} rel="noopener">Facebook</a>!</p>
+  <p>The prices, rankings and ratings below are from when we ran this comparison, so they’re a few years old now. Check the latest before you buy.</p>
+
+  <h2 id="how-i-m-gonna-choose-the-best-vodka-for-cocktails">How I’m gonna choose the best vodka for cocktails</h2>
+  <p>The best way to work out which is the best vodka for cocktails is to analyse them, compare them, rank them and give them points. I think the best and <strong><em>fairest comparison comes from actual stats and data, rather than opinion.</em></strong></p>
+  <p>So I’m going to rank each vodka on four tests:</p>
+  <ul>
+    <li>Value for money.</li>
+    <li>Reputation.</li>
+    <li>Position on Amazon’s vodka best sellers list.</li>
+    <li>Amazon rating.</li>
+  </ul>
+  <p>In each test, first place gets 12 points, second gets 11, and so on down to 1 point for twelfth. Sound good? Great! Let’s start comparing vodka.</p>
+
+  <h2 id="best-vodka-for-cocktails-by-value-for-money">Value for money</h2>
+  <p>Value for money is one of the most important things people think about when buying vodka for cocktails. Why? Because very few people will buy a £30-plus bottle of vodka just to add a mixer to it. Most of the time, people spending that much are buying for taste: connoisseurs who want to sip it and enjoy the flavour.</p>
+  <p>That said, some of the more expensive vodkas <strong><em>can add a lot to a cocktail</em></strong>. Anyway, wherever your head’s at on how much you’d pay for a bottle, here’s how they compare. Since most of these vodkas come in 70cl bottles (only two come in 1-litre bottles), I’m comparing 70cl prices.</p>
+  <div class="table-wrap">
+    <table>
+      <caption>70cl prices on Amazon UK when we ran the comparison.</caption>
+      <thead><tr><th scope="col">#</th><th scope="col">Vodka</th><th scope="col">Price</th><th scope="col">Points</th></tr></thead>
+      <tbody>
+        {tests.price.map((r, i) => <tr><td>{place(i)}</td><td><a href={link(r)} {...amazon}>{label(r)}</a></td><td>{r.figure}</td><td>{points(tests.price, r.key)}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+  <p>Russian Standard and Smirnoff Red Label top the list, with a bit of a gap to Wyborowa in third. All three are great value for money… but perhaps not <strong><em>the best</em></strong> value. The table only covers 70cl bottles. If you count 1-litre bottles too, and <strong><em>consider the value based on the amount of alcohol</em></strong>, the picture changes slightly (more on that below).</p>
+
+  <h2 id="best-vodka-for-cocktails-by-brand-reputation">Brand reputation</h2>
+  <p>This part of the test gets a little… <em>sketchy</em>. Let me explain.</p>
+  <p>We used <a href="https://yougov.co.uk/ratings/food/popularity/alcohol-brands/all" rel="noopener">YouGov’s ratings</a> to see which vodka brands are most popular with the British public. YouGov is an international research and data company based in London, and the most quoted market research source in the UK, so it’s a great source of data. Its list covers all alcohol, not just vodka, so you can even compare vodka brands with other spirits. Cool stuff.</p>
+  <p>On the face of it, the results were as you might expect. Or more accurately, as I expected: Smirnoff and Absolut at the top of the pile, battling for first and second place. But there was a problem.</p>
+
+  <h3>Data issues</h3>
+  <p>Not all the brands were on the list… or were they? Some of these vodkas belong to bigger companies, so they didn’t appear on their own. For example, Skyy Premium isn’t on the list, but it’s part of the Campari Group (<a href="/what-is-campari/">find out more about Campari</a>). It didn’t seem fair to count it, though, as Campari is a far more popular brand as a whole than Skyy is on its own.</p>
+  <p>Some brands just aren’t on the list at all. Why? I’m not sure, but my best guess is they just hadn’t come up in YouGov’s data for whatever reason. In any case, six of the 12 vodkas weren’t on the list, and it’s quite surprising which ones made the cut. Żubrówka made it, yet Wyborowa didn’t. In my mind, Wyborowa is a much better-known brand, but there ya go.</p>
+  <p>ANYWAY, here’s which vodkas made the list, and in what order:</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Vodka brands in YouGov’s ranking of alcohol brands. Brands that weren’t listed score 0.</caption>
+      <thead><tr><th scope="col">#</th><th scope="col">Vodka</th><th scope="col">Points</th></tr></thead>
+      <tbody>
+        {tests.reputation.map((r, i) => <tr><td>{place(i)}</td><td><a href={link(r)} {...amazon}>{vodkas[r.key].name}</a></td><td>{points(tests.reputation, r.key)}</td></tr>)}
+        {allKeys.filter((k) => !tests.reputation.some((r) => r.key === k)).map((k) => <tr><td>=7</td><td><a href={vodkas[k].href} {...amazon}>{vodkas[k].name}</a></td><td>0</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+  <p>As I (and probably you) expected, Smirnoff and Absolut are the two best-known vodkas. But that doesn’t tell the whole story. YouGov’s list had 184 alcohol brands, and Smirnoff was the 2nd most popular in the UK, just behind <a href="https://amzn.to/2U2NhA4" {...amazon}>Baileys</a>. 2nd. That’s impressive.</p>
+  <p>The next most popular vodka was Absolut… but way down the overall list in <strong>28th</strong>, with Grey Goose 3rd for vodka but <strong>38th</strong> overall. So despite Smirnoff and Absolut being 1st and 2nd here, on YouGov’s list they’re <strong><em>26 places apart</em></strong>.</p>
+  <p>Despite not every vodka being on the list, I think this is still a valuable test. But to be fair, when I add up the points I’ll show two tables: one with the reputation points and one without.</p>
+
+  <h2 id="best-vodka-for-cocktails-by-amazon-bestseller-list">Amazon best sellers</h2>
+  <p>Comparing vodkas on <a href="https://www.amazon.co.uk/Best-Sellers-Grocery-Vodka/zgbs/grocery/359903031" {...amazon}>Amazon’s vodka best sellers list</a> is quite an important test. Why? Because it shows exactly which vodkas people buy most, whatever the price. And it led to a couple of interesting observations. Take a look for yourselves:</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Order on Amazon UK’s vodka best sellers list when we ran the comparison.</caption>
+      <thead><tr><th scope="col">#</th><th scope="col">Vodka</th><th scope="col">Points</th></tr></thead>
+      <tbody>
+        {tests.bestsellers.map((r, i) => <tr><td>{place(i)}</td><td><a href={link(r)} {...amazon}>{label(r)}</a></td><td>{points(tests.bestsellers, r.key)}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Bigger bottles = better value for money</h3>
+  <p>The two vodkas that come in 1-litre bottles sell the best. Of course, the 1-litre bottles cost a little more, but they’re better value. When we wrote this, a 1-litre bottle of Smirnoff cost £16 and the 70cl cost £13. The 70cl works out at £18.57 a litre: a rather sizeable £2.57 more. Absolut’s 70cl and 1-litre bottles tell a similar tale.</p>
+
+  <h3>Quality vodka sells</h3>
+  <p>Earlier, I said not many people would pay top dollar for a vodka they’re just going to mix into a cocktail. That may be true, but nobody told the Amazon best sellers list. Grey Goose came 4th, despite being the second most expensive vodka in our comparison. Crystal Head came 7th, despite being the most expensive.</p>
+  <p>This says a lot. It says people don’t mind paying for quality vodka, and there just might be something in spending a little more on your spirits.</p>
+
+  <h2 id="best-vodka-for-cocktails-by-amazon-rating">Amazon ratings</h2>
+  <p>This test tells us not only how well buyers rate each vodka, but how many of them went out of their way to leave a review. The results were a little surprising. Take a look for yourselves:</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Star ratings out of 5 on Amazon UK when we ran the comparison.</caption>
+      <thead><tr><th scope="col">#</th><th scope="col">Vodka</th><th scope="col">Rating</th><th scope="col">Points</th></tr></thead>
+      <tbody>
+        {tests.rating.map((r, i) => <tr><td>{place(i)}</td><td><a href={link(r)} {...amazon}>{vodkas[r.key].name}</a></td><td>{r.figure}</td><td>{points(tests.rating, r.key)}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Good vodka was picked</h3>
+  <p>I think these results show just how good a selection of vodka this is. The <strong><em>lowest rating</em></strong> on the list is 4.5 out of 5. Just as impressive is the number of <strong><em>reviews</em></strong> each vodka had. If one of them had just one 5-star review, this test would have been next to meaningless.</p>
+  <p>The <strong><em>fewest</em></strong> reviews was 6, for Russian Standard. There could be two reasons for that: it had only recently started selling on Amazon (most likely), or because it’s “cheap and cheerful” and does the job, people don’t tend to come back and review it. But that’s just speculation.</p>
+
+  <h3>The best rated vodka</h3>
+  <p>I think it’s interesting that Haku is the best-rated vodka, but even more interesting that Grey Goose came 2nd. Haku scored 4.9 from 46 reviews, but <em>Grey Goose got 4.8 from 740 reviews</em>. Yes, <strong>740</strong>. That’s impressive. Add in its place on the Amazon best sellers list, and Grey Goose has to be a strong contender overall, right? Let’s take a look.</p>
+
+  <h2 id="overall-best-vodka-for-cocktails">The final scores</h2>
+  <p>So this is it: the final rankings for the best vodka for cocktails. As promised, there are two tables: one with the brand reputation points, and one without.</p>
+
+  <h3>With brand reputation</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Total points from all four tests.</caption>
+      <thead><tr><th scope="col">#</th><th scope="col">Vodka</th><th scope="col">Points</th></tr></thead>
+      <tbody>
+        {withReputation.map((r) => <tr><td>{r.place}</td><td><a href={vodkas[r.key].href} {...amazon}>{vodkas[r.key].name}</a></td><td>{r.total}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+  <p>Given the earlier tables, Smirnoff and Absolut were always going to take the first two places. They topped, or came close to topping, every test. Impressively, Grey Goose came joint 3rd with Russian Standard, despite coming second to last on value for money.</p>
+
+  <h3>Without brand reputation</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Total points from value for money, Amazon best sellers and Amazon ratings.</caption>
+      <thead><tr><th scope="col">#</th><th scope="col">Vodka</th><th scope="col">Points</th></tr></thead>
+      <tbody>
+        {withoutReputation.map((r) => <tr><td>{r.place}</td><td><a href={vodkas[r.key].href} {...amazon}>{vodkas[r.key].name}</a></td><td>{r.total}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+  <p>As you can see, not much changes at the top. Grey Goose loses its 10 reputation points and drops below Russian Standard, 2 points behind, but that’s about it. At the bottom, there’s one big change: Żubrówka Bison Grass drops from joint 7th to last.</p>
+
+  <h2 id="our-verdict">What’s the best vodka for cocktails? Our verdict</h2>
+  <p>I think it’s clear which vodka is best for cocktails: <strong>Smirnoff</strong>. It topped, or came near the top of, almost every test in this comparison. (Want more on Smirnoff? Read <a href="/is-smirnoff-good-vodka/">is Smirnoff good vodka?</a>.)</p>
+  <div class="picks picks--one"><ProductPick product={{ ...smirnoff, label: 'Our verdict' }} /></div>
+  <p>But <a href={vodkas.greyGoose.href} {...amazon}>Grey Goose</a> gets an honourable mention. Coming near the top of both the Amazon best sellers and the ratings speaks volumes. OK, it’s not the cheapest vodka, but sometimes you get what you pay for.</p>
+
+  <h3>Quick overview</h3>
+  <p>Here’s a quick overview of each test, so you can choose the vodka that meets the criteria that are <strong><em>important to you</em></strong>:</p>
+  <ul>
+    <li><strong>Most cheap and cheerful:</strong> <a href={vodkas.russianStandard.href} {...amazon}>Russian Standard 70cl</a></li>
+    <li><strong>Best value for money:</strong> <a href={vodkas.smirnoff.litre} {...amazon}>Smirnoff Red Label 1L</a></li>
+    <li><strong>The vodka people buy most:</strong> <a href={vodkas.smirnoff.litre} {...amazon}>Smirnoff Red Label 1L</a></li>
+    <li><strong>Best rated:</strong> <a href={vodkas.haku.href} {...amazon}>Haku</a> (4.9 out of 5 from 46 reviews)</li>
+    <li><strong>Honourable mention:</strong> <a href={vodkas.greyGoose.href} {...amazon}>Grey Goose</a></li>
+  </ul>
+
+  <h2 id="want-some-cocktail-ideas">Want some cocktail ideas?</h2>
+  <p>Okay, now that we know the best vodka for cocktails, you’re probably thinking: <em>I wanna make some cocktails!</em> Here are a few of our favourite vodka cocktails to try our recommendation out in. Happy mixing!</p>
+  <ul class="cards cards--square">
+    {featured.map((r) => <RecipeCard recipe={r} />)}
+  </ul>
+
+  <section class="next" aria-labelledby="next-title">
+    <h2 id="next-title">Want more vodka cocktails?</h2>
+    <p>We have {withVodka} quick and easy vodka cocktails you can make at home, from the Pornstar Martini to the Moscow Mule.</p>
+    <a class="btn btn--green" href="/vodka-cocktails/">See all {withVodka} vodka cocktails <Icon name="arrow" /></a>
+  </section>
+
+  <h2 id="further-reading">Further reading</h2>
+  <ul>
+    <li><a href="/is-smirnoff-good-vodka/">Is Smirnoff good vodka? Our honest review</a></li>
+    <li><a href="/best-white-rum/">The best white rum for cocktails</a></li>
+  </ul>
+  <p class="sources">Sources:</p>
+  <ul class="sources">
+    <li><a href="https://www.amazon.co.uk/Best-Sellers-Grocery-Vodka/zgbs/grocery/359903031" {...amazon}>Amazon UK: best sellers in vodka</a></li>
+    <li><a href="https://yougov.co.uk/ratings/food/popularity/alcohol-brands/all" rel="noopener">YouGov: the most popular alcohol brands</a></li>
+  </ul>
+</ArticleLayout>

@@ -1,0 +1,22 @@
+---
+import CollectionLayout from '../layouts/CollectionLayout.astro';
+import { cocktailTypes } from '../data/recipes';
+
+const path = '/non-alcoholic-cocktails/';
+---
+<CollectionLayout
+  path={path}
+  collection="Non-Alcoholic"
+  heading="Non-alcoholic"
+  title="Non-Alcoholic Cocktails: Alcohol-Free Cocktail Recipes | ThatCocktail"
+  description="Don’t drink alcohol? No problem! Booze-free cocktail recipes for designated drivers and dry nights in, including a Pornstar Martini mocktail and the Shirley Temple."
+  lead="Don’t drink alcohol? No problem! Here’s our list of non-alcoholic cocktails, for designated drivers and dry nights in."
+  listTitle="Our non-alcoholic cocktails"
+  listLede="Every ThatCocktail recipe without alcohol, newest first."
+  parent={{ name: 'Types of cocktails', href: '/types-of-cocktails/' }}
+  siblings={{
+    title: 'Other types of cocktails',
+    links: cocktailTypes.filter((t) => t.href !== path).map((t) => ({ name: t.title, href: t.href })),
+    more: { label: 'All types of cocktails', href: '/types-of-cocktails/' },
+  }}
+/>

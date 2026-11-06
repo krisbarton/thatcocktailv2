@@ -1,0 +1,53 @@
+---
+import Icon from './Icon.astro';
+
+/** Progress through the double opt-in: step 2 on /almost-done/, all done on /thank-you/. */
+interface Props {
+  current: 2 | 'done';
+}
+const { current } = Astro.props;
+
+const steps = [
+  { title: 'Subscribe', text: 'You gave us your email' },
+  { title: 'Confirm your email', text: 'Click “Confirm My Subscription”' },
+  { title: 'Get your free guide', text: 'It lands in your inbox' },
+];
+const stateOf = (i: number) => (current === 'done' || i + 1 < current ? 'done' : i + 1 === current ? 'current' : 'todo');
+---
+<ol class="steps" aria-label="Subscription progress">
+  {steps.map((s, i) => {
+    const state = stateOf(i);
+    return (
+      <li class:list={['step', `step--${state}`]} aria-current={state === 'current' ? 'step' : undefined}>
+        <span class="step__dot">{state === 'done' ? <Icon name="check" /> : i + 1}</span>
+        <span class="step__title">{s.title}<span class="sr-only">{state === 'done' ? ' (done)' : state === 'current' ? ' (current step)' : ''}</span></span>
+        <span class="step__text">{s.text}</span>
+      </li>
+    );
+  })}
+</ol>
+
+<style>
+  .steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;width:100%;max-width:760px;margin:36px auto 0;padding:0;list-style:none;counter-reset:none}
+  .step{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding-inline:8px;text-align:center}
+  /* The tube connecting each dot to the next */
+  .step:not(:last-child)::after{content:"";position:absolute;top:22px;left:calc(50% + 30px);right:calc(-50% + 30px);height:4px;border-radius:4px;background:#2a2a2a}
+  .step--done:not(:last-child)::after{background:var(--lime);box-shadow:0 0 12px rgba(54,236,149,.6)}
+  .step__dot{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;font:800 1.25rem/1 var(--font-display);border:3px solid #333;color:var(--on-black-soft);background:#0d0d0d}
+  .step__dot :global(svg){width:24px;height:24px}
+  .step--done .step__dot{border-color:var(--lime);background:var(--lime);color:#04210f;box-shadow:0 0 18px rgba(54,236,149,.55)}
+  .step--current .step__dot{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 0 6px rgba(81,229,255,.15),0 0 22px rgba(81,229,255,.5);animation:pulse 2.4s ease-in-out infinite}
+  .step__title{margin-top:6px;font:700 1.05rem/1.2 var(--font-display);color:#fff}
+  .step--todo .step__title{color:var(--on-black-soft)}
+  .step__text{font-size:.85rem;line-height:1.4;color:var(--on-black-soft)}
+  @keyframes pulse{50%{box-shadow:0 0 0 10px rgba(81,229,255,.06),0 0 30px rgba(81,229,255,.7)}}
+
+  @media (max-width:599px){
+    .steps{grid-template-columns:minmax(0,1fr);gap:18px;max-width:340px}
+    .step{display:grid;grid-template-columns:48px minmax(0,1fr);column-gap:14px;align-items:center;text-align:left;padding:0}
+    .step__dot{grid-row:span 2}
+    .step__title{margin-top:0;align-self:end}
+    .step__text{align-self:start}
+    .step:not(:last-child)::after{top:52px;bottom:-16px;left:22px;right:auto;width:4px;height:auto}
+  }
+</style>

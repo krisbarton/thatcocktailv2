@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import ArticleCards from '../../components/ArticleCards.astro';
+import CtaBox from '../../components/CtaBox.astro';
+import GuideSignup from '../../components/GuideSignup.astro';
+import GuideDialog from '../../components/GuideDialog.astro';
+import { SITE, media } from '../../data/site';
+import { ingredientGuides, alcoholReviews } from '../../data/recipes';
+import { organization, website, webPage, breadcrumbs } from '../../data/schema';
+
+const path = '/cocktail-ingredients/';
+const title = 'Cocktail Ingredients: Know What’s in Your Cocktails | ThatCocktail';
+const description = 'Understanding cocktail ingredients is a great start to making great cocktails. Our guides and reviews cover the booze we love to use, from triple sec to sloe gin.';
+
+const crumbs = [{ name: 'Cocktail ingredients', href: path }];
+
+// The hub's two sections, each with its own page.
+const sections = [
+  {
+    id: 'information',
+    title: 'Alcohol information',
+    lede: 'What’s in the bottle, what it tastes like and how to use it in cocktails.',
+    href: '/cocktail-ingredients/alcohol-information/',
+    articles: ingredientGuides,
+    more: 'Read the guide',
+  },
+  {
+    id: 'reviews',
+    title: 'Alcohol reviews',
+    lede: 'Which brand to buy, and whether the one you’ve got is any good.',
+    href: '/cocktail-ingredients/alcohol-reviews/',
+    articles: alcoholReviews,
+    more: 'Read the review',
+  },
+];
+
+const schema = [
+  organization,
+  website,
+  webPage({
+    path,
+    type: 'CollectionPage',
+    name: title,
+    description,
+    extra: {
+      breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` },
+      hasPart: sections.map((s) => ({ '@type': 'CollectionPage', name: s.title, url: new URL(s.href, SITE.url).href })),
+    },
+  }),
+  breadcrumbs(path, crumbs.map((c) => ({ name: c.name, path: c.href }))),
+];
+---
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={{ src: media('/wp-content/uploads/2021/10/Cocktail-Ingredients.png'), width: 500, height: 300, alt: 'Cocktail Ingredients: improve your cocktail game by getting up to speed with cocktail ingredients' }}
+  schema={schema}
+>
+  <PageHero crumbs={crumbs} title="Cocktail"
+    lead="Understanding cocktail ingredients is a great start to making great cocktails. If you know what flavours and alcohol levels you’re dealing with, you’ll find mixing your own cocktails so much easier.">
+    <Fragment slot="script">ingredients</Fragment>
+  </PageHero>
+
+  <section class="section" aria-label="About this section">
+    <div class="wrap">
+      <div class="prose">
+        <p>Below, you’ll find all of our articles about the ingredients we LOVE to use in our cocktails: guides to what they are, and reviews of the brands worth buying. Happy mixing!</p>
+        <p>PS: if you want to keep up with our cocktail recipes and articles, check out our <a href={SITE.social.facebook} rel="noopener">Facebook page</a> or <a href="#free-guide" aria-haspopup="dialog" data-guide-dialog>subscribe to our mailing list</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  {sections.map((s, i) => (
+    <section class:list={['section', { 'section--mist': i % 2 === 0 }]} id={s.id} aria-labelledby={`${s.id}-title`}>
+      <div class="wrap">
+        <SectionHead id={`${s.id}-title`} title={s.title} lede={s.lede}
+          more={{ label: `All ${s.title.toLowerCase()}`, href: s.href }} />
+        <ArticleCards articles={s.articles} more={s.more} />
+      </div>
+    </section>
+  ))}
+
+  <section class="section" aria-labelledby="buy-title">
+    <div class="wrap">
+      <CtaBox id="buy-title" title="Ready to buy a bottle?"
+        lede="Our alcohol recommendations list every brand we rate, from vodka and rum to bitters and absinthe."
+        primary={{ label: 'See our alcohol recommendations', href: '/alcohol-recommendations/' }}
+        secondary={{ label: 'Cocktails by spirit', href: '/cocktails-by-spirit/' }} />
+    </div>
+  </section>
+
+  <GuideSignup />
+  <GuideDialog />
+</BaseLayout>

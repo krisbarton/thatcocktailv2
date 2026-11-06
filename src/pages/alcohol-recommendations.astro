@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHead from '../components/SectionHead.astro';
+import ProductPick from '../components/ProductPick.astro';
+import Icon from '../components/Icon.astro';
+import GuideSignup from '../components/GuideSignup.astro';
+import GuideDialog from '../components/GuideDialog.astro';
+import { SITE, media, freeGuide } from '../data/site';
+import { alcoholGroups } from '../data/alcohol';
+import { organization, website, webPage, breadcrumbs } from '../data/schema';
+import '../styles/toc.css';
+
+const path = '/alcohol-recommendations/';
+const title = 'Alcohol Recommendations: What Booze Do We Endorse? | ThatCocktail';
+const description = 'Wanna know the best booze to buy? Here are all of our alcohol recommendations, from vodka, rum and gin to liqueurs, fizz and bitters.';
+
+const crumbs = [{ name: 'Alcohol recommendations', href: path }];
+const count = (g: (typeof alcoholGroups)[number]) => g.types.reduce((n, t) => n + t.products.length, 0);
+
+const schema = [
+  organization,
+  website,
+  webPage({ path, name: title, description, extra: { breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` } } }),
+  breadcrumbs(path, crumbs.map((c) => ({ name: c.name, path: c.href }))),
+];
+---
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={{ src: media('/wp-content/uploads/2021/10/Alcohol-Recommendations.png'), width: 500, height: 300, alt: 'Alcohol Recommendations: what booze do we endorse?' }}
+  schema={schema}
+>
+  <PageHero crumbs={crumbs} title="Alcohol"
+    lead="If you’re looking for alcohol recommendations, you’re in the right place! Here are ALL of the brands of booze we recommend, should you ever need a hand deciding what to buy.">
+    <Fragment slot="script">recommendations</Fragment>
+  </PageHero>
+
+  <div class="wrap r-body">
+    <aside class="r-aside">
+      <div class="r-aside__inner">
+        <nav class="toc" aria-label="On this page">
+          <p class="kicker">On this page</p>
+          <ol>
+            {alcoholGroups.map((g) => (
+              <li><a href={`#${g.id}`}>{g.name} <span class="toc__count">{count(g)}<span class="sr-only"> recommendations</span></span></a></li>
+            ))}
+          </ol>
+        </nav>
+        <a class="btn toc__cta toc__all" href="/cocktails/">View all recipes <Icon name="arrow" /></a>
+        <a class="toc__cta toc__guide" href="#free-guide" aria-haspopup="dialog" data-guide-dialog>
+          <img src={media(freeGuide.cover)} width="875" height="1221" alt="" loading="lazy" decoding="async">
+          <span><span class="toc__guide-kicker">Free guide</span> Get my FREE guide</span>
+          <Icon name="arrow" />
+        </a>
+      </div>
+    </aside>
+
+    <div class="r-main">
+      <p class="disclosure">Some of the links on this page are affiliate links. If you buy something through one, we earn a small commission at no extra cost to you.</p>
+
+      {alcoholGroups.map((g) => (
+        <section class="r-section" id={g.id} aria-labelledby={`${g.id}-title`}>
+          <SectionHead id={`${g.id}-title`} title={g.name} lede={g.lede} />
+          {g.types.length > 3 && (
+            <ul class="chips drink-index" aria-label={`${g.name} on this page`}>
+              {g.types.map((t) => <li><a href={`#${t.id}`}>{t.name}</a></li>)}
+            </ul>
+          )}
+
+          {g.types.map((t) => (
+            <section class="drink" id={t.id} aria-labelledby={`${t.id}-title`}>
+              <h3 class="drink__title" id={`${t.id}-title`}>{t.name}</h3>
+              {t.html && <div class="prose drink__copy">{t.html.map((h) => <p set:html={h} />)}</div>}
+              {t.note && <p class="drink__note"><strong>Editor’s note</strong> <span set:html={t.note} /></p>}
+              <div class="picks">
+                {t.products.map((p) => <ProductPick product={p} />)}
+              </div>
+              {t.after && <div class="prose drink__copy drink__copy--after">{t.after.map((h) => <p set:html={h} />)}</div>}
+            </section>
+          ))}
+        </section>
+      ))}
+
+      <section class="r-section" aria-labelledby="more-title">
+        <SectionHead id="more-title" title="More on the way" />
+        <div class="prose">
+          <p>That’s quite an extensive list of alcohol recommendations, right? Well, more are on the way.</p>
+          <p>Why? Because the more cocktails we add, the more alcohol we’ll be able to recommend. Our <a href="/cocktails/">cocktail recipes</a> are growing all the time, so why not <a href="#free-guide" aria-haspopup="dialog" data-guide-dialog>join our mailing list</a> and get new recipes delivered right to your inbox? For free.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <GuideSignup />
+  <GuideDialog />
+</BaseLayout>
+
+<style>
+  .disclosure{max-width:72ch;margin-bottom:clamp(40px,5vw,56px);padding:14px 18px;border:1px solid var(--line);border-radius:14px;font-size:.92rem;color:var(--ink-soft)}
+  .drink-index{margin-bottom:clamp(36px,4vw,48px)}
+  .drink{scroll-margin-top:24px}
+  .drink + .drink{margin-top:clamp(44px,5vw,60px)}
+  .drink__title{font:800 clamp(1.4rem,2.4vw,1.75rem)/1.1 var(--font-display);letter-spacing:-.01em;color:#000}
+  .drink__copy{margin-top:12px}
+  .drink__copy--after{margin-top:26px}
+  .drink__note{max-width:72ch;margin-top:16px;padding:14px 18px;border-left:4px solid var(--pink-deep);border-radius:0 14px 14px 0;background:var(--cyan-wash);font-size:.98rem}
+  .drink__note strong{display:block;margin-bottom:4px;font:700 .75rem/1.2 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--pink-ink)}
+  .drink__note :global(a){color:var(--pink-ink);text-underline-offset:3px}
+  .picks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 22px;margin-top:34px}
+  .picks :global(.pick){margin:0!important;max-width:none}
+  @media (max-width:699px){
+    .picks{grid-template-columns:minmax(0,1fr)}
+  }
+</style>

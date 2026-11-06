@@ -1,0 +1,25 @@
+---
+import CollectionLayout from '../layouts/CollectionLayout.astro';
+
+const path = '/bitter-cocktail-recipes/';
+const flavours = [
+  { name: 'Sweet cocktails', href: '/sweet-cocktail-recipes/' },
+  { name: 'Savoury cocktails', href: '/savoury-cocktail-recipes/' },
+  { name: 'Sour cocktails', href: '/sour-cocktail-recipes/' },
+];
+---
+<CollectionLayout
+  path={path}
+  collection="Bitter"
+  heading="Bitter"
+  title="Bitter Cocktails: Our Full List of Bitter Cocktail Recipes | ThatCocktail"
+  description="Our full list of bitter cocktail recipes, from the Americano to the Dry Martini, with measures in ml and oz."
+  lead="For when you want a drink with a bit of bite. Here’s our full list of bitter cocktail recipes."
+  listLede="Every bitter ThatCocktail recipe, newest first."
+  parent={{ name: 'Flavour profiles', href: '/flavour-profiles/' }}
+  siblings={{
+    title: 'Other flavour profiles',
+    links: flavours,
+    more: { label: 'All flavour profiles', href: '/flavour-profiles/' },
+  }}
+/>

@@ -1,0 +1,41 @@
+---
+import SpiritLayout from '../layouts/SpiritLayout.astro';
+import { media } from '../data/site';
+---
+<SpiritLayout
+  spirit="Amaretto"
+  filter
+  title="Amaretto Cocktails: Quick & Easy Amaretto Cocktail Recipes | ThatCocktail"
+  description="Amaretto is a flavoursome base for cocktails that makes delicious drinks. Here’s every amaretto cocktail on ThatCocktail, from the Amaretto Sour to the Godfather."
+  lead="Amaretto is a very flavoursome base for cocktails that makes some delicious drinks. In my house, amaretto and Coke is a favourite before Christmas, drunk while wrapping presents and watching Home Alone."
+  ogImage={{ src: media('/wp-content/uploads/2022/04/Amartetto-Cocktails.png'), width: 500, height: 300, alt: 'Amaretto Cocktails title card' }}
+>
+  <p>Other times, we use one of the recipes below and mix up something extraordinary. Take a look for yourself.</p>
+
+  <h2>What is amaretto?</h2>
+  <p>Amaretto is a sweet, almond-flavoured liqueur that originated in Saronno, Italy.</p>
+  <p>Depending on the brand, it may be made from apricot kernels, bitter almonds, peach stones or almonds. They’re all natural sources of benzaldehyde, which gives the liqueur its almond-like flavour.</p>
+  <p>Amaretto is generally 21 to 28 percent alcohol.</p>
+
+  <h2>Classic amaretto cocktails</h2>
+  <p>Classics-wise, we have:</p>
+  <ul>
+    <li><a href="/cocktails/alabama-slammer/">Alabama Slammer</a>, a far too drinkable cocktail that mixes amaretto, Southern Comfort, sloe gin and orange juice to make something unique… and boozy.</li>
+    <li><a href="/cocktails/french-connection/">French Connection</a>, an elegant combination of cognac and amaretto. Yes, that’s all there is to it, and it’s delicious.</li>
+    <li><a href="/cocktails/godfather/">Godfather</a>, which, like the French Connection, keeps it simple: Scotch whisky and amaretto make a boozy after-dinner drink.</li>
+  </ul>
+
+  <h2>What amaretto should I use?</h2>
+  <p>So, what amaretto should you use for your amaretto cocktails? Easy! Whatever you have in. But if you’re in the market for a new bottle, we recommend Disaronno.</p>
+
+  <aside class="pick" aria-label="Our amaretto pick">
+    <span class="pick__label">Our top pick</span>
+    <img class="pick__img" src={media('/wp-content/uploads/2019/07/disoranno-amaretto.jpg')} width="154" height="300" alt="Bottle of Disaronno amaretto" loading="lazy" decoding="async">
+    <div>
+      <p class="pick__name">Disaronno</p>
+      <p class="pick__why">The amaretto we recommend.</p>
+      <a class="btn btn--green btn--sm" href="https://amzn.to/3uhzcRM" target="_blank" rel="sponsored noopener">Buy now</a>
+      <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+    </div>
+  </aside>
+</SpiritLayout>

@@ -1,0 +1,49 @@
+---
+/**
+ * Stand-in for a cocktail without its own photo yet: a neon cocktail-glass sign (in the style of the 404 page)
+ * with the drink's name. Decorative, so it's hidden from screen readers; the title is always shown next to it.
+ */
+interface Props {
+  name?: string;
+  class?: string;
+}
+const { name, class: className } = Astro.props;
+// Each instance needs its own filter id; many placeholders can share a page.
+const fid = `neon-ph-${Math.random().toString(36).slice(2, 8)}`;
+---
+<div class:list={['neon-ph', className]} aria-hidden="true">
+  <svg class="neon-ph__glass" viewBox="0 0 120 120">
+    <defs>
+      <filter id={fid} x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="near"/>
+        <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="far"/>
+        <feMerge><feMergeNode in="far"/><feMergeNode in="near"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <g filter={`url(#${fid})`} fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 30h72L60 66z" stroke="#51e5ff" stroke-width="5"/>
+      <path d="M60 66v30M42 98h36" stroke="#51e5ff" stroke-width="5"/>
+      <path d="M33 39h54" stroke="#51e5ff" stroke-width="3"/>
+      <circle cx="86" cy="24" r="9" stroke="#36ec95" stroke-width="4"/>
+      <path d="M86 15v18M77 24h18" stroke="#36ec95" stroke-width="2"/>
+      <path d="M70 14 58 44" stroke="#ec368d" stroke-width="4"/>
+    </g>
+  </svg>
+  {name && <span class="neon-ph__name">{name}</span>}
+</div>
+
+<style>
+  .neon-ph{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6%;
+    width:100%;height:100%;aspect-ratio:1;padding:10%;text-align:center;container-type:inline-size;
+    background:
+      radial-gradient(60% 55% at 50% 40%,rgba(81,229,255,.14),transparent 70%),
+      radial-gradient(60% 60% at 100% 0%,rgba(236,54,141,.22),transparent 65%),
+      #050505;
+  }
+  .neon-ph__glass{width:46%;height:auto;overflow:visible}
+  .neon-ph__name{
+    max-width:100%;font:800 clamp(.8rem,9cqi,2.4rem)/1 var(--font-display);letter-spacing:-.01em;
+    color:var(--cyan);text-shadow:0 0 14px rgba(81,229,255,.55);text-wrap:balance;overflow-wrap:anywhere;
+  }
+</style>

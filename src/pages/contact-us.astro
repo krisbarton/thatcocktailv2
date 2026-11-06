@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ContactMethods from '../components/ContactMethods.astro';
+import Icon from '../components/Icon.astro';
+import { SITE } from '../data/site';
+import { organization, website, webPage, breadcrumbs, ids } from '../data/schema';
+
+const path = '/contact-us/';
+const title = 'Contact Us | ThatCocktail';
+const description = 'Got questions? Wanna chat? Email, call, message or write to ThatCocktail. Here are all the ways you can get in touch with us.';
+
+const shortcuts = [
+  { icon: 'search', title: 'Looking for a recipe?', text: 'Search more than 1,000 cocktail recipes by name, spirit or ingredient.', href: '/search/', cta: 'Search recipes' },
+  { icon: 'sparkle', title: 'Want something new?', text: 'See the newest recipes we’ve added, most of which take about two minutes.', href: '/cocktails/', cta: 'Latest recipes' },
+  { icon: 'cocktail', title: 'Not sure what to make?', text: 'Start with the recipes our readers come back to most.', href: '/popular-cocktail-recipes/', cta: 'Popular recipes' },
+] as const;
+
+const schema = [
+  organization,
+  website,
+  webPage({
+    path,
+    type: 'ContactPage',
+    name: title,
+    description,
+    extra: { about: { '@id': ids.org }, breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` } },
+  }),
+  breadcrumbs(path, [{ name: 'Contact us', path }]),
+];
+---
+<BaseLayout title={title} description={description} schema={schema}>
+  <PageHero kicker="Get in touch" title="Contact"
+    lead="Got questions? Wanna chat? Let’s do it! Here are all the ways you can get in touch with us.">
+    <Fragment slot="script">us</Fragment>
+  </PageHero>
+
+  <section class="section contact" aria-labelledby="ways-title">
+    <div class="wrap">
+      <h2 class="sr-only" id="ways-title">Ways to contact us</h2>
+      <ContactMethods />
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="shortcuts-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2 class="h2" id="shortcuts-title">Looking for something else?</h2>
+          <p class="section-head__lede">You might find what you need faster here.</p>
+        </div>
+      </div>
+      <ul class="shortcuts">
+        {shortcuts.map((s) => (
+          <li class="shortcut">
+            <span class="shortcut__icon"><Icon name={s.icon} /></span>
+            <h3 class="shortcut__title"><a href={s.href}>{s.title}</a></h3>
+            <p class="shortcut__text">{s.text}</p>
+            <span class="shortcut__cta" aria-hidden="true">{s.cta} <Icon name="arrow" class="arrow" /></span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Pull the contact cards up so they overlap the hero's lower edge. */
+  .contact{padding-top:0}
+  .contact .wrap{margin-top:clamp(-40px,-3vw,-24px);position:relative}
+
+  .shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .shortcut{
+    position:relative;display:flex;flex-direction:column;gap:8px;padding:22px;border-radius:var(--radius);border:1px solid var(--mag-edge);
+    background:radial-gradient(200px at 50% -50%,var(--mag-hi) 0%,var(--mag-lo) 100%);
+    color:#fff;box-shadow:0 18px 30px -22px rgba(117,11,62,.9);transition:transform .15s ease,box-shadow .15s ease;
+  }
+  .shortcut:hover{transform:translateY(-3px);box-shadow:0 26px 36px -22px rgba(117,11,62,1)}
+  .shortcut__icon :global(svg){width:28px;height:28px}
+  .shortcut__title{font:800 1.45rem/1.1 var(--font-display)}
+  .shortcut__title a{color:#fff;text-decoration:none}
+  .shortcut__title a::after{content:"";position:absolute;inset:0;border-radius:inherit}
+  .shortcut__title a:focus-visible{outline:none}
+  .shortcut__title a:focus-visible::after{outline:3px solid var(--black);outline-offset:3px}
+  .shortcut__text{font-size:.92rem;line-height:1.5}
+  .shortcut__cta{margin-top:auto;padding-top:6px;display:inline-flex;align-items:center;gap:6px;font-weight:700}
+  .shortcut:hover :global(.arrow){transform:translateX(3px)}
+
+  @media (max-width:899px){
+    .shortcuts{grid-template-columns:minmax(0,1fr)}
+  }
+</style>

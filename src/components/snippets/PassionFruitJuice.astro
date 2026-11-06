@@ -1,0 +1,11 @@
+---
+/** Passion Fruit Juice: from https://www.thatcocktail.com/snippets/passion-fruit-juice/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product: Product = { name: 'Passion Fruit Juice', img: '/wp-content/uploads/2022/08/passion-fruit-juice-removebg-preview.png', href: 'https://amzn.to/3QcHz8C' };
+---
+<p>Passion fruit juice gives cocktails a sweet edge.</p>
+<p>I mean, it’s delicious – who doesn’t like passion fruit juice? Do you even know anyone? No. Because they don’t exist.</p>
+<p>For passion fruit juice, we recommend:</p>
+<ProductPick product={product} />

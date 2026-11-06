@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import HubSections, { type HubSection } from '../components/HubSections.astro';
+import GuideSignup from '../components/GuideSignup.astro';
+import { SITE } from '../data/site';
+import { organization, website, webPage, breadcrumbs } from '../data/schema';
+import { getCocktails, toCard, pickFresh, type Cocktail } from '../lib/cocktails';
+
+const path = '/flavour-profiles/';
+const title = 'Flavour Profiles: Sweet, Bitter, Savoury & Sour Cocktails | ThatCocktail';
+const description = 'Looking for a drink that matches your tastes? Browse our cocktail recipes by flavour: sweet, bitter, savoury and sour.';
+
+const PER_SECTION = 6;
+const cocktails = await getCocktails();
+const shown = new Set<Cocktail>();
+
+// Each flavour is a tag in the recipes' `collections`, with its own collection page.
+const sections: (HubSection & { href: string })[] = [
+  { name: 'Sweet', href: '/sweet-cocktail-recipes/' },
+  { name: 'Bitter', href: '/bitter-cocktail-recipes/' },
+  { name: 'Savoury', href: '/savoury-cocktail-recipes/' },
+  { name: 'Sour', href: '/sour-cocktail-recipes/' },
+].map((s) => {
+  const list = cocktails.filter((c) => c.data.collections.some((t) => t.label === s.name));
+  const flavour = s.name.toLowerCase();
+  const cards = pickFresh(list, shown, PER_SECTION).map(toCard);
+  return {
+    id: flavour,
+    name: s.name,
+    href: s.href,
+    title: `${s.name} cocktails`,
+    lede: `${list.length} of our recipes are ${flavour}. ${list.length > cards.length ? 'Here are some of the newest.' : 'Here they all are.'}`,
+    count: list.length,
+    more: { label: `All ${flavour} cocktails`, href: s.href },
+    four: cards.length === 4,
+    cards,
+  };
+});
+
+const schema = [
+  organization,
+  website,
+  webPage({
+    path,
+    type: 'CollectionPage',
+    name: title,
+    description,
+    extra: {
+      breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: sections.length,
+        itemListElement: sections.map((s, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: new URL(s.href, SITE.url).href,
+          name: s.title,
+        })),
+      },
+    },
+  }),
+  breadcrumbs(path, [{ name: 'Flavour profiles', path }]),
+];
+---
+<BaseLayout title={title} description={description} schema={schema}>
+  <PageHero kicker="Pick a flavour" title="Flavour"
+    lead="Looking for a drink that matches your specific tastes? Say no more! Take a look at our flavour profiles.">
+    <Fragment slot="script">profiles</Fragment>
+  </PageHero>
+
+  <HubSections sections={sections} cta={{ label: 'All cocktail recipes', href: '/cocktails/' }} />
+
+  <GuideSignup />
+</BaseLayout>

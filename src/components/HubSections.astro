@@ -1,0 +1,72 @@
+---
+/**
+ * The body of a hub page (/cocktails-by-spirit/, /types-of-cocktails/, /seasonal-cocktails/, /flavour-profiles/):
+ * an "On this page" rail beside one section of recipe cards per entry. Styles are in toc.css.
+ */
+import SectionHead from './SectionHead.astro';
+import RecipeCard from './RecipeCard.astro';
+import type { Recipe } from '../data/recipes';
+import '../styles/toc.css';
+
+export interface HubSection {
+  id: string;
+  /** Rail label, e.g. "Vodka". */
+  name: string;
+  /** Section heading, e.g. "Vodka cocktails". */
+  title: string;
+  lede: string;
+  /** Recipe count shown in the rail; leave out to show none. */
+  count?: number;
+  more?: { label: string; href: string };
+  /** Optional links shown as chips above the cards, e.g. the four season pages. */
+  links?: { name: string; href: string }[];
+  /** Four cards a row instead of three, for a section of exactly four. */
+  four?: boolean;
+  cards: Recipe[];
+}
+
+interface Props {
+  sections: HubSection[];
+  /** Green button under the rail. */
+  cta: { label: string; href: string };
+}
+const { sections, cta } = Astro.props;
+---
+<div class="wrap r-body">
+  <aside class="r-aside">
+    <div class="r-aside__inner">
+      <nav class="toc" aria-label="On this page">
+        <p class="kicker">On this page</p>
+        <ol>
+          {sections.map((s) => (
+            <li><a href={`#${s.id}`}>{s.name} {s.count != null && <span class="toc__count">{s.count}<span class="sr-only"> recipes</span></span>}</a></li>
+          ))}
+        </ol>
+      </nav>
+      <a class="btn btn--green toc__cta" href={cta.href}>{cta.label}</a>
+    </div>
+  </aside>
+
+  <div class="r-main">
+    {sections.map((s) => (
+      <section class="r-section" id={s.id} aria-labelledby={`${s.id}-title`}>
+        <SectionHead id={`${s.id}-title`} title={s.title} lede={s.lede} more={s.more} />
+        {s.links && (
+          <ul class="chips hub-links" aria-label={`${s.title}: more`}>
+            {s.links.map((l) => <li><a href={l.href}>{l.name}</a></li>)}
+          </ul>
+        )}
+        <ul class:list={['cards cards--square', { 'cards--four': s.four }]}>
+          {s.cards.map((card) => <RecipeCard recipe={card} />)}
+        </ul>
+      </section>
+    ))}
+  </div>
+</div>
+
+<style>
+  .hub-links{margin-bottom:28px}
+  @media (min-width:1000px){
+    .r-section .cards--four{grid-template-columns:repeat(4,minmax(0,1fr))}
+  }
+</style>

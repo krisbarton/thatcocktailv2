@@ -1,0 +1,49 @@
+---
+import Icon from './Icon.astro';
+
+/** "Bartender's tips" at the foot of the recipe card: a short list of how-to tips for the drink. */
+interface Props {
+  /** Used for the heading id. */
+  id: string;
+  /** HTML allowed. */
+  tips: string[];
+}
+const { id, tips } = Astro.props;
+const headingId = `${id}-tips`;
+---
+<aside class="tips" aria-labelledby={headingId}>
+  <div class="tips__head">
+    <span class="tips__badge"><Icon name="bulb" /></span>
+    <h3 id={headingId}>Bartender’s <span class="tips__script">tips</span></h3>
+  </div>
+  <ul class="tips__list">
+    {tips.map((tip) => <li><Icon name="sparkle" class="tips__mark" /><span set:html={tip} /></li>)}
+  </ul>
+</aside>
+
+<style>
+  .tips{position:relative;margin-top:28px;padding:22px 24px 10px;border-radius:18px;background:radial-gradient(160px 120px at 0 0,rgba(81,229,255,.22),transparent 70%),#000;color:#fff;box-shadow:0 0 0 1.5px var(--cyan),0 0 22px -4px rgba(81,229,255,.55),0 22px 40px -28px rgba(0,111,132,.9)}
+  .tips__head{display:flex;align-items:center;gap:14px}
+  .tips__badge{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:50%;background:var(--cyan);color:#000;box-shadow:0 0 18px 2px rgba(81,229,255,.55)}
+  .tips__badge :global(svg){width:24px;height:24px}
+  .tips h3{margin:0;font:800 1.55rem/1 var(--font-display);color:var(--cyan);text-shadow:0 0 18px rgba(81,229,255,.35)}
+  .tips__script{margin-left:2px;font:400 1.7rem/1 'Yellowtail',cursive;color:var(--pink);text-shadow:0 0 14px rgba(236,54,141,.55)}
+  .tips__list{margin-top:12px}
+  .tips__list li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:12px;align-items:start;padding:14px 0;border-top:1px solid rgba(81,229,255,.22);font-size:1.03rem;line-height:1.6;color:#e9fbff}
+  .tips__list :global(.tips__mark){width:20px;height:20px;margin-top:4px;color:var(--pink)}
+  .tips__list :global(a){color:var(--cyan);font-weight:600}
+  .tips__list :global(a:focus-visible){outline:3px solid var(--cyan);outline-offset:2px}
+
+  @media (max-width:600px){
+    .tips{padding:18px 18px 6px}
+  }
+
+  /* Ink-friendly when the card is printed. */
+  @media print{
+    .tips{background:#fff;color:#000;box-shadow:none;border:1px solid #000;break-inside:avoid}
+    .tips__badge{background:none;color:#000;box-shadow:none;border:1px solid #000}
+    .tips h3,.tips__script{color:#000;text-shadow:none}
+    .tips__list li{color:#000;border-color:#ccc}
+    .tips__list :global(.tips__mark),.tips__list :global(a){color:#000}
+  }
+</style>

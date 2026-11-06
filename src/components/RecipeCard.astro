@@ -1,0 +1,31 @@
+---
+import type { Recipe } from '../data/recipes';
+import NeonPlaceholder from './NeonPlaceholder.astro';
+import { media } from '../data/site';
+
+interface Props {
+  recipe: Recipe;
+  /** Heading level for the card title. */
+  as?: 'h2' | 'h3';
+  /** Space-separated filter keys, used by RecipeFilter's buttons (see filterProps). */
+  filters?: string;
+  /** Text the RecipeFilter search box matches against. */
+  search?: string;
+  hidden?: boolean;
+  /** Image sizes for the srcset; the default suits four cards a row. */
+  sizes?: string;
+}
+const { recipe: r, as: Heading = 'h3', filters, search, hidden, sizes = '(min-width: 1000px) 270px, 45vw' } = Astro.props;
+const srcset = r.img && r.img300 ? `${media(r.img300)} 300w, ${media(r.img)} ${r.width}w` : undefined;
+---
+<li class="card" data-filters={filters} data-search={search} hidden={hidden}>
+  <div class="card__media">
+    {r.img ? (
+      <img src={media(r.img!)} srcset={srcset} sizes={srcset ? sizes : undefined}
+         width={r.width} height={r.height} alt={r.alt} loading="lazy" decoding="async">
+    ) : <NeonPlaceholder name={r.title} />}
+  </div>
+  <Heading class="card__title"><a href={r.href}>{r.title}</a></Heading>
+  <p class="card__meta">{r.meta}</p>
+  {r.ingredients && <p class="card__ingr">{r.ingredients}</p>}
+</li>

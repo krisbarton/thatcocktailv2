@@ -1,0 +1,10 @@
+---
+/** Crème de Cassis: from https://www.thatcocktail.com/snippets/creme-de-cassis/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product: Product = { name: 'Crème de Cassis', img: '/wp-content/uploads/2022/03/voltaire-creme-de-cassis-e1647345444725.jpg', href: 'https://amzn.to/37qm6YN', us: { href: 'https://shrsl.com/3fdif', img: '/wp-content/uploads/2022/03/de-kuyper-creme-de-cassis.jpg' } };
+---
+<p>Crème de Cassis is a dark red liqueur made from blackcurrants and has been around since 1841.</p>
+<p>For Crème de Cassis, we recommend:</p>
+<ProductPick product={product} />

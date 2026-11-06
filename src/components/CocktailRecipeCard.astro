@@ -1,0 +1,132 @@
+---
+import NeonPlaceholder from './NeonPlaceholder.astro';
+import CocktailTips from './CocktailTips.astro';
+import { SITE } from '../data/site';
+import { type Cocktail, cocktailImage, cocktailUrl, measure } from '../lib/cocktails';
+
+/** The printable recipe card from cocktail-page-redesign/recipe-card, fed from a cocktail entry. */
+interface Props {
+  cocktail: Cocktail;
+}
+const { cocktail: c } = Astro.props;
+const d = c.data;
+const img = cocktailImage(c);
+const pageUrl = new URL(cocktailUrl(c), SITE.url).href;
+const enc = encodeURIComponent;
+const headingId = `${c.id}-card`;
+const total = d.prepMins + d.makeMins;
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+---
+<section class="cocktail" id="recipe" aria-labelledby={headingId}>
+  <div class="cocktail__image">
+    {img
+      ? <img class="cocktail__img" src={img.src300} width="300" height="300" alt="" loading="lazy" decoding="async">
+      : <NeonPlaceholder class="cocktail__img" />}
+  </div>
+  <div class="cocktail__heading">
+    <p class="cocktail__heading--kicker">Recipe card</p>
+    <h2 id={headingId}>{d.title}</h2>
+    <div class="cocktail__social">
+      <button class="cocktail__social--print" type="button" data-print>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9V3h10v6M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><path d="M7 14h10v7H7z"/></svg>Print</button>
+      <a href={`https://www.pinterest.com/pin/create/button/?url=${enc(pageUrl)}${img ? `&media=${enc(img.png)}` : ''}&description=${enc(`${d.title} recipe: ${d.summary}`)}`} target="_blank" rel="external noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.64 19.31c-.09-.79-.17-2 .03-2.87l1.2-5.1s-.3-.61-.3-1.52c0-1.42.83-2.49 1.86-2.49.88 0 1.3.66 1.3 1.45 0 .88-.56 2.2-.85 3.43-.24 1.02.52 1.86 1.53 1.86 1.84 0 3.25-1.94 3.25-4.73 0-2.47-1.78-4.2-4.31-4.2-2.94 0-4.66 2.2-4.66 4.48 0 .89.34 1.84.77 2.36.08.1.1.19.07.3l-.29 1.17c-.04.19-.15.23-.35.14-1.29-.6-2.1-2.49-2.1-4.01 0-3.27 2.37-6.27 6.85-6.27 3.6 0 6.39 2.56 6.39 5.99 0 3.57-2.25 6.45-5.38 6.45-1.05 0-2.04-.55-2.38-1.19l-.65 2.47c-.23.9-.86 2.03-1.29 2.72A10 10 0 1 0 12 2z"/></svg>Pin</a>
+      <a href={`https://x.com/intent/post?text=${enc(`${d.title} recipe @thatcocktail`)}&url=${enc(pageUrl)}`} target="_blank" rel="external noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>Post</a>
+      <a href={`https://www.facebook.com/sharer/sharer.php?u=${enc(pageUrl)}`} target="_blank" rel="external noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.413c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.264h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>Share</a>
+    </div>
+  </div>
+
+  <div class="cocktail__content">
+    <dl class:list={['cocktail__info', { 'cocktail__info--6': d.calories }]}>
+      <div><dt>Prep</dt><dd>{plural(d.prepMins, 'min')}</dd></div>
+      <div><dt>Making</dt><dd>{plural(d.makeMins, 'min')}</dd></div>
+      <div><dt>Total</dt><dd>{plural(total, 'min')}</dd></div>
+      <div><dt>Serves</dt><dd>{d.serves}</dd></div>
+      <div><dt>Glass</dt><dd>{d.glass}</dd></div>
+      {d.calories && <div><dt>Calories</dt><dd>{d.calories} kcal</dd></div>}
+    </dl>
+
+    <div class="cocktail__ingredients">
+      <h3 id={`${c.id}-ingredients`}>Ingredients</h3>
+      <div class="cocktail__scale">
+        <span class="cocktail__scale--label" id={`${c.id}-scale`}>Drinks</span>
+        <div class="cocktail__scale--options" role="group" aria-labelledby={`${c.id}-scale`}>
+          <button type="button" data-scale="1" aria-pressed="true">1</button>
+          <button type="button" data-scale="2" aria-pressed="false">2</button>
+          <button type="button" data-scale="4" aria-pressed="false">4</button>
+        </div>
+      </div>
+      <p class="cocktail__ingredients--note" aria-live="polite" data-scale-note>Makes 1 drink.</p>
+      <ul>
+        {d.ingredients.map((i, n) => {
+          const m = measure(i);
+          const scalable = (i.ml != null && i.oz != null) || i.count != null;
+          return (
+            <li><label><input type="checkbox" id={`${c.id}-ing-${n + 1}`}><span>
+              {m && (scalable ? (
+                <span class="cocktail__ingredients--qty"
+                      data-ml={i.ml} data-oz={i.oz} data-ml-max={i.mlMax} data-oz-max={i.ozMax}
+                      data-count={i.count} data-one={i.one} data-many={i.many}>{m}</span>
+              ) : <span>{m}</span>)}
+              {i.item && <>{' '}<Fragment set:html={i.item} /></>}{i.note && `, ${i.note}`}
+            </span></label></li>
+          );
+        })}
+      </ul>
+    </div>
+
+    <div class="cocktail__method">
+      <h3 id={`${c.id}-method`}>Method</h3>
+      <ol>
+        {d.method.map((step, n) => <li id={`${c.id}-step-${n + 1}`}><span set:html={step} /></li>)}
+      </ol>
+      {d.methodNoShaker && (
+        <div class="cocktail__alt">
+          <h4 id={`${c.id}-no-shaker`}>No cocktail shaker? Do this instead</h4>
+          <ol>
+            {d.methodNoShaker.map((step) => <li><span set:html={step} /></li>)}
+          </ol>
+        </div>
+      )}
+    </div>
+
+    {d.tips?.length ? <CocktailTips id={c.id} tips={d.tips} /> : null}
+  </div>
+</section>
+
+<script>
+  const round = (n: number) => String(Math.round(n * 10) / 10);
+
+  document.querySelectorAll<HTMLElement>('section.cocktail').forEach((card) => {
+    // Scale the recipe for 1, 2 or 4 drinks.
+    const buttons = card.querySelectorAll<HTMLButtonElement>('[data-scale]');
+    const note = card.querySelector<HTMLElement>('[data-scale-note]');
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const k = Number(button.dataset.scale);
+        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+        card.querySelectorAll<HTMLElement>('.cocktail__ingredients--qty').forEach((q) => {
+          const d = q.dataset;
+          if (d.ml && d.oz) {
+            q.textContent = d.mlMax && d.ozMax
+              ? `${round(+d.ml * k)}–${round(+d.mlMax * k)}ml / ${round(+d.oz * k)}–${round(+d.ozMax * k)}oz`
+              : `${round(+d.ml * k)}ml / ${round(+d.oz * k)}oz`;
+          } else if (d.count) {
+            const n = +d.count * k;
+            q.textContent = `${n} ${n === 1 ? d.one ?? '' : d.many ?? ''}`.trim();
+          }
+        });
+        if (note) note.textContent = k === 1 ? 'Makes 1 drink.' : `Makes ${k} drinks.`;
+      });
+    });
+
+    // Print just the recipe card.
+    card.querySelector('[data-print]')?.addEventListener('click', () => {
+      document.documentElement.classList.add('print-recipe');
+      window.print();
+    });
+  });
+  window.addEventListener('afterprint', () => document.documentElement.classList.remove('print-recipe'));
+</script>

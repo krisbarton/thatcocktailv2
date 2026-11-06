@@ -1,0 +1,41 @@
+---
+import SpiritLayout from '../layouts/SpiritLayout.astro';
+import { media } from '../data/site';
+---
+<SpiritLayout
+  spirit="Gin"
+  title="Gin Cocktails: Our Full List of Gin Cocktail Recipes | ThatCocktail"
+  description="Every gin cocktail recipe on ThatCocktail, from the Negroni and French 75 to the Tom Collins, with measures in ml and oz. Plus the gin we recommend."
+  lead="Gin is a great base for cocktails, right up there with vodka, and with new flavoured gins appearing all the time, it’s more popular than ever. Here’s every gin cocktail recipe we’ve got. Let’s get mixing!"
+  ogImage={{ src: media('/wp-content/uploads/2022/04/Gin-Cocktails.png'), width: 500, height: 300, alt: 'Gin Cocktails title card' }}
+>
+  <h2>What is gin?</h2>
+  <p>In a nutshell, gin is a distilled spirit that gets its flavour from juniper berries.</p>
+  <p>It was brought over to Britain by European visitors, most notably the Dutch, as a medicinal drink, and by 1688 it had become the nation’s favourite. The British adapted it to be a bit more of a… social drink. Classic Britain.</p>
+
+  <h2>Popular gin cocktails</h2>
+  <p>The most iconic gin cocktail of all time is the Gin and Tonic. It doesn’t get much better than that, and it works with any flavoured gin that comes along.</p>
+  <p>Other classic gin cocktails include:</p>
+  <ul>
+    <li><a href="/cocktails/tom-collins/">Tom Collins</a>, the offshoot of the <a href="/cocktails/john-collins/">John Collins</a>. It mixes Old Tom gin, lemon juice, sugar syrup and tonic water.</li>
+    <li><a href="/cocktails/negroni/">Negroni</a>, a classic mix of gin, sweet vermouth and <a href="/what-is-campari/">Campari</a>.</li>
+    <li><a href="/cocktails/french-75/">French 75</a>, a classy drink that mixes gin, champagne, lemon juice and simple syrup.</li>
+    <li><a href="/cocktails/singapore-sling/">Singapore Sling</a>, a classic, boozy cocktail that contains ALL THE ALCOHOL. Including gin.</li>
+    <li><a href="/cocktails/fluffy-duck/">Fluffy Duck</a>, a smooth cocktail that combines gin, advocaat, triple sec, orange juice and soda water.</li>
+    <li><a href="/cocktails/long-island-iced-tea/">Long Island Iced Tea</a>, another cocktail that contains ALL THE ALCOHOL. It’s a classic that’ll mess you up good.</li>
+  </ul>
+
+  <h2>What gin should I use?</h2>
+  <p>Whatever gin you have in the house is great for most of these cocktails. But for gin and tonics, or if you’re in the market for a new bottle, we recommend Hendrick’s.</p>
+
+  <aside class="pick" aria-label="Our gin pick">
+    <span class="pick__label">Our top pick</span>
+    <img class="pick__img" src={media('/wp-content/uploads/2019/06/hendricks-gin.jpg')} width="142" height="300" alt="Bottle of Hendrick’s gin" loading="lazy" decoding="async">
+    <div>
+      <p class="pick__name">Hendrick’s Gin</p>
+      <p class="pick__why">Our pick for gin and tonics, and for anyone buying a new bottle.</p>
+      <a class="btn btn--green btn--sm" href="https://amzn.to/2EjgvlS" target="_blank" rel="sponsored noopener">Buy now</a>
+      <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+    </div>
+  </aside>
+</SpiritLayout>

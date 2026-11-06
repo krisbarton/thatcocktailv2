@@ -1,0 +1,14 @@
+---
+/** Aperol: from https://www.thatcocktail.com/snippets/aperol/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product: Product = { name: 'Aperol', img: '/wp-content/uploads/2022/07/aperol-e1657012823189.jpg', href: 'https://amzn.to/3yHXm9F' };
+---
+<p>Aperol is a type of Italian digestive bitters.</p>
+<p>Considered an aperitif (a drink served before a meal), Aperol is made from gentian, rhubarb, and cinchona and has a vibrant orange hue.</p>
+<p>The name Aperol comes from the Italian slang word for aperitivo (aka aperitif), which is <strong><em>apero</em></strong>.</p>
+<p><strong>So Aperol literally means aperitif. </strong></p>
+<p>Aperol was originally created in 1919 by Luigi and Silvio Barbieri, though it did not become popular until after the Second World War.</p>
+<p>Now Aperol is owned by the Campari Group and in the 2000s saw a resurgence with the popularity of the Aperol Spritz cocktail.</p>
+<ProductPick product={product} />

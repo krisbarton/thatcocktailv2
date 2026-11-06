@@ -1,0 +1,170 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import ProductPick from '../components/ProductPick.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import Icon from '../components/Icon.astro';
+import { alcoholPick } from '../data/alcohol';
+import { kit } from '../data/products';
+import { ingredientGuides } from '../data/recipes';
+import { getCocktails, toCard } from '../lib/cocktails';
+
+const cocktails = await getCocktails();
+const bySlug = new Map(cocktails.map((c) => [c.id, c]));
+const card = (slug: string) => {
+  const c = bySlug.get(slug);
+  if (!c) throw new Error(`what-is-campari: no recipe called ${slug}`);
+  return toCard(c);
+};
+// Only a handful of recipes use Campari, so the closing link goes to the bitter cocktails instead.
+const bitter = cocktails.filter((c) => c.data.collections.some((t) => t.label === 'Bitter')).length;
+
+// Same Campari as /alcohol-recommendations/.
+const campari = alcoholPick('campari');
+
+const toc = [
+  { href: '#the-history-of-campari', label: 'The history of Campari' },
+  { href: '#what-is-campari-made-from', label: 'What is Campari made from?' },
+  { href: '#what-does-campari-taste-like', label: 'What does Campari taste like?' },
+  { href: '#how-do-you-drink-campari', label: 'How do you drink Campari?' },
+  { href: '#what-cocktails-can-you-make-with-campari', label: 'Cocktails with Campari' },
+  { href: '#summary', label: 'Summary' },
+];
+
+const related = ['/what-is-triple-sec/', '/what-is-blue-curacao/', '/what-is-peach-schnapps/'].map((href) => ingredientGuides.find((g) => g.href === href)!);
+---
+<ArticleLayout
+  title="What is Campari?"
+  seoTitle="What Is Campari? Discover the Bitter-Sweet Spirit Behind Classic Cocktails | ThatCocktail"
+  description="Campari is a bitter Italian aperitif and the star of the Negroni. Here’s where it comes from, what it’s made of, what it tastes like, how to drink it and the best cocktails to make with it."
+  kicker="Alcohol information"
+  lead="Have you ever seen Campari as a cocktail ingredient and thought: what is Campari? Yeah. Me too. Until I read up on it a little. It’s really quite an interesting aperitif."
+  published={new Date('2019-09-12T08:53:10Z')}
+  updated={new Date('2025-09-01T10:21:12Z')}
+  image={{ src: '/wp-content/uploads/2019/09/campari-1.jpg', width: 500, height: 450, alt: 'A Campari cocktail over ice with a slice of orange' }}
+  crumbs={[
+    { name: 'Cocktail ingredients', href: '/cocktail-ingredients/' },
+    { name: 'Alcohol information', href: '/cocktail-ingredients/alcohol-information/' },
+    { name: 'What is Campari?', href: '/what-is-campari/' },
+  ]}
+  toc={toc}
+  facts={[
+    { icon: 'cocktail', strong: 'Bitter', text: 'Italian aperitif' },
+    { icon: 'sparkle', strong: '25.5–28%', text: 'ABV' },
+    { icon: 'book', strong: '1860', text: 'first made' },
+  ]}
+  jump={{ label: 'Jump to the cocktails', href: '#what-cocktails-can-you-make-with-campari' }}
+  related={{
+    title: 'More alcohol guides',
+    lede: 'Other bottles you’ll find in our cocktail recipes, explained.',
+    articles: related,
+    more: { label: 'All alcohol information', href: '/cocktail-ingredients/alcohol-information/' },
+  }}
+>
+  <div class="in-short">
+    <p class="kicker">In short</p>
+    <p><strong>Campari is a bitter Italian liqueur, drunk as an aperitif.</strong> It’s dark red and between 25.5% and 28% alcohol.</p>
+  </div>
+
+  <p>Want to know a little more? Let’s take a deeper look. But if you just want a bottle, this is the one:</p>
+  <div class="picks picks--one"><ProductPick product={campari} /></div>
+
+  <h2 id="the-history-of-campari">The history of Campari</h2>
+  <p>Campari was invented in 1860 by Gaspare Campari in Novara, Italy.</p>
+  <p>Gaspare was born into a farming family in Cassolnovo in 1828, but he didn’t follow the family trade. By the age of 14, he was making drinks at a local bar called the Bass Bar.</p>
+  <p><a href="https://www.telegraph.co.uk/foodanddrink/wine/6605241/Campari-the-Italian-classic-that-still-has-style.html" rel="noopener">According to Jonathan Ray, writing in the Telegraph</a>, it was here he apparently became “obsessed by people’s drinking habits”. This obsession eventually led him to open his own bar, which was so successful he opened a second in the heart of Milan. It became “the most fashionable in town, favoured by the Milanese intelligentsia.”</p>
+  <p>He made his own bitters, cordials and cream liqueurs in the basement, and in the 1840s he started selling his own bitters. At first he called the drink <strong><em>Bitter all’Uso d’Holanda</em></strong>, and this is widely recognised as the birth of the Campari bitter aperitif. But it wasn’t until around 1860 that he refined his formula into what we now know (and love).</p>
+  <p>Gaspare died in 1882, at the age of 54, and the business passed to his sons, Davide and Guido, who went about expanding their father’s empire.</p>
+  <p>In 1904, they opened a production plant at Sesto San Giovanni, just outside Milan, which let them mass-produce the bitter and export it. They started with Nice, and the liqueur’s popularity grew. Today, it’s exported to more than <strong>190 countries</strong>.</p>
+  <p>Quite an interesting history there, right? Now let’s take a look at what Campari is actually made from.</p>
+
+  <h2 id="what-is-campari-made-from">What is Campari made from?</h2>
+  <p>Campari is made from a combination of:</p>
+  <ul>
+    <li>Bitter and aromatic herbs.</li>
+    <li>Plants.</li>
+    <li>Fruit in alcohol.</li>
+    <li>Water.</li>
+  </ul>
+  <p>Yes, I realise that’s not an incredibly specific list of ingredients, but there’s a reason for that. Exactly what the Italian aperitif is made from is a well-kept secret. Eligio Bossetti, a local Italian historian, <a href="https://www.telegraph.co.uk/foodanddrink/wine/6605241/Campari-the-Italian-classic-that-still-has-style.html" rel="noopener">told the Telegraph in 2009</a>: “Today only three people know the secret formula and so secret is it that nobody even knows who those three people are.”</p>
+  <p>Now <em>that’s</em> a secret recipe. KFC, eat your heart out.</p>
+  <p>Interestingly, what <em>is</em> known is how Campari got its royal red colour. <a href="https://en.wikipedia.org/wiki/Campari" rel="noopener">It was originally coloured with carmine dye</a>, which is made from <strong>crushed cochineal insects</strong>. Yes, that’s right: <em>insects</em>. Yuk. You’ll be glad to know Campari stopped using it in 2006, and it’s now artificially coloured.</p>
+
+  <h2 id="what-does-campari-taste-like">What does Campari taste like?</h2>
+  <p>Campari is an incredibly unique drink. It’s both sweet and bitter at first taste, then hits you with a rich herby, orangey (and rather tasty) flavour.</p>
+  <p>For some, the bitterness takes time to get used to, but it’s also why it makes a fantastic addition to cocktails.</p>
+
+  <h2 id="how-do-you-drink-campari">How do you drink Campari?</h2>
+  <p>Campari is an aperitif: a drink served before dinner to help stimulate the appetite. It’s in a number of both classic and modern cocktails, and it’s often drunk with soda water.</p>
+
+  <h2 id="what-cocktails-can-you-make-with-campari">What cocktails can you make with Campari?</h2>
+  <p>Campari is a fantastic cocktail ingredient, because its bitter flavour often adds a new dimension to a drink. Here are some of the most popular cocktails with Campari.</p>
+
+  <h3>Negroni</h3>
+  <p>The Negroni is a classic cocktail, thought to have been first mixed in 1919 in Florence, Italy. It’s one of our favourite <a href="/gin-cocktails/">gin cocktails</a>.</p>
+  <h3>Americano</h3>
+  <p>The Americano is pretty much just like a Negroni, but swaps the gin for soda water, for a more refreshing (and less boozy) drink.</p>
+  <h3>Dracula’s Bite</h3>
+  <p>The Dracula’s Bite is a more modern cocktail with Campari: gin, Campari and orange juice, with a couple of dashes of blackcurrant liqueur.</p>
+  <h3>Boulevardier</h3>
+  <p>And if you like a Negroni but prefer whiskey to gin, the Boulevardier is the one for you.</p>
+  <ul class="cards cards--square">
+    {['negroni', 'americano', 'draculas-bite', 'boulevardier'].map((slug) => <RecipeCard recipe={card(slug)} />)}
+  </ul>
+
+  <div class="mini-recipe">
+    <h3>Campari Spritz</h3>
+    <p>The Spritz is another classic that makes the most of Campari’s fruity, bitter flavour. It dates from some point in the late 1800s, and uses prosecco as its base, with the usual soda water to complement the Italian aperitif. Prefer it sweeter? Try <a href="/cocktails/aperol-spritz-recipe/">an Aperol Spritz</a>.</p>
+    <h4>Ingredients</h4>
+    <ul>
+      <li>60ml / 2oz prosecco</li>
+      <li>30ml / 1oz Campari</li>
+      <li>A splash of soda water</li>
+      <li>A slice of orange, to garnish</li>
+    </ul>
+    <h4>Method</h4>
+    <ol>
+      <li>Add ice to an old fashioned glass.</li>
+      <li>Pour in the prosecco and Campari.</li>
+      <li>Add a splash of soda water.</li>
+      <li>Garnish with a slice of orange.</li>
+    </ol>
+  </div>
+
+  <h3>Perfect your cocktail experience</h3>
+  <p>If you’re going to make classic cocktails, you might as well do it right, right? Here’s some of the kit that’ll make your Campari cocktails perfect.</p>
+  <div class="picks">
+    {[kit.shakerSet, kit.oldFashionedGlasses, kit.highballGlasses, kit.cocktailGlasses].map((p) => <ProductPick product={p} />)}
+  </div>
+
+  <h2 id="summary">Summary</h2>
+  <p>So, what is Campari?</p>
+  <ul>
+    <li>An aperitif.</li>
+    <li>A bitter Italian liqueur that’s most often used as a mixer.</li>
+    <li>Between 25.5% and 28% alcohol.</li>
+    <li>Made to a secret recipe that only three people in the world know, and nobody knows who they are.</li>
+    <li>Bitter and fruity at the same time.</li>
+    <li>Usually garnished with orange.</li>
+    <li>Coloured with crushed-up insects until 2006.</li>
+  </ul>
+
+  <section class="next" aria-labelledby="next-title">
+    <h2 id="next-title">Like a bit of bitterness?</h2>
+    <p>Campari isn’t the only way to get it. We have {bitter} bitter cocktail recipes, from the Negroni to the Aperol Spritz.</p>
+    <a class="btn btn--green" href="/bitter-cocktail-recipes/">See all {bitter} bitter cocktails <Icon name="arrow" /></a>
+  </section>
+
+  <h2 id="further-reading">Further reading</h2>
+  <ul>
+    <li><a href="/gin-cocktails/">Quick and easy gin cocktails</a></li>
+    <li><a href="/classic-cocktails/">Classic cocktails</a></li>
+    <li><a href="/cocktails-with-orange-juice/">37 delicious cocktails with orange juice</a></li>
+    <li><a href="/what-is-triple-sec/">What is triple sec?</a></li>
+  </ul>
+  <p class="sources">Sources:</p>
+  <ul class="sources">
+    <li><a href="https://en.wikipedia.org/wiki/Campari" rel="noopener">Campari on Wikipedia</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Gaspare_Campari" rel="noopener">Gaspare Campari on Wikipedia</a></li>
+    <li><a href="https://www.telegraph.co.uk/foodanddrink/wine/6605241/Campari-the-Italian-classic-that-still-has-style.html" rel="noopener">The Telegraph: Campari, the Italian classic that still has style</a></li>
+  </ul>
+</ArticleLayout>

@@ -1,0 +1,51 @@
+---
+import { needQuestion } from '../lib/cocktail-faqs';
+import type { RecipeNeeds } from '../lib/recipe-snippets';
+
+/**
+ * "What Ingredients do you need to make an Americano?" and "What Equipment do you need to make
+ * an Americano?": the snippets for a recipe's ingredients and equipment, before the recipe card.
+ * Each block only shows when something was found for it, and the article doesn't have its own
+ * section for it. Sits inside .r-article for the prose and product pick styles.
+ */
+interface Props {
+  /** The cocktail's name. */
+  name: string;
+  needs: RecipeNeeds;
+}
+const { name, needs } = Astro.props;
+
+const blocks = [
+  { id: 'ingredients-you-need', heading: needQuestion('Ingredients', name), snippets: needs.ingredients, inArticle: needs.article.ingredients },
+  { id: 'equipment-you-need', heading: needQuestion('Equipment', name), snippets: needs.equipment, inArticle: needs.article.equipment },
+].filter((b) => b.snippets.length && !b.inArticle);
+---
+<div class="r-article need">
+  {blocks.map((b) => (
+    <section class="need__block" id={b.id} aria-labelledby={`${b.id}-title`}>
+      <h2 id={`${b.id}-title`}>{b.heading}</h2>
+      {b.snippets.map(({ id, title, Component }) => (
+        <section class="need__item" id={`need-${id}`} aria-labelledby={`need-${id}-title`}>
+          <h3 id={`need-${id}-title`}>{title}</h3>
+          <Component />
+        </section>
+      ))}
+    </section>
+  ))}
+</div>
+
+<style>
+  .need{margin-bottom:clamp(44px,5vw,60px)}
+  .need__block + .need__block{margin-top:clamp(44px,5vw,60px)}
+  .need__item{margin-top:30px;padding-top:26px;border-top:1px solid var(--line)}
+  .need__item:first-of-type{margin-top:22px}
+  .need__item > :global(* + *){margin-top:14px}
+  .need .need__item h3{margin-top:0}
+  .need__item :global(h4){margin-top:24px;font:700 1.15rem/1.2 var(--font-display);color:#000}
+  /* Recipe chips ("Cocktails with Grenadine"): not a prose list. */
+  .need__item :global(ul.chips){padding-left:0;list-style:none}
+  .need__item :global(.chips li){max-width:none}
+  .need__item :global(.chips a){min-height:36px;padding:6px 14px;font-size:.9rem}
+  .need__item :global(.pick .pick__img){width:96px;height:140px;object-fit:contain;border-radius:0}
+  .need__item :global(.pick p){max-width:none}
+</style>

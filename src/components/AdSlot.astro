@@ -1,0 +1,75 @@
+---
+import { adsense } from '../data/site';
+
+/**
+ * A Google AdSense box: in the recipe rail under the free guide button, and above the recipe card.
+ * Nothing loads with the page. The first scroll loads adsbygoogle.js and fills the rail box, and
+ * the recipe box fills as it nears the screen, as the WordPress theme's public.js did. The rail
+ * box is desktop only (the rail is the sticky "On this page" bar on phones), and a box AdSense
+ * has nothing for is hidden.
+ */
+interface Props {
+  place: keyof typeof adsense.slots;
+}
+const { place } = Astro.props;
+---
+<div class:list={['ad', `ad--${place}`]}>
+  <p class="ad__label">Advertisement</p>
+  <ins class="adsbygoogle"
+       style="display:block;text-align:center"
+       data-ad-layout="in-article"
+       data-ad-format="fluid"
+       data-ad-client={adsense.client}
+       data-ad-slot={adsense.slots[place]}
+       data-adtest={import.meta.env.DEV ? 'on' : undefined}></ins>
+</div>
+
+<style>
+  .ad{text-align:center}
+  /* Labelled once there's an ad in the box. */
+  .ad__label{visibility:hidden;margin-bottom:8px;font:700 .68rem/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+  .ad:has(ins[data-ad-status='filled']) .ad__label{visibility:visible}
+  .ad--rail{min-height:120px}
+  /* Room for the ad before it loads, so the recipe card doesn't jump down under the reader. */
+  .ad--recipe{min-height:280px}
+  .ad:has(ins[data-ad-status='unfilled']){display:none}
+  @media (max-width:999px){
+    .ad--rail{display:none}
+  }
+  @media print{
+    .ad{display:none}
+  }
+</style>
+
+<script>
+  const w = window as unknown as { adsbygoogle?: object[] };
+  const boxes = [...document.querySelectorAll<HTMLElement>('.ad ins.adsbygoogle')];
+
+  // Each push fills the next empty box in page order, so the boxes are pushed in that order.
+  const fill = () => (w.adsbygoogle = w.adsbygoogle || []).push({});
+
+  function load() {
+    const script = document.createElement('script');
+    script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${boxes[0].dataset.adClient}`;
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    document.head.append(script);
+
+    const near = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      near.unobserve(e.target);
+      fill();
+    }), { rootMargin: '600px 0px' });
+
+    boxes.forEach((ins) => {
+      // A hidden box (the rail on phones) has no width for AdSense to size an ad to, and would
+      // take the next push, so it comes out.
+      if (!ins.offsetWidth) ins.closest('.ad')?.remove();
+      // The rail is on screen from the first scroll; the recipe box waits until it's near.
+      else if (ins.closest('.ad--rail')) fill();
+      else near.observe(ins);
+    });
+  }
+
+  if (boxes.length) addEventListener('scroll', load, { once: true, passive: true });
+</script>

@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import ArticleCards from '../../components/ArticleCards.astro';
+import CtaBox from '../../components/CtaBox.astro';
+import GuideSignup from '../../components/GuideSignup.astro';
+import { SITE, media } from '../../data/site';
+import { alcoholReviews } from '../../data/recipes';
+import { organization, website, webPage, breadcrumbs } from '../../data/schema';
+
+const path = '/cocktail-ingredients/alcohol-reviews/';
+const title = 'Alcohol Reviews: What’s the Best Brand of Booze for You? | ThatCocktail';
+const description = 'There’s lots of choice out there, and booze is no different. Our alcohol reviews and comparisons help you choose the best brand for your cocktails.';
+
+const crumbs = [
+  { name: 'Cocktail ingredients', href: '/cocktail-ingredients/' },
+  { name: 'Alcohol reviews', href: path },
+];
+
+const schema = [
+  organization,
+  website,
+  webPage({
+    path,
+    type: 'CollectionPage',
+    name: title,
+    description,
+    extra: {
+      breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: alcoholReviews.length,
+        itemListElement: alcoholReviews.map((a, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: new URL(a.href, SITE.url).href,
+          name: a.title,
+        })),
+      },
+    },
+  }),
+  breadcrumbs(path, crumbs.map((c) => ({ name: c.name, path: c.href }))),
+];
+---
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={{ src: media('/wp-content/uploads/2021/10/Alcohol-Reviews.png'), width: 500, height: 300, alt: 'Alcohol Reviews: what’s the best brand of booze for you?' }}
+  schema={schema}
+>
+  <PageHero crumbs={crumbs} title="Alcohol"
+    lead="There’s lots of choice out there. For, well, pretty much everything. And booze is no different. So how do you choose the best booze for the cocktail you want to make? That’s where our alcohol reviews come in.">
+    <Fragment slot="script">reviews</Fragment>
+  </PageHero>
+
+  <section class="section" aria-label="About these reviews">
+    <div class="wrap">
+      <div class="prose">
+        <p>Alcohol is most definitely the most important <a href="/cocktail-ingredients/">ingredient in your cocktail</a>, and knowing the best brand of it can turn a cocktail from meh to marvellous.</p>
+        <p>In these reviews and comparisons, we collate as much useful information as we can to come up with recommendations. In short, we try to be thorough and present all of your options as we see them.</p>
+        <p>More are on the way. In the meantime, if you have a request, <a href={SITE.social.facebook} rel="noopener">head on over to our Facebook page and ask us</a>!</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="reviews-title">
+    <div class="wrap">
+      <SectionHead id="reviews-title" title="Alcohol reviews and comparisons"
+        lede="Which brand to buy, and whether the one you’ve got is any good." />
+      <ArticleCards articles={alcoholReviews} more="Read the review" />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="buy-title">
+    <div class="wrap">
+      <CtaBox id="buy-title" title="Just want the answer?"
+        lede="Our alcohol recommendations list every brand we rate, from vodka and rum to bitters and absinthe."
+        primary={{ label: 'See our alcohol recommendations', href: '/alcohol-recommendations/' }}
+        secondary={{ label: 'Alcohol information', href: '/cocktail-ingredients/alcohol-information/' }} />
+    </div>
+  </section>
+
+  <GuideSignup />
+</BaseLayout>

@@ -1,0 +1,49 @@
+---
+import SpiritLayout from '../layouts/SpiritLayout.astro';
+import { media } from '../data/site';
+---
+<SpiritLayout
+  spirit="Peach schnapps"
+  filter
+  title="Peach Schnapps Cocktails: Sweet & Easy Recipes | ThatCocktail"
+  description="Peach schnapps cocktails are sweet, refreshing and perfect for summer. Here’s every peach schnapps cocktail on ThatCocktail, from the Woo Woo to Sex on the Beach."
+  lead="Peach schnapps cocktails are typically delicious. And by delicious, I mean sweet. Often mixed with orange or cranberry juice, they tend to be on the sweet side… and that’s great by me!"
+  ogImage={{ src: media('/wp-content/uploads/2022/04/Peach-Schnapps-Cocktails.png'), width: 500, height: 300, alt: 'Peach Schnapps Cocktails title card' }}
+>
+  <p>As well as being sweet, peach schnapps cocktails tend to be very refreshing, and a lot of them strike me as summer drinks. Sound good? Let’s get mixing!</p>
+
+  <h2>What is peach schnapps?</h2>
+  <p>We go into <a href="/what-is-peach-schnapps/">more detail about what peach schnapps is here</a>, but essentially it’s a peach version of the popular schnapps.</p>
+
+  <h3>So, what’s schnapps?</h3>
+  <p><em>Schnapps</em> is a German word for any kind of strong alcoholic drink, and over the years it’s become known as a style of drink. It can take several forms:</p>
+  <ul>
+    <li>Distilled fruit brandy.</li>
+    <li>Herbal liqueurs.</li>
+    <li>Infusions, where flavour is extracted from plants using a solvent such as water, oil or, in the case of schnapps, alcohol.</li>
+    <li>Flavoured liqueurs. This is where peach schnapps comes in.</li>
+  </ul>
+
+  <h2>Classic peach schnapps cocktails</h2>
+  <p>Peach schnapps is a key ingredient in a few modern classics that you’ll want to make and drink right away. These include:</p>
+  <ul>
+    <li><a href="/cocktails/woo-woo/">Woo Woo</a>, a refreshing mix of vodka, peach schnapps and cranberry juice that’s entirely too drinkable.</li>
+    <li><a href="/cocktails/sex-on-the-beach/">Sex on the Beach</a>, a classic holiday cocktail that mixes vodka, peach schnapps, orange juice and cranberry juice for a sweet thirst-quencher.</li>
+    <li><a href="/cocktails/sex-in-the-driveway/">Sex in the Driveway</a>, a boozy yet refreshing drink that mixes vodka, peach schnapps, blue curaçao and Sprite.</li>
+    <li><a href="/cocktails/fuzzy-navel/">Fuzzy Navel</a>, a staple drink of my youth that mixes peach schnapps with orange juice for something simple yet refreshing.</li>
+  </ul>
+
+  <h2>What peach schnapps should I use?</h2>
+  <p>Use whatever peach schnapps you have in the house, or prefer, for these cocktails. But if you’re on the hunt for a new bottle, we recommend Archers.</p>
+
+  <aside class="pick" aria-label="Our peach schnapps pick">
+    <span class="pick__label">Our top pick</span>
+    <img class="pick__img" src={media('/wp-content/uploads/2020/05/peach-schnapps.jpg')} width="84" height="300" alt="Bottle of Archers peach schnapps" loading="lazy" decoding="async">
+    <div>
+      <p class="pick__name">Archers Peach Schnapps</p>
+      <p class="pick__why">The peach schnapps we recommend.</p>
+      <a class="btn btn--green btn--sm" href="https://amzn.to/3dlJtnp" target="_blank" rel="sponsored noopener">Buy now</a>
+      <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+    </div>
+  </aside>
+</SpiritLayout>

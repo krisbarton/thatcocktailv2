@@ -1,0 +1,41 @@
+---
+import CollectionLayout from '../layouts/CollectionLayout.astro';
+import { cocktailTypes } from '../data/recipes';
+
+const path = '/classic-cocktails/';
+---
+<CollectionLayout
+  path={path}
+  collection="Classic"
+  heading="Classic"
+  title="Classic Cocktails: Our Full List of Classic Cocktail Recipes | ThatCocktail"
+  description="Our full list of classic cocktail recipes, from the Old Fashioned and Negroni to the Margarita and Moscow Mule, with measures in ml and oz."
+  lead="Here’s our full list of the cocktails we consider to be classics: the drinks that have stood the test of time."
+  listLede="Every ThatCocktail recipe we consider a classic, newest first."
+  parent={{ name: 'Types of cocktails', href: '/types-of-cocktails/' }}
+  video={{
+    id: 'QfZCAWgHiFg',
+    title: 'Classic Cocktail Collection | 9 classic cocktail recipes recommended by us',
+    description: 'Nine classic cocktails, step by step, in one video: from the Rob Roy and the Rusty Nail to the Mai Tai, the Caipirinha, the Bee’s Knees and the Aviation. Every recipe is on screen at the end of its chapter, so you can pause and pour.',
+    uploaded: '2026-11-02T07:21:28-08:00',
+    seconds: 670,
+    heading: '9 classic cocktails, step by step',
+    lede: 'Every recipe is on screen at the end of its chapter, so you can pause and pour.',
+    chapters: [
+      { at: 0, name: 'Rob Roy', href: '/cocktails/rob-roy/' },
+      { at: 81, name: 'Mai Tai', href: '/cocktails/mai-tai/' },
+      { at: 172, name: 'Godchild', href: '/cocktails/godchild/' },
+      { at: 227, name: 'Bee’s Knees', href: '/cocktails/bees-knees/' },
+      { at: 319, name: 'Rusty Nail', href: '/cocktails/rusty-nail/' },
+      { at: 380, name: 'Americano', href: '/cocktails/americano/' },
+      { at: 438, name: 'Caipirinha', href: '/cocktails/caipirinha/' },
+      { at: 503, name: 'Gin Fizz', href: '/cocktails/gin-fizz/' },
+      { at: 585, name: 'Aviation', href: '/cocktails/aviation/' },
+    ],
+  }}
+  siblings={{
+    title: 'Other types of cocktails',
+    links: cocktailTypes.filter((t) => t.href !== path).map((t) => ({ name: t.title, href: t.href })),
+    more: { label: 'All types of cocktails', href: '/types-of-cocktails/' },
+  }}
+/>

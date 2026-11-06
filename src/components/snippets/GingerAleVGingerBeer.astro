@@ -1,0 +1,16 @@
+---
+/** Ginger Ale vs Ginger Beer: from https://www.thatcocktail.com/snippets/ginger-ale-v-ginger-beer/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product1: Product = { name: 'Fever-Tree Ginger Beer', img: '/wp-content/uploads/2022/05/ginger-beer-removebg-preview-1.png', href: 'https://amzn.to/2FKPSH2', us: { href: 'https://shrsl.com/3ims0' } };
+const product2: Product = { name: 'Fever-Tree Ginger Ale', img: '/wp-content/uploads/2022/05/ginger-ale-removebg-preview-1.png', href: 'https://amzn.to/3MaBzMi', us: { href: 'https://shrsl.com/3imus' } };
+---
+<p><a href="https://amzn.to/2FKPSH2" rel="sponsored noopener">Ginger Beer</a> and <a href="https://amzn.to/3MaBzMi" rel="sponsored noopener">Ginger Ale</a> are two very different beverages.</p>
+<p>Well, they both have Ginger flavouring, but they each have <em><strong>a</strong></em> <em><strong>completely different taste.</strong></em></p>
+<p>The difference between them is that <a href="https://amzn.to/2FKPSH2" rel="sponsored noopener">Ginger Beer</a> is brewed and fermented, whilst <a href="https://amzn.to/3MaBzMi" rel="sponsored noopener">Ginger Ale</a> is actually flavoured carbonated water.</p>
+<p>This makes <a href="https://amzn.to/2FKPSH2" rel="sponsored noopener">Ginger Beer</a> stronger and contains a slightly spicy finish and after taste.</p>
+<p>For <a href="https://amzn.to/2FKPSH2" rel="sponsored noopener">Ginger Beer</a>, we recommend:</p>
+<ProductPick product={product1} />
+<p>For <a href="https://amzn.to/3MaBzMi" rel="sponsored noopener">Ginger Ale</a>, we recommend:</p>
+<ProductPick product={product2} />

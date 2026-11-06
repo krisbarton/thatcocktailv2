@@ -1,0 +1,171 @@
+---
+/**
+ * Search box and collection buttons for a list of recipe cards, as on /cocktails/.
+ * Put it inside an element marked data-filter-scope that also holds the cards; it filters every
+ * card in that element rendered with filterProps() (src/lib/cocktails.ts). Elements in the scope
+ * marked data-filter-section (e.g. the rum groups) hide when none of their cards match.
+ *
+ * Any [data-count] in the scope shows "N recipes" / "N of T recipes". Pass `status` for a
+ * "Showing N of T" line under the controls instead, for lists whose heading already has the total.
+ * Pass `limit` to show only the first N cards until something is searched or filtered (render the
+ * rest with `hidden`). While a search or filter is active, the scope gets a data-searching attribute.
+ * Without JavaScript the controls stay hidden and every recipe shows (or the first `limit`).
+ */
+import Icon from './Icon.astro';
+import type { Cocktail } from '../lib/cocktails';
+
+interface Props {
+  /** The recipes in the list, to build the collection buttons. */
+  cocktails: Cocktail[];
+  /** The page's own path; the form submits here with ?q= when JavaScript is off. */
+  action: string;
+  /** Unique on the page. */
+  id?: string;
+  label?: string;
+  placeholder?: string;
+  status?: boolean;
+  limit?: number;
+  /** Focus the search box on load, on devices with a mouse, unless a search is already filled in. */
+  autofocus?: boolean;
+}
+const {
+  cocktails,
+  action,
+  id = 'recipe-search',
+  label = 'Find a cocktail',
+  placeholder = `Search ${cocktails.length} recipes by name or ingredient`,
+  status = false,
+  limit,
+  autofocus = false,
+} = Astro.props;
+
+// Buttons for every collection used in the list, most common first. A collection every recipe
+// is in (e.g. Classic on /classic-cocktails/) wouldn't filter anything, so it's left out.
+const counts = new Map<string, number>();
+for (const c of cocktails) for (const t of c.data.collections) counts.set(t.label, (counts.get(t.label) ?? 0) + 1);
+const filters = [...counts.entries()]
+  .filter(([, count]) => count < cocktails.length)
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  .map(([label, count]) => ({ label, count }));
+---
+<div class="recipe-filter" data-recipe-filter data-limit={limit} data-autofocus={autofocus ? '' : undefined}>
+  <form class="search" role="search" action={action} data-search-form hidden>
+    <label class="search__label" for={id}>{label}</label>
+    <div class="search__field">
+      <Icon name="search" />
+      <input id={id} name="q" type="search" placeholder={placeholder}
+             autocomplete="off" spellcheck="false" enterkeyhint="search" data-search>
+    </div>
+  </form>
+
+  {filters.length > 0 && (
+    <div class="filters" role="group" aria-label="Filter by collection" data-filters hidden>
+      <button type="button" aria-pressed="true" data-filter="">All <span>{cocktails.length}</span></button>
+      {filters.map((f) => (
+        <button type="button" aria-pressed="false" data-filter={f.label.toLowerCase()}>{f.label} <span>{f.count}</span></button>
+      ))}
+    </div>
+  )}
+
+  {status && <p class="status" aria-live="polite" data-status></p>}
+  <p class="empty" data-empty hidden>No cocktails match that. Try a single ingredient, like “lime” or “mint”, or <button type="button" data-reset>show every recipe</button>.</p>
+</div>
+
+<style>
+  .recipe-filter{margin-bottom:34px}
+  .search{max-width:560px;margin-bottom:18px}
+  .search__label{display:block;margin-bottom:8px;font-weight:700}
+  .search__field{position:relative}
+  .search__field :global(svg){position:absolute;left:18px;top:50%;width:22px;height:22px;transform:translateY(-50%);color:var(--ink-soft);pointer-events:none}
+  .search__field input{width:100%;min-height:54px;padding:12px 18px 12px 52px;border-radius:999px;border:2px solid var(--black);background:#fff;color:var(--ink);font:inherit;font-size:1.05rem}
+  .search__field input::placeholder{color:#767676;opacity:1}
+  .search__field input:focus-visible{outline:3px solid var(--pink-deep);outline-offset:2px}
+  .filters{display:flex;flex-wrap:wrap;gap:8px}
+  .filters button{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:8px 16px;border-radius:999px;background:#fff;border:1px solid #cfcfcf;color:var(--ink);font-weight:600;font-size:.95rem;cursor:pointer;transition:border-color .15s,color .15s,background-color .15s}
+  .filters button span{font-size:.8rem;font-weight:700;color:var(--ink-soft)}
+  .filters button:hover{border-color:var(--pink-deep);color:var(--pink-ink)}
+  .filters button[aria-pressed="true"]{background:var(--black);border-color:var(--black);color:var(--cyan)}
+  .filters button[aria-pressed="true"] span{color:var(--on-black-soft)}
+  .status{margin-top:18px;font-weight:600;color:var(--ink-soft)}
+  .status:empty{display:none}
+  .empty{padding:28px 0 0;font-size:1.1rem;color:var(--ink-soft)}
+  .empty button{padding:0;border:0;background:none;font:inherit;color:var(--pink-ink);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+</style>
+
+<script>
+  import { createSearch } from '../lib/cocktail-search';
+
+  // The search matches every word typed against each cocktail's name, ingredients and glass,
+  // and works together with the collection buttons. ?q=lime in the URL pre-fills the search.
+  document.querySelectorAll<HTMLElement>('[data-recipe-filter]').forEach((root) => {
+    const scope = root.closest<HTMLElement>('[data-filter-scope]');
+    const form = root.querySelector<HTMLFormElement>('[data-search-form]');
+    const input = root.querySelector<HTMLInputElement>('[data-search]');
+    const group = root.querySelector<HTMLElement>('[data-filters]');
+    const empty = root.querySelector<HTMLElement>('[data-empty]');
+    const status = root.querySelector<HTMLElement>('[data-status]');
+    if (!scope || !form || !input || !empty) return;
+
+    const buttons = group?.querySelectorAll<HTMLButtonElement>('[data-filter]') ?? [];
+    const cards = scope.querySelectorAll<HTMLElement>('.card[data-search]');
+    const sections = scope.querySelectorAll<HTMLElement>('[data-filter-section]');
+    const counts = scope.querySelectorAll<HTMLElement>('[data-count]');
+    // Count recipes, not cards: a recipe can sit in two groups (a Scorpion uses white and dark rum).
+    const recipe = (card: HTMLElement) => card.querySelector('a')?.getAttribute('href') ?? '';
+    const total = new Set([...cards].map(recipe)).size;
+    const limit = Number(root.dataset.limit) || 0;
+    let filter = '';
+
+    const search = createSearch([...cards].map((card) => card.dataset.search ?? ''));
+
+    const update = () => {
+      const matches = search(input.value);
+      const searching = Boolean(filter || input.value.trim());
+      const idle = limit > 0 && !searching;
+      const found = new Set<string>();
+      cards.forEach((card, i) => {
+        const match = idle
+          ? i < limit
+          : (!filter || (card.dataset.filters ?? '').split(' ').includes(filter)) && matches(card.dataset.search ?? '');
+        card.hidden = !match;
+        if (match) found.add(recipe(card));
+      });
+      const shown = found.size;
+      sections.forEach((s) => (s.hidden = !s.querySelector('.card[data-search]:not([hidden])')));
+      scope.toggleAttribute('data-searching', searching);
+      counts.forEach((c) => (c.textContent = idle ? `Latest ${shown} of ${total} recipes` : shown === total ? `${total} recipes` : `${shown} of ${total} recipes`));
+      if (status) status.textContent = shown === total || shown === 0 ? '' : `Showing ${shown} of ${total} recipes`;
+      empty.hidden = shown > 0;
+
+      // Keep the search in the address bar so it can be shared or bookmarked.
+      const url = new URL(location.href);
+      if (input.value.trim()) url.searchParams.set('q', input.value.trim());
+      else url.searchParams.delete('q');
+      history.replaceState(null, '', url);
+    };
+
+    const setFilter = (f: string) => {
+      filter = f;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.filter ?? '') === f)));
+      update();
+    };
+
+    form.hidden = false;
+    if (group) group.hidden = false;
+    input.value = new URLSearchParams(location.search).get('q') ?? '';
+    if (input.value) update();
+    else if (root.hasAttribute('data-autofocus') && matchMedia('(hover: hover) and (pointer: fine)').matches) input.focus();
+
+    input.addEventListener('input', update);
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      input.blur(); // closes the on-screen keyboard on phones
+    });
+    buttons.forEach((b) => b.addEventListener('click', () => setFilter(b.dataset.filter ?? '')));
+    root.querySelector('[data-reset]')?.addEventListener('click', () => {
+      input.value = '';
+      setFilter('');
+      input.focus();
+    });
+  });
+</script>

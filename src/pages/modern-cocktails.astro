@@ -1,0 +1,21 @@
+---
+import CollectionLayout from '../layouts/CollectionLayout.astro';
+import { cocktailTypes } from '../data/recipes';
+
+const path = '/modern-cocktails/';
+---
+<CollectionLayout
+  path={path}
+  collection="Modern"
+  heading="Modern"
+  title="Modern Cocktails: Our Full List of Modern Cocktail Recipes | ThatCocktail"
+  description="Our full list of modern cocktail recipes, from the Pornstar Martini to the Cranberry Aperol Spritz, with measures in ml and oz."
+  lead="Here’s our full list of the cocktails we consider to be from the modern era of cocktail-making."
+  listLede="Every ThatCocktail recipe we consider modern, newest first."
+  parent={{ name: 'Types of cocktails', href: '/types-of-cocktails/' }}
+  siblings={{
+    title: 'Other types of cocktails',
+    links: cocktailTypes.filter((t) => t.href !== path).map((t) => ({ name: t.title, href: t.href })),
+    more: { label: 'All types of cocktails', href: '/types-of-cocktails/' },
+  }}
+/>

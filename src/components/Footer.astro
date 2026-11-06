@@ -1,0 +1,46 @@
+---
+import Icon from './Icon.astro';
+import { SITE, footerNav } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <img src="/images/thatcocktail-logo-400x74.png" width="400" height="74" alt="ThatCocktail" loading="lazy" decoding="async">
+        <p>{SITE.tagline}</p>
+        <ul class="social">
+          <li><a href={SITE.social.facebook} rel="noopener" aria-label="ThatCocktail on Facebook"><Icon name="facebook" /></a></li>
+          <li><a href={SITE.social.x} rel="noopener" aria-label="ThatCocktail on X (Twitter)"><Icon name="x" /></a></li>
+          <li><a href={SITE.social.instagram} rel="noopener" aria-label="ThatCocktail on Instagram"><Icon name="instagram" /></a></li>
+          <li><a href={SITE.social.youtube} rel="noopener" aria-label="ThatCocktail on YouTube"><Icon name="youtube" /></a></li>
+        </ul>
+      </div>
+
+      <nav class="site-footer__nav" aria-label="Footer">
+        {footerNav.map((col) => (
+          <div class="footer-col">
+            <h2 class="footer-title">{col.title}</h2>
+            <ul>
+              {col.links.map((link) => <li><a href={link.href}>{link.label}</a></li>)}
+            </ul>
+          </div>
+        ))}
+      </nav>
+    </div>
+
+    <div class="site-footer__meta">
+      <address>
+        <strong>{SITE.name}</strong><br>
+        {SITE.address.street}, {SITE.address.locality}, {SITE.address.postcode}, {SITE.address.country}<br>
+        Phone: <a href={SITE.phoneHref}>{SITE.phone}</a>
+      </address>
+      <div class="site-footer__legal">
+        <p>© {year} {SITE.name}. All rights reserved.</p>
+        <p>ThatCocktail uses affiliate links to earn commission. This doesn’t affect the price you pay, and we never pass your details on to third parties. We hate that.</p>
+        <p>Please drink responsibly. For the facts about alcohol, visit <a href="https://www.drinkaware.co.uk/" rel="noopener">drinkaware.co.uk</a>.</p>
+      </div>
+    </div>
+  </div>
+</footer>

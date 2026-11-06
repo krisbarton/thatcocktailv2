@@ -1,0 +1,25 @@
+---
+import CollectionLayout from '../layouts/CollectionLayout.astro';
+
+const path = '/sweet-cocktail-recipes/';
+const flavours = [
+  { name: 'Bitter cocktails', href: '/bitter-cocktail-recipes/' },
+  { name: 'Savoury cocktails', href: '/savoury-cocktail-recipes/' },
+  { name: 'Sour cocktails', href: '/sour-cocktail-recipes/' },
+];
+---
+<CollectionLayout
+  path={path}
+  collection="Sweet"
+  heading="Sweet"
+  title="Sweet Cocktails: Our Full List of Sweet Cocktail Recipes | ThatCocktail"
+  description="Our full list of sweet cocktail recipes, from the Bee’s Knees to the Red Apple, with measures in ml and oz."
+  lead="Fruity, sugary and easy to drink. Here’s our full list of sweet cocktail recipes."
+  listLede="Every sweet ThatCocktail recipe, newest first."
+  parent={{ name: 'Flavour profiles', href: '/flavour-profiles/' }}
+  siblings={{
+    title: 'Other flavour profiles',
+    links: flavours,
+    more: { label: 'All flavour profiles', href: '/flavour-profiles/' },
+  }}
+/>

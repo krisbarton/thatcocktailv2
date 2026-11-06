@@ -1,0 +1,154 @@
+---
+/**
+ * A collection page built from the recipes' `collections` tags, e.g. /classic-cocktails/ lists every
+ * recipe tagged "Classic", newest first. Anything in the default slot appears above the list.
+ * Lists of FILTER_MIN or more recipes get the search box and collection buttons (RecipeFilter).
+ */
+import BaseLayout from './BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHead from '../components/SectionHead.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import RecipeFilter from '../components/RecipeFilter.astro';
+import GuideSignup from '../components/GuideSignup.astro';
+import VideoEmbed from '../components/VideoEmbed.astro';
+import { SITE } from '../data/site';
+import { organization, website, webPage, breadcrumbs, videoObject, type Video } from '../data/schema';
+import { getCocktails, toCard, cocktailUrl, filterProps, FILTER_MIN } from '../lib/cocktails';
+
+type Link = { name: string; href: string };
+
+interface Props {
+  path: string;
+  /** The tag in each recipe's `collections`, e.g. "Classic". */
+  collection: string;
+  /** Neon heading word(s); "cocktails" is added in script, e.g. "Classic". */
+  heading: string;
+  title: string;
+  description: string;
+  lead: string;
+  /** Heading above the list; defaults to "All N classic cocktails". */
+  listTitle?: string;
+  /** Lede under the list heading. */
+  listLede: string;
+  /** The page(s) above this one in the breadcrumb, top first, e.g. Types of cocktails › Seasonal cocktails. */
+  parent: Link | Link[];
+  /** Related collections, shown as links under the list. */
+  siblings?: { title: string; links: Link[]; more: { label: string; href: string } };
+  ogImage?: { src: string; width: number; height: number; alt: string };
+  /** A YouTube video shown above the list, with its own heading. Its chapters link to the recipes. */
+  video?: Video & { heading: string; lede?: string };
+}
+const { path, collection, heading, title, description, lead, listTitle, listLede, parent, siblings, ogImage, video } = Astro.props;
+const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+
+const label = `${heading} cocktails`;
+const cocktails = (await getCocktails()).filter((c) => c.data.collections.some((t) => t.label === collection));
+const crumbs = [...[parent].flat(), { name: label, href: path }];
+const hasIntro = Astro.slots.has('default');
+const filterable = cocktails.length >= FILTER_MIN;
+const one = label.toLowerCase().replace(/s$/, ''); // "autumn cocktail"
+
+const schema = [
+  organization,
+  website,
+  webPage({
+    path,
+    type: 'CollectionPage',
+    name: title,
+    description,
+    extra: {
+      breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: cocktails.length,
+        itemListElement: cocktails.map((c, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: new URL(cocktailUrl(c), SITE.url).href,
+          name: c.data.title,
+        })),
+      },
+    },
+  }),
+  breadcrumbs(path, crumbs.map((c) => ({ name: c.name, path: c.href }))),
+  ...(video ? [videoObject(path, video)] : []),
+];
+---
+<BaseLayout title={title} description={description} ogImage={ogImage} schema={schema}>
+  <PageHero crumbs={crumbs} title={heading} lead={lead}>
+    <Fragment slot="script">cocktails</Fragment>
+    {(hasIntro || video) && <p class="hero-cta"><a class="btn btn--green" href="#list">See all {cocktails.length} recipes</a></p>}
+  </PageHero>
+
+  {hasIntro && (
+    <section class="section">
+      <div class="wrap">
+        <div class="prose">
+          <slot />
+        </div>
+      </div>
+    </section>
+  )}
+
+  {video && (
+    <section class="section" id="video" aria-labelledby="video-title">
+      <div class="wrap">
+        <SectionHead id="video-title" title={video.heading} lede={video.lede} />
+        <div class="watch">
+          <VideoEmbed id={video.id} title={video.title} />
+          {video.chapters && video.chapters.length > 0 && (
+            <div class="watch__chapters">
+              <h3 class="watch__title">In this video</h3>
+              <ol class="chapters">
+                {video.chapters.map((c) => (
+                  <li>
+                    <span class="chapters__time">{clock(c.at)}</span>
+                    {c.href ? <a href={c.href}>{c.name}</a> : <span>{c.name}</span>}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="section section--mist" id="list" aria-labelledby="list-title">
+    <div class="wrap" data-filter-scope>
+      <SectionHead id="list-title" title={listTitle ?? `All ${cocktails.length} ${label.toLowerCase()}`} lede={listLede} />
+      {filterable && <RecipeFilter cocktails={cocktails} action={path} label={`Find ${/^[aeiou]/.test(one) ? 'an' : 'a'} ${one}`} status />}
+      <ul class="cards cards--square">
+        {cocktails.map((c) => <RecipeCard recipe={toCard(c)} {...(filterable ? filterProps(c) : {})} />)}
+      </ul>
+    </div>
+  </section>
+
+  {siblings && (
+    <section class="section" aria-labelledby="siblings-title">
+      <div class="wrap">
+        <SectionHead id="siblings-title" title={siblings.title} more={siblings.more} />
+        <ul class="chips">
+          {siblings.links.map((l) => <li><a href={l.href}>{l.name}</a></li>)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <GuideSignup />
+</BaseLayout>
+
+<style>
+  .hero-cta{margin-top:28px}
+
+  .watch{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);gap:clamp(24px,4vw,48px);align-items:start;margin-top:8px}
+  .watch :global(.video){margin-top:0}
+  .watch__title{font:700 1.15rem/1.2 var(--font-display);color:#000}
+  .chapters{margin-top:12px;list-style:none;padding:0;border-top:2px solid #000}
+  .chapters li{display:flex;align-items:baseline;gap:14px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.14)}
+  .chapters__time{flex:none;min-width:3.2em;font-variant-numeric:tabular-nums;font-size:.9rem;color:var(--ink-soft)}
+  .chapters a{font-weight:600}
+  @media (max-width:899px){
+    .watch{grid-template-columns:minmax(0,1fr)}
+  }
+</style>

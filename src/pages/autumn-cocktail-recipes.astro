@@ -1,0 +1,28 @@
+---
+import CollectionLayout from '../layouts/CollectionLayout.astro';
+
+const path = '/autumn-cocktail-recipes/';
+const seasons = [
+  { name: 'Winter cocktails', href: '/winter-cocktail-recipes/' },
+  { name: 'Spring cocktails', href: '/spring-cocktail-recipes/' },
+  { name: 'Summer cocktails', href: '/summer-cocktail-recipes/' },
+];
+---
+<CollectionLayout
+  path={path}
+  collection="Autumn"
+  heading="Autumn"
+  title="Autumn Cocktails: Our Full List of Autumn Cocktail Recipes | ThatCocktail"
+  description="Our full list of autumn cocktail recipes, from the Americano to the Rusty Nail, with measures in ml and oz."
+  lead="A change of weather calls for a change of cocktail. Here’s our full list of autumn cocktail recipes."
+  listLede="Every ThatCocktail recipe for autumn, newest first."
+  parent={[
+    { name: 'Types of cocktails', href: '/types-of-cocktails/' },
+    { name: 'Seasonal cocktails', href: '/seasonal-cocktails/' },
+  ]}
+  siblings={{
+    title: 'Cocktails for other seasons',
+    links: seasons,
+    more: { label: 'All seasonal cocktails', href: '/seasonal-cocktails/' },
+  }}
+/>

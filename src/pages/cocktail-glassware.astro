@@ -1,0 +1,77 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import ProductPick from '../components/ProductPick.astro';
+import Icon from '../components/Icon.astro';
+import { glassware } from '../data/products';
+
+const toc = [
+  { href: '#champagne-flutes', label: 'Champagne flutes' },
+  { href: '#copper-mugs', label: 'Copper mugs' },
+  { href: '#old-fashioned-glasses', label: 'Old fashioned glasses' },
+  { href: '#hurricane-glasses', label: 'Hurricane glasses' },
+  { href: '#highball-glasses', label: 'Highball glasses' },
+  { href: '#cocktail-glasses', label: 'Cocktail glasses' },
+  { href: '#margarita-glasses', label: 'Margarita glasses' },
+];
+---
+<ArticleLayout
+  title="Cocktail glassware"
+  seoTitle="Cocktail Glassware That’ll Make Your Cocktails Look Amazing | ThatCocktail"
+  description="Having the right glassware for the right cocktail will put your cocktails on the next level. Here are our recommendations, from champagne flutes and copper mugs to highball and margarita glasses."
+  kicker="Recommendations"
+  lead="You’ve made the effort to mix an amazing cocktail, so it might as well look the part too, right? Here’s all the cocktail glassware we recommend, so your quick, easy and delicious cocktails look as good as they taste."
+  published={new Date('2021-10-06T12:17:01Z')}
+  updated={new Date('2021-10-16T13:10:17Z')}
+  image={{ src: '/wp-content/uploads/2021/10/Glassware-Recommendations.png', width: 500, height: 300, alt: 'Cocktail glassware recommendations' }}
+  crumbs={[{ name: 'Cocktail glassware', href: '/cocktail-glassware/' }]}
+  toc={toc}
+  facts={[{ icon: 'glass', strong: '7', text: 'glasses we recommend' }]}
+  jump={{ label: 'Jump to the glasses', href: '#champagne-flutes' }}
+>
+  <p class="disclosure">Some of the links on this page are affiliate links. If you buy something through one, we earn a small commission at no extra cost to you.</p>
+
+  <h2 id="why-glassware-matters">Why cocktail glassware matters</h2>
+  <p>Certain cocktails are served in a specific glass. Sure, you can ignore that and serve your cocktail in any glass you like, but it won’t have the same <em>feel</em> to it.</p>
+  <p>Imagine serving a <a href="/cocktails/moscow-mule/">Moscow Mule</a> in a pint glass…</p>
+  <p>…actually, that would be <em>awesome</em>.</p>
+  <p>Here’s a better example: what if you served a <a href="/cocktails/margarita/">Margarita</a> in a <a href="#champagne-flutes">champagne flute</a>? It just wouldn’t feel right.</p>
+  <p>Let’s dive right into the list.</p>
+
+  <h2 id="champagne-flutes">Champagne flutes</h2>
+  <p>Champagne flutes are great for any kind of champagne cocktail, such as the <a href="/cocktails/mimosa/">Mimosa</a>.</p>
+  <div class="picks picks--one"><ProductPick product={glassware.champagneFlutes} /></div>
+
+  <h2 id="copper-mugs">Copper mugs</h2>
+  <p>Copper mugs are mainly used for mule cocktails. Mules are offshoots of the <a href="/cocktails/moscow-mule/">Moscow Mule</a> that add different <a href="/cocktail-ingredients/">ingredients</a> to the standard ginger beer and lime juice, like the <a href="/cocktails/jamaican-mule/">Jamaican Mule</a> or the slightly more extravagant <a href="/cocktails/mermaid-mule/">Mermaid Mule</a>.</p>
+  <div class="picks picks--one"><ProductPick product={glassware.copperMug} /></div>
+
+  <h2 id="old-fashioned-glasses">Old fashioned glasses</h2>
+  <p>Old fashioned glasses are basically whiskey glasses, but in the cocktail world they’re ideal for <a href="/cocktails/old-fashioned-recipe/">the classic Old Fashioned</a>.</p>
+  <div class="picks picks--one"><ProductPick product={glassware.oldFashionedGlasses} /></div>
+
+  <h2 id="hurricane-glasses">Hurricane glasses</h2>
+  <p>Hurricane glasses are the traditional glass for flamboyant cocktails, such as the <a href="/cocktails/blue-hawaii/">Blue Hawaii</a>. But the most popular cocktail ever served in a hurricane glass has to be the <a href="/cocktails/pina-colada/">Piña Colada</a>.</p>
+  <div class="picks picks--one"><ProductPick product={glassware.hurricaneGlasses} /></div>
+
+  <h2 id="highball-glasses">Highball glasses</h2>
+  <p>Highball glasses are the most common glasses in the cocktail world. You can put most cocktails in one, from the <a href="/cocktails/long-island-iced-tea/">Long Island Iced Tea</a> to a <a href="/how-to-make-a-bay-breeze/">Bay Breeze</a>.</p>
+  <div class="picks picks--one"><ProductPick product={glassware.highballGlasses} /></div>
+
+  <h2 id="cocktail-glasses">Cocktail glasses</h2>
+  <p>Cocktail glasses are for the more elegant classic cocktails, such as <a href="/cocktails/manhattan/">the Manhattan</a> or <a href="/cocktails/pornstar-martini/">a Pornstar Martini</a>.</p>
+  <div class="picks picks--one"><ProductPick product={glassware.cocktailGlasses} /></div>
+
+  <h2 id="margarita-glasses">Margarita glasses</h2>
+  <p>The margarita glass is famously used for… yeah, you guessed it… <a href="/cocktails/margarita/">Margaritas</a>!</p>
+  <div class="picks picks--one"><ProductPick product={glassware.margaritaGlasses} /></div>
+
+  <section class="next" aria-labelledby="next-title">
+    <h2 id="next-title">Got the glasses? Now for the kit</h2>
+    <p>Our cocktail equipment recommendations cover everything else we use, from the shaker and jigger to the bar spoon and blender. Or put your new glasses straight to work with one of our <a href="/cocktails/">quick and easy cocktail recipes</a>.</p>
+    <a class="btn btn--green" href="/cocktail-equipment/">See our equipment recommendations <Icon name="arrow" /></a>
+  </section>
+</ArticleLayout>
+
+<style>
+  .disclosure{max-width:68ch;padding:14px 18px;border:1px solid var(--line);border-radius:14px;font-size:.92rem;color:var(--ink-soft)}
+</style>

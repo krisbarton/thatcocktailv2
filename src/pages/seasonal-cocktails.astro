@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import HubSections, { type HubSection } from '../components/HubSections.astro';
+import GuideSignup from '../components/GuideSignup.astro';
+import { SITE } from '../data/site';
+import { organization, website, webPage, breadcrumbs } from '../data/schema';
+import { getCocktails, toCard, pickFresh, type Cocktail } from '../lib/cocktails';
+
+const path = '/seasonal-cocktails/';
+const title = 'Seasonal Cocktails: Winter, Spring, Summer & Autumn Recipes | ThatCocktail';
+const description = 'A change of season means a change of weather, a new wardrobe, a new attitude and most definitely a change of cocktail. Here are the right cocktails for every season.';
+const crumbs = [
+  { name: 'Types of cocktails', href: '/types-of-cocktails/' },
+  { name: 'Seasonal cocktails', href: path },
+];
+
+const PER_SECTION = 6;
+const cocktails = await getCocktails();
+const shown = new Set<Cocktail>();
+
+const sections: (HubSection & { href: string })[] = [
+  { name: 'Winter', href: '/winter-cocktail-recipes/' },
+  { name: 'Spring', href: '/spring-cocktail-recipes/' },
+  { name: 'Summer', href: '/summer-cocktail-recipes/' },
+  { name: 'Autumn', href: '/autumn-cocktail-recipes/' },
+].map((s) => {
+  const list = cocktails.filter((c) => c.data.collections.some((t) => t.label === s.name));
+  const season = s.name.toLowerCase();
+  return {
+    id: season,
+    name: s.name,
+    href: s.href,
+    title: `${s.name} cocktails`,
+    lede: `${list.length} of our recipes are perfect for ${season}. Here are some of the newest.`,
+    count: list.length,
+    more: { label: `All ${season} cocktails`, href: s.href },
+    cards: pickFresh(list, shown, PER_SECTION).map(toCard),
+  };
+});
+
+const schema = [
+  organization,
+  website,
+  webPage({
+    path,
+    type: 'CollectionPage',
+    name: title,
+    description,
+    extra: {
+      breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: sections.length,
+        itemListElement: sections.map((s, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: new URL(s.href, SITE.url).href,
+          name: s.title,
+        })),
+      },
+    },
+  }),
+  breadcrumbs(path, crumbs.map((c) => ({ name: c.name, path: c.href }))),
+];
+---
+<BaseLayout title={title} description={description} schema={schema}>
+  <PageHero crumbs={crumbs} title="Seasonal"
+    lead="A change of season generally signals a change of weather. A change of weather, a new wardrobe, a new attitude, and most definitely a change of cocktail. Here are the right cocktails for every season.">
+    <Fragment slot="script">cocktails</Fragment>
+  </PageHero>
+
+  <HubSections sections={sections} cta={{ label: 'All types of cocktails', href: '/types-of-cocktails/' }} />
+
+  <GuideSignup />
+</BaseLayout>

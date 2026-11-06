@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import HubSections, { type HubSection } from '../components/HubSections.astro';
+import GuideSignup from '../components/GuideSignup.astro';
+import { SITE } from '../data/site';
+import { cocktailTypes } from '../data/recipes';
+import { organization, website, webPage, breadcrumbs } from '../data/schema';
+import { getCocktails, toCard, pickFresh, type Cocktail } from '../lib/cocktails';
+
+const path = '/types-of-cocktails/';
+const title = 'Types of Cocktails: Classic, Modern, Seasonal & Non-Alcoholic | ThatCocktail';
+const description = 'Find the type of cocktail you’re after. Our recipes are split into classic, modern, seasonal and non-alcoholic cocktails, with measures in ml and oz.';
+
+const PER_SECTION = 6;
+const cocktails = await getCocktails();
+const tagged = (label: string) => cocktails.filter((c) => c.data.collections.some((t) => t.label === label));
+const shown = new Set<Cocktail>();
+const typeHref = (title: string) => cocktailTypes.find((t) => t.title === title)!.href;
+
+const classic = tagged('Classic');
+const modern = tagged('Modern');
+const nonAlcoholic = tagged('Non-Alcoholic');
+
+// Seasonal: one recipe from each season, labelled, plus links to the four season pages.
+const seasons = [
+  { name: 'Winter', href: '/winter-cocktail-recipes/' },
+  { name: 'Spring', href: '/spring-cocktail-recipes/' },
+  { name: 'Summer', href: '/summer-cocktail-recipes/' },
+  { name: 'Autumn', href: '/autumn-cocktail-recipes/' },
+].map((s) => ({ ...s, list: tagged(s.name) }));
+
+// Each type: rail label, page link, and the cards for its section.
+const type = (id: string, name: string, typeTitle: string, rest: Omit<HubSection, "id" | "name" | "title" | "more">) => ({
+  id,
+  name,
+  title: `${name} cocktails`,
+  href: typeHref(typeTitle),
+  more: { label: `All ${name.toLowerCase()} cocktails`, href: typeHref(typeTitle) },
+  ...rest,
+});
+
+const sections: (HubSection & { href: string })[] = [
+  type('classic', 'Classic', 'Classic cocktails', {
+    count: classic.length,
+    lede: `${classic.length} of our recipes are classics, the drinks that have stood the test of time.`,
+    cards: pickFresh(classic, shown, PER_SECTION).map(toCard),
+  }),
+  type('modern', 'Modern', 'Modern cocktails', {
+    count: modern.length,
+    lede: `${modern.length} of our recipes are modern cocktails. Here are some of the newest.`,
+    cards: pickFresh(modern, shown, PER_SECTION).map(toCard),
+  }),
+  type('seasonal', 'Seasonal', 'Seasonal cocktails', {
+    lede: 'A cocktail for every season. Here’s one for each, or browse a whole season.',
+    links: seasons.map((s) => ({ name: `${s.name} cocktails`, href: s.href })),
+    four: true,
+    cards: seasons.flatMap((s) => pickFresh(s.list, shown, 1).map((c) => ({ ...toCard(c), meta: `${s.name} pick` }))),
+  }),
+  type('non-alcoholic', 'Non-alcoholic', 'Non-alcoholic cocktails', {
+    count: nonAlcoholic.length,
+    lede: 'Booze-free drinks for designated drivers and dry nights in.',
+    cards: pickFresh(nonAlcoholic, shown, PER_SECTION).map(toCard),
+  }),
+];
+
+const schema = [
+  organization,
+  website,
+  webPage({
+    path,
+    type: 'CollectionPage',
+    name: title,
+    description,
+    extra: {
+      breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: sections.length,
+        itemListElement: sections.map((s, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: new URL(s.href, SITE.url).href,
+          name: `${s.name} cocktails`,
+        })),
+      },
+    },
+  }),
+  breadcrumbs(path, [{ name: 'Types of cocktails', path }]),
+];
+---
+<BaseLayout title={title} description={description} schema={schema}>
+  <PageHero kicker="Pick a style" title="Types of"
+    lead="Let’s make it easier to find the type of cocktail you’re looking for. We’ve split our recipes into four types: classic, modern, seasonal and non-alcoholic.">
+    <Fragment slot="script">cocktails</Fragment>
+  </PageHero>
+
+  <HubSections sections={sections} cta={{ label: 'All cocktail recipes', href: '/cocktails/' }} />
+
+  <GuideSignup />
+</BaseLayout>
+

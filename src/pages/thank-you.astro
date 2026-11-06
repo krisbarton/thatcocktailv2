@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SubscribeSteps from '../components/SubscribeSteps.astro';
+import ProofBar from '../components/ProofBar.astro';
+import LatestRecipes from '../components/LatestRecipes.astro';
+import Icon from '../components/Icon.astro';
+import { media } from '../data/site';
+
+// Where MailerLite sends people after they confirm. Not indexed, and kept out of the sitemap.
+const title = 'You’re All Signed Up! | ThatCocktail';
+const description = 'You’re all signed up to the ThatCocktail mailing list! We’ll email you whenever we have something cool to share with you and promise not to spam you.';
+const summerSizzlers = 'https://amzn.to/45qCYc0';
+---
+<BaseLayout title={title} description={description} noindex>
+  <PageHero kicker="Subscription confirmed" title="You’re all signed up!" centred
+    lead="Your free ebook “Make Perfect Cocktails At Home” should already be in your inbox waiting for you! Cool, right?">
+    <Fragment slot="script">Thanks!</Fragment>
+    <SubscribeSteps current="done" />
+  </PageHero>
+
+  <ProofBar />
+
+  <section class="section" aria-labelledby="signed-up-title">
+    <div class="wrap welcome">
+      <img class="welcome__cover" src={media('/wp-content/uploads/2026/09/make-perfect-cocktails-at-home-cover.png.webp')}
+           width="875" height="1221" alt="Cover of the free guide Make Perfect Cocktails at Home" loading="lazy" decoding="async">
+      <div>
+        <p class="kicker">Welcome to the club</p>
+        <h2 class="h2" id="signed-up-title">What happens now?</h2>
+        <p class="welcome__text">You’re all signed up to the ThatCocktail mailing list! We’ll email you whenever we have something cool to share with you, and we promise not to spam you. We hate spam just as much as you.</p>
+        <p class="welcome__text">Can’t find the guide? Check your spam or promotions folder, then <a href="/contact-us/">get in touch</a> if it still hasn’t turned up.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="ebooks-title">
+    <div class="wrap book">
+      <div class="book__copy">
+        <p class="kicker">Want more ebooks?</p>
+        <h2 class="h2" id="ebooks-title">ThatCocktail’s Summer Sizzlers</h2>
+        <p class="book__text">If you want more ThatCocktail ebooks, we’ve published a stunning cocktail recipe book on Amazon! You can download it straight to your Kindle or any Kindle-supporting device. How cool is that?</p>
+        <p class="book__actions">
+          <a class="btn btn--green" href={summerSizzlers} rel="sponsored noopener"><Icon name="book" />Buy it on Amazon</a>
+        </p>
+        <p class="book__note">We earn a commission from Amazon links. It doesn’t change the price you pay.</p>
+      </div>
+      <a class="book__cover" href={summerSizzlers} rel="sponsored noopener" tabindex="-1" aria-hidden="true">
+        <img src={media('/wp-content/uploads/2024/06/Front-Cover-724x1024.jpg')} width="724" height="1024"
+             alt="" loading="lazy" decoding="async">
+      </a>
+    </div>
+  </section>
+
+  <LatestRecipes id="latest-title" title="Latest recipes" lede="…or, you could just check out our latest cocktail recipes!" />
+</BaseLayout>
+
+<style>
+  .welcome{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:clamp(32px,6vw,80px);align-items:center;max-width:960px}
+  .welcome__cover{width:100%;border-radius:6px;transform:rotate(-4deg);box-shadow:0 0 0 1px rgba(0,0,0,.08),0 30px 50px -24px rgba(0,111,132,.55)}
+  .welcome .kicker,.book .kicker{margin-bottom:12px}
+  .welcome__text{margin-top:14px;max-width:58ch;font-size:1.05rem;color:#333}
+  .welcome__text a{font-weight:700}
+
+  .book{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,300px);gap:clamp(32px,6vw,80px);align-items:center;max-width:1000px}
+  .book__text{margin-top:14px;max-width:56ch;font-size:1.05rem;color:#333}
+  .book__actions{margin-top:26px}
+  .book__note{margin-top:16px;font-size:.85rem;color:var(--ink-soft)}
+  .book__cover{display:block;justify-self:center;max-width:300px;border-radius:8px;overflow:hidden;transform:rotate(3deg);box-shadow:14px 14px 0 0 var(--pink),0 30px 50px -24px rgba(0,0,0,.5);transition:transform .2s ease}
+  .book__cover:hover{transform:rotate(1deg) translateY(-4px)}
+
+  @media (max-width:699px){
+    .welcome{grid-template-columns:minmax(0,1fr)}
+    .welcome__cover{max-width:160px}
+    .book{grid-template-columns:minmax(0,1fr)}
+    .book__cover{order:-1;max-width:200px;justify-self:start}
+  }
+</style>

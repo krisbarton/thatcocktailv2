@@ -1,0 +1,11 @@
+---
+/** Julep Cup: from https://www.thatcocktail.com/snippets/julep-cup/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product: Product = { name: 'Julep Cups', img: '/wp-content/uploads/2023/10/julep-cup-e1698148434773.jpg', href: 'https://amzn.to/3ScsN6q' };
+---
+<p>A Julep Cup is the traditional cup Mint Juleps were served in.</p>
+<p>They were usually silver or pewter and always held at the bottom. Why? Because the Julep Cups were always frosted as part of the recipe.</p>
+<p>For Julep Cups, we recommend:</p>
+<ProductPick product={product} />

@@ -1,0 +1,161 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import ProductPick from '../components/ProductPick.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import Icon from '../components/Icon.astro';
+import { alcoholPick, type Product } from '../data/alcohol';
+import { kit } from '../data/products';
+import { ingredientGuides } from '../data/recipes';
+import { getCocktails, toCard, usesIngredient } from '../lib/cocktails';
+
+const cocktails = await getCocktails();
+const bySlug = new Map(cocktails.map((c) => [c.id, c]));
+const featured = ['blue-lagoon', 'fruit-tingle', 'barbados-sunrise', 'summer-seen', 'mermaid-mule', 'blue-hawaii', 'blue-on-blue'].map((slug) => {
+  const c = bySlug.get(slug);
+  if (!c) throw new Error(`what-is-blue-curacao: no recipe called ${slug}`);
+  return toCard(c);
+});
+const withBlueCuracao = cocktails.filter((c) => usesIngredient(c, /blue cura[cç]ao/)).length;
+
+// Bols is the same pick as /alcohol-recommendations/, so it keeps the US link.
+const brands: Product[] = [
+  { ...alcoholPick('blue-curacao'), label: 'Our top pick' },
+  { label: 'Also good', name: 'De Kuyper Blue Curaçao', img: '/wp-content/uploads/2019/10/de-kuyper-blue-curacao_.jpg', href: 'https://amzn.to/2wvA9tG' },
+  { label: 'Also good', name: 'Volare Blue Curaçao', img: '/wp-content/uploads/2019/10/volare-blue-curacao.jpg', href: 'https://amzn.to/32lOmW8' },
+  { label: 'Also good', name: 'Iseo Blue Curaçao', img: '/wp-content/uploads/2019/10/iseo-blue-curacao.jpg', href: 'https://amzn.to/3c19Rjx' },
+  { label: 'Also good', name: 'Briottet Blue Curaçao', img: '/wp-content/uploads/2019/10/briottet-blue-curacao.jpg', href: 'https://amzn.to/2PaGi4U' },
+];
+
+const toc = [
+  { href: '#what-is-blue-curacao', label: 'What is blue curaçao?' },
+  { href: '#the-history-of-blue-curacao', label: 'The history of blue curaçao' },
+  { href: '#what-does-blue-curacao-taste-like', label: 'What does it taste like?' },
+  { href: '#is-there-alcohol-in-blue-curacao', label: 'Is there alcohol in it?' },
+  { href: '#what-brands-of-blue-curacao-are-available', label: 'Brands of blue curaçao' },
+  { href: '#cocktails-with-blue-curacao', label: 'Cocktails with blue curaçao' },
+  { href: '#summary', label: 'Summary' },
+];
+
+const related = ['/what-is-triple-sec/', '/what-is-peach-schnapps/', '/what-is-sloe-gin/'].map((href) => ingredientGuides.find((g) => g.href === href)!);
+---
+<ArticleLayout
+  title="What is blue curaçao?"
+  seoTitle="What is Blue Curacao? Here’s All You Need to Know | ThatCocktail"
+  description="Blue curaçao is the liqueur behind almost every blue cocktail. Here’s what it’s made from, why it’s blue, what it tastes like, how strong it is and the best cocktails to make with it."
+  kicker="Alcohol information"
+  lead="Have you ever seen blue curaçao as a cocktail ingredient, or in a fancy cocktail bar someplace, and wondered: what is blue curaçao? Is it just there to make the cocktail go blue? Does it even have alcohol in it? What does it taste like?"
+  published={new Date('2019-10-22T10:53:00Z')}
+  updated={new Date('2021-10-07T13:38:25Z')}
+  image={{ src: '/wp-content/uploads/2020/01/what-is-blue-curacao-1.png', width: 500, height: 300, alt: 'A blue curaçao cocktail garnished with lime and mint' }}
+  crumbs={[
+    { name: 'Cocktail ingredients', href: '/cocktail-ingredients/' },
+    { name: 'Alcohol information', href: '/cocktail-ingredients/alcohol-information/' },
+    { name: 'What is blue curaçao?', href: '/what-is-blue-curacao/' },
+  ]}
+  toc={toc}
+  facts={[
+    { icon: 'cocktail', strong: 'Bitter orange', text: 'liqueur' },
+    { icon: 'sparkle', strong: '15–40%', text: 'ABV' },
+    { icon: 'globe', strong: 'Curaçao', text: 'origin' },
+  ]}
+  jump={{ label: 'Jump to the cocktails', href: '#cocktails-with-blue-curacao' }}
+  related={{
+    title: 'More alcohol guides',
+    lede: 'Other bottles you’ll find in our cocktail recipes, explained.',
+    articles: related,
+    more: { label: 'All alcohol information', href: '/cocktail-ingredients/alcohol-information/' },
+  }}
+>
+  <div class="in-short">
+    <p class="kicker">In short</p>
+    <p><strong>Blue curaçao is a liqueur flavoured with the dried peel of the laraha citrus fruit,</strong> then coloured blue for effect.</p>
+  </div>
+
+  <p>These questions are <em>very</em> common, so let’s answer them straight away. But if you just want a bottle, this is the one we recommend:</p>
+  <div class="picks picks--one"><ProductPick product={brands[0]} /></div>
+
+  <h2 id="what-is-blue-curacao">What is blue curaçao?</h2>
+  <p>Blue curaçao is a liqueur flavoured with the dried peel of the laraha citrus fruit, which is then artificially coloured blue for effect.</p>
+  <p>Now let’s get into a little more detail.</p>
+
+  <h2 id="the-history-of-blue-curacao">The history of blue curaçao</h2>
+  <p>The story starts in 1527, when Spanish explorers brought the Seville orange to the island of Curaçao.</p>
+  <p>Over time, the Seville oranges growing on Curaçao developed into a bitter subspecies of fruit called the laraha, which is generally considered too bitter to eat. At least, too bitter to eat as a fruit. Making it an ingredient in a liqueur is something else entirely.</p>
+
+  <h3>So how was the liqueur created?</h3>
+  <p>There’s no definitive evidence of who actually invented the laraha-based liqueur, but the Lucas Bols distillery certainly stakes a claim to it, and it makes a whole lotta sense too.</p>
+  <p>The Lucas Bols distillery was founded in Amsterdam way back in 1575, and it’s documented that back in the day it had shares in the Dutch West and East India Companies. That means it would certainly have benefited from a cheap supply of spices and ingredients to make its drinks.</p>
+
+  <h3>What about the laraha fruit?</h3>
+  <p>They surely didn’t ship the laraha fruit back from Curaçao too? Would it even survive the journey?</p>
+  <p>No, they didn’t ship the fruit back. The laraha in the liqueur doesn’t come from the fruit itself but from the peel, in the form of an aromatic oil. It was the oil that was shipped back to Amsterdam and used for the liqueur.</p>
+
+  <h3>Why is blue curaçao blue?</h3>
+  <p>In its natural form, curaçao is actually clear, and it’s coloured blue pretty much for effect.</p>
+  <p>Why? According to the Lucas Bols distillery, it’s because Bols “tended to add an element of alchemical mystery to his products”, and colouring the liqueur blue was his way of doing this.</p>
+  <p><a href="https://www.curacaoliqueur.com/articles/what-is-the-origin-blue-curacao" rel="noopener">CuracaoLiqueur.com suggests</a> another reason:</p>
+  <blockquote><p>We think because it evokes thoughts of a tropical vacation with beautiful blue oceans and blue skies (there is mention in the 1930’s of a Dutch-style Curaçao version called ‘Crème de Ciel’, French for ‘Cream of Sky’). Another reason for the blue is that a cocktail simply looks stunning with some blue coloring in it. It is candy for the eye, which makes the cocktails much more attractive and an easier sell.</p></blockquote>
+  <p>And that makes a whole lotta sense when you think about it: the more attractive the cocktail looks, the easier it is to sell. Have you ever been to a bar, seen someone with a beautiful cocktail and thought, <em>I gotta know what that is! I want one!</em> It’s only natural, right?</p>
+
+  <h2 id="what-does-blue-curacao-taste-like">What does blue curaçao taste like?</h2>
+  <p>Blue curaçao tastes like bitter orange and citrus, which is pretty much what you’d expect from a liqueur flavoured with laraha peel.</p>
+
+  <h2 id="is-there-alcohol-in-blue-curacao">Is there alcohol in blue curaçao?</h2>
+  <p>Blue curaçao is a liqueur, so it definitely has alcohol in it. It’s typically between 15% and 40% alcohol, depending on the brand.</p>
+
+  <h2 id="what-brands-of-blue-curacao-are-available">What brands of blue curaçao are available?</h2>
+  <p>Bols is the brand most associated with blue curaçao, but you’d be quite surprised by just how many brands make the bitter orange liqueur. Here are some popular ones:</p>
+  <div class="picks">
+    {brands.map((p) => <ProductPick product={p} />)}
+  </div>
+
+  <h2 id="cocktails-with-blue-curacao">Cocktails with blue curaçao</h2>
+  <p>Blue curaçao is a great ingredient to use in cocktails, because it has pretty much everything you could want in a cocktail mixer:</p>
+  <ol>
+    <li>It has an enticing colour.</li>
+    <li>It has a bitter orange taste that blends well with most flavours.</li>
+    <li>It has a good amount of alcohol in it.</li>
+  </ol>
+  <p>Naturally, we have a list of delicious blue curaçao cocktails that we just <strong>have</strong> to share with you:</p>
+  <ul class="cards cards--square">
+    {featured.map((r) => <RecipeCard recipe={r} />)}
+  </ul>
+  <p>That’s one tasty-looking list of cocktails, right? Go try them!</p>
+
+  <h3>Perfect your cocktail-making game</h3>
+  <p>The equipment is <strong>by no means essential</strong> for these cocktails, but it’ll improve the way they taste and look, not to mention impress your family and friends.</p>
+  <p>To improve the taste, a cocktail shaker is highly recommended. Don’t know where to start? <a href="/cocktail-sets/">We’ve written a detailed article comparing some of the best cocktail shaker sets</a>. To improve the look, get the right glass (or mug): most of the cocktails above go in a highball glass, and the Mermaid Mule goes in a copper mug.</p>
+  <div class="picks">
+    {[kit.shakerSet, kit.highballGlasses, kit.copperMugs].map((p) => <ProductPick product={p} />)}
+  </div>
+
+  <h2 id="summary">Summary</h2>
+  <p>So, what is blue curaçao?</p>
+  <ul>
+    <li>It’s a liqueur.</li>
+    <li>It’s made from the peel of the laraha fruit, a descendant of the Seville orange.</li>
+    <li>It tastes of bitter orange and citrus.</li>
+    <li>One story says it was coloured blue because Lucas Bols loved making his liqueurs stand out.</li>
+    <li>Other stories say it’s blue because it evokes beachside landscapes.</li>
+    <li>It’s a fantastic ingredient for cocktails.</li>
+  </ul>
+
+  <section class="next" aria-labelledby="next-title">
+    <h2 id="next-title">Want more blue curaçao cocktails?</h2>
+    <p>We have {withBlueCuracao} quick and easy cocktail recipes with blue curaçao, from the Blue Lagoon to the Blue Hawaii.</p>
+    <a class="btn btn--green" href="/search/?q=blue+curacao">See all {withBlueCuracao} blue curaçao cocktails <Icon name="arrow" /></a>
+  </section>
+
+  <h2 id="further-reading">Further reading</h2>
+  <ul>
+    <li><a href="/what-is-triple-sec/">What is triple sec?</a></li>
+    <li><a href="/cocktails/moscow-mule/">The ultimate Moscow Mule recipe</a></li>
+    <li><a href="/cocktails-with-white-rum/">41 quick and easy cocktails with white rum</a></li>
+    <li><a href="/vodka-cocktails/">Quick and easy vodka cocktails</a></li>
+  </ul>
+  <p class="sources">Sources:</p>
+  <ul class="sources">
+    <li><a href="https://en.wikipedia.org/wiki/Cura%C3%A7ao_(liqueur)" rel="noopener">Curaçao (liqueur) on Wikipedia</a></li>
+    <li><a href="https://www.curacaoliqueur.com/articles/what-is-the-origin-blue-curacao" rel="noopener">CuracaoLiqueur.com: what is the origin of blue curaçao?</a></li>
+  </ul>
+</ArticleLayout>

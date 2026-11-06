@@ -1,0 +1,11 @@
+---
+/** Maraschino Cherries: from https://www.thatcocktail.com/snippets/maraschino-cherries/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product: Product = { name: 'Maraschino Cherries', img: '/wp-content/uploads/2022/05/maraschini-cherries.jpg', href: 'https://amzn.to/384oGV2', us: { href: 'https://shrsl.com/3i9ro' } };
+---
+<p><a href="https://amzn.to/384oGV2" rel="sponsored noopener">Maraschino Cherries</a> are preserved, sweetened cherries that are regularly used as a garnish in a variety of different cocktails.</p>
+<p>In short, they can make a cocktail pop.</p>
+<p>For <a href="https://amzn.to/384oGV2" rel="sponsored noopener">Maraschino Cherries</a>, we recommend:</p>
+<ProductPick product={product} />

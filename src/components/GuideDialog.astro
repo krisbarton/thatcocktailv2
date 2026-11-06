@@ -1,0 +1,101 @@
+---
+/**
+ * The free guide signup as a popup, with the same cover, copy and form as GuideSignup.
+ * Any link marked data-guide-dialog opens it. Keep the link's href pointing at the signup
+ * section (#free-guide) so it still works without JavaScript.
+ */
+import Icon from './Icon.astro';
+import SubscribeForm from './SubscribeForm.astro';
+import { media, freeGuide } from '../data/site';
+
+const id = 'guide-dialog';
+---
+<dialog class="guide-dialog on-black" id={id} aria-labelledby={`${id}-title`}>
+  <button class="guide-dialog__close" type="button" data-close-dialog>
+    <Icon name="close" /><span class="sr-only">Close</span>
+  </button>
+  <div class="guide-dialog__body">
+    <div class="guide-dialog__cover">
+      <!-- Not lazy: a lazy image in a closed dialog would only start loading once the popup opens. -->
+      <img src={media(freeGuide.cover)} width="875" height="1221" alt={freeGuide.coverAlt} decoding="async" fetchpriority="low">
+    </div>
+    <div>
+      <p class="kicker">Free guide</p>
+      <h2 class="guide-dialog__title" id={`${id}-title`}>{freeGuide.title}</h2>
+      <p class="guide-dialog__text">{freeGuide.text}</p>
+      <SubscribeForm id={id} />
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .guide-dialog{
+    width:min(860px,calc(100% - 32px));max-width:none;max-height:calc(100dvh - 32px);
+    padding:0;border:0;border-radius:24px;overflow:auto;overscroll-behavior:contain;
+    color:#fff;
+    background:
+      radial-gradient(50% 80% at 14% 50%,rgba(81,229,255,.18),transparent 70%),
+      var(--black);
+    box-shadow:0 0 0 1px rgba(255,255,255,.08),0 40px 90px -20px rgba(0,0,0,.7);
+  }
+  .guide-dialog::backdrop{background:rgba(8,8,8,.72);backdrop-filter:blur(4px)}
+  .guide-dialog[open]{animation:guide-pop .22s ease-out}
+  .guide-dialog[open]::backdrop{animation:guide-fade .22s ease-out}
+  @keyframes guide-pop{from{opacity:0;transform:translateY(12px) scale(.98)}}
+  @keyframes guide-fade{from{opacity:0}}
+  @media (prefers-reduced-motion:reduce){
+    .guide-dialog[open],.guide-dialog[open]::backdrop{animation:none}
+  }
+  :global(html:has(.guide-dialog[open])){overflow:hidden}
+
+  .guide-dialog__close{
+    position:absolute;top:14px;right:14px;z-index:1;display:grid;place-items:center;width:44px;height:44px;
+    border:1px solid rgba(255,255,255,.22);border-radius:50%;background:rgba(255,255,255,.06);color:#fff;cursor:pointer;
+    transition:background-color .15s,border-color .15s,color .15s;
+  }
+  .guide-dialog__close:hover{background:rgba(255,255,255,.14);border-color:var(--cyan);color:var(--cyan)}
+  .guide-dialog__close :global(svg){width:20px;height:20px}
+
+  .guide-dialog__body{display:grid;grid-template-columns:minmax(0,210px) minmax(0,1fr);gap:clamp(32px,5vw,56px);align-items:center;padding:clamp(48px,6vw,64px) clamp(28px,5vw,56px) clamp(36px,5vw,56px)}
+  /* Same neon frame as GuideSignup, so the near-black cover shows on the black dialog. */
+  .guide-dialog__cover img{width:100%;height:auto;border-radius:6px;transform:rotate(-4deg);box-shadow:0 0 0 2px var(--cyan),0 0 0 8px rgba(81,229,255,.14),0 0 44px 4px rgba(81,229,255,.4),0 30px 60px -18px rgba(81,229,255,.6)}
+  .guide-dialog__title{margin-top:12px;font:800 clamp(1.8rem,3.4vw,2.5rem)/1.04 var(--font-display);letter-spacing:-.015em;color:var(--cyan);text-wrap:balance}
+  .guide-dialog__text{margin-top:14px;max-width:52ch;font-size:1.02rem;color:var(--on-black)}
+
+  @media (max-width:639px){
+    .guide-dialog{width:calc(100% - 24px);max-height:calc(100dvh - 24px);border-radius:20px}
+    .guide-dialog__body{grid-template-columns:minmax(0,1fr);gap:24px;padding:56px 22px 28px}
+    .guide-dialog__cover{max-width:112px}
+  }
+</style>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('dialog.guide-dialog');
+  const triggers = document.querySelectorAll<HTMLAnchorElement>('[data-guide-dialog]');
+
+  // Browsers without <dialog> keep the link's normal jump to the signup section.
+  if (dialog && typeof dialog.showModal === 'function') {
+    const input = dialog.querySelector<HTMLInputElement>('input[name="email"]');
+    let opener: HTMLElement | null = null;
+
+    triggers.forEach((link) => link.addEventListener('click', (e) => {
+      e.preventDefault();
+      opener = link;
+      dialog.showModal();
+      // On phones the keyboard would cover the copy, so only jump straight to the field with a mouse.
+      if (matchMedia('(hover: hover) and (pointer: fine)').matches) input?.focus();
+    }));
+
+    dialog.querySelector('[data-close-dialog]')?.addEventListener('click', () => dialog.close());
+
+    // Close on a click on the backdrop, but not when a drag that started inside (e.g. selecting
+    // the email address) ends outside.
+    let downOnBackdrop = false;
+    dialog.addEventListener('pointerdown', (e) => (downOnBackdrop = e.target === dialog));
+    dialog.addEventListener('click', (e) => {
+      if (downOnBackdrop && e.target === dialog) dialog.close();
+    });
+
+    dialog.addEventListener('close', () => opener?.focus());
+  }
+</script>

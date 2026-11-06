@@ -1,0 +1,211 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import ProductPick from '../components/ProductPick.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import Icon from '../components/Icon.astro';
+import { alcoholPick, type Product } from '../data/alcohol';
+import { ingredientGuides } from '../data/recipes';
+import { getCocktails, toCard, usesIngredient } from '../lib/cocktails';
+
+const cocktails = await getCocktails();
+const bySlug = new Map(cocktails.map((c) => [c.id, c]));
+const featured = ['sloe-gin-fizz', 'sloe-comfortable-screw', 'alabama-slammer'].map((slug) => {
+  const c = bySlug.get(slug);
+  if (!c) throw new Error(`what-is-sloe-gin: no recipe called ${slug}`);
+  return toCard(c);
+});
+// /gin-cocktails/ leaves sloe gin out, so the closing link is a search instead.
+const withSloeGin = cocktails.filter((c) => usesIngredient(c, /sloe gin/)).length;
+
+// Gordon's is the same pick as /alcohol-recommendations/, so it keeps the US link.
+const gordons: Product = { ...alcoholPick('sloe-gin'), label: 'Our verdict' };
+const greenalls: Product = { label: 'Also good value', name: 'Greenalls Sloe Gin', img: '/wp-content/uploads/2020/02/greenalls-sloe-gin.jpg', href: 'https://amzn.to/3bM8V2g' };
+const sipsmith: Product = { label: 'A little pricier', name: 'Sipsmith Sloe Gin', img: '/wp-content/uploads/2020/02/sipsmith-sloe-gin.jpg', href: 'https://amzn.to/2V0b7xc' };
+const ableforths: Product = { label: 'A little pricier', name: 'Ableforth’s Bathtub Sloe Gin', img: '/wp-content/uploads/2020/02/ableforths-sloe-gin.jpg', href: 'https://amzn.to/2OYCaFm' };
+const amazon = { target: '_blank', rel: 'sponsored noopener' };
+
+const toc = [
+  { href: '#what-is-sloe-gin', label: 'What is sloe gin?' },
+  { href: '#the-origin-of-sloe-gin', label: 'The origin of sloe gin' },
+  { href: '#what-is-sloe-gin-faqs', label: 'Sloe gin FAQs' },
+  { href: '#sloe-gin-cocktails', label: 'Sloe gin cocktails' },
+  { href: '#summary', label: 'Summary' },
+];
+
+const related = ['/what-is-peach-schnapps/', '/what-is-campari/', '/what-is-triple-sec/'].map((href) => ingredientGuides.find((g) => g.href === href)!);
+---
+<ArticleLayout
+  title="What is sloe gin?"
+  seoTitle="What is Sloe Gin? Everything You Need to Know and More | ThatCocktail"
+  description="Sloe gin is a red British liqueur made with gin and sloes. Here’s what sloes are, where sloe gin comes from, what it tastes like, the best sloe gin to buy and the best sloe gin cocktails."
+  kicker="Alcohol information"
+  lead="Have you ever seen sloe gin in the booze aisle and thought: what is sloe gin? What’s the difference between gin and sloe gin? What’s going on? Don’t worry, we’ve got ya covered."
+  published={new Date('2020-02-17T16:13:58Z')}
+  updated={new Date('2021-10-07T13:37:16Z')}
+  image={{ src: '/wp-content/uploads/2020/02/what-is-sloe-gin-1.png', width: 500, height: 300, alt: 'A bottle of Gordon’s sloe gin behind a bar' }}
+  crumbs={[
+    { name: 'Cocktail ingredients', href: '/cocktail-ingredients/' },
+    { name: 'Alcohol information', href: '/cocktail-ingredients/alcohol-information/' },
+    { name: 'What is sloe gin?', href: '/what-is-sloe-gin/' },
+  ]}
+  toc={toc}
+  facts={[
+    { icon: 'cocktail', strong: 'Red', text: 'gin liqueur' },
+    { icon: 'sparkle', strong: '15–30%', text: 'ABV' },
+    { icon: 'globe', strong: 'British', text: 'origin' },
+  ]}
+  jump={{ label: 'Jump to the cocktails', href: '#sloe-gin-cocktails' }}
+  related={{
+    title: 'More alcohol guides',
+    lede: 'Other bottles you’ll find in our cocktail recipes, explained.',
+    articles: related,
+    more: { label: 'All alcohol information', href: '/cocktail-ingredients/alcohol-information/' },
+  }}
+>
+  <div class="in-short">
+    <p class="kicker">In short</p>
+    <p><strong>Sloe gin is a red liqueur made with gin and sloes.</strong> The best sloe gin for your money? We recommend Gordon’s.</p>
+  </div>
+
+  <p>In this article, we’re going to answer the “what is sloe gin?” question and a whole lot more: the history of sloe gin, quick and easy sloe gin cocktails, and what we think is the best sloe gin you can buy today. Let’s dive right in.</p>
+
+  <h2 id="what-is-sloe-gin">What is sloe gin?</h2>
+  <p>Sloe gin is a British red liqueur, made with gin and ripe sloes.</p>
+  <p>Wait… sloes? What are <em>they</em>? You might be asking yourself. And it’s a great question.</p>
+
+  <h3>What are sloes?</h3>
+  <p>Sloes, otherwise known as <a href="https://en.wikipedia.org/wiki/Prunus_spinosa" rel="noopener"><em>Prunus spinosa</em></a>, are small fruits related to the plum.</p>
+  <p>Sloes grow wild in hedgerows across Britain, but they aren’t cultivated, so they remain a little obscure as a fruit. The reason is a simple one: <strong><em>they don’t taste very nice.</em></strong></p>
+
+  <h3>Other variations of sloe gin</h3>
+  <p>Because sloes are native to the UK, other fruit is often used to make “sloe” gin in other countries. For example, some US distilleries use aronia berries or beach plums to make their own version.</p>
+
+  <h2 id="the-origin-of-sloe-gin">The origin of sloe gin</h2>
+  <p>Our story starts in Britain, when Parliament passed a series of Enclosure Acts that turned common land into individual farms. Hedgerows were planted to divide the land, and that led to a bumper crop of sloe berries.</p>
+  <p>But sloes were rarely eaten. Their taste is described as “tart and astringent”, so not exactly appetising. It wasn’t long before people figured out that sloes mixed with gin were a winning combination.</p>
+  <p>In the early days, sloe gin was an outlaw concoction made at home, and liable to give you a three-day hangover. A poem from 1717 about the ills of British culture was a little… disparaging about it, describing a drink <strong><em>“made at Home … of Sugar, Sloes, and Grocer’s Trash”</em></strong>.</p>
+  <p>Okay, it may seem a little tame compared to a scathing attack from Eminem or somesuch, but at the time it was scathing enough.</p>
+
+  <h3>A port substitute</h3>
+  <p>The next account of sloe gin comes in the 19th century, by which time making the red liqueur had clearly spread beyond its rural roots. By 1838, sloe gin had reached the cloudy heights of London, where accounts describe it as a mixture <strong><em>“which the inhabitants of London swallow for Port.”</em></strong></p>
+
+  <h3>A change in reputation</h3>
+  <p>So, sloe gin didn’t have the best reputation in the early days. Certainly not like it does now. So when did that change?</p>
+  <p>The change began in the late 19th century. Sloe gin was so popular with drinkers that the major distilleries decided to get in on the action. And why wouldn’t they? It was a good way to make more money in a relatively untapped market.</p>
+  <p>It was a good thing for sloe gin, too. The distilleries knew how to make great gin, so the quality of sloe gin increased. Dramatically. And in the early 20th century, its reputation was about to improve even more.</p>
+
+  <h3>The Sloe Gin Fizz</h3>
+  <p>One reason for the rise in popularity could be sloe gin turning up in popular cocktails. At the start of the 20th century, arguably one of the most famous sloe gin cocktails was invented: <a href="/cocktails/sloe-gin-fizz/">the Sloe Gin Fizz</a>, a sweet and decadent mix of sloe gin, sour citrus and bubbles that’s very pleasing to the palate.</p>
+  <p>But this wasn’t the end of sloe gin’s rise in popularity. It was only the beginning.</p>
+
+  <h3>The Charlie Chaplin</h3>
+  <p>What really made sloe gin popular was the Charlie Chaplin, a cocktail invented at the Waldorf-Astoria some time between 1910 and 1919. It’s named after arguably the most popular celebrity of the time. Do I really have to say it? Charlie Chaplin.</p>
+  <p>The Charlie Chaplin is made with apricot brandy, sloe gin and lime juice. <a href="#charlie-chaplin">You can check out the full recipe below</a>.</p>
+
+  <h3>Gin’s popularity</h3>
+  <p>Sloe gin has been a staple of the gin liqueur world ever since, but recently its popularity has grown again. Why? <a href="/gin-and-tonic-recipe/#the-popularity-of-gin">Because gin has soared in popularity in the UK over the last few years</a>. In 2018, <a href="https://www.thedrinksbusiness.com/2018/09/sales-of-uk-gin-double-in-value-in-five-years-to-hit-2-2-billion/" rel="noopener">experts predicted</a> that yearly gin sales in the UK alone could soon top £3 billion. Now those are some <strong><em>serious</em></strong> numbers.</p>
+  <p>There are now dozens, if not hundreds, of gin brands, and you can buy a gin liqueur in pretty much any flavour you can imagine. (Yes, that includes <a href="https://amzn.to/39HE5Gc" {...amazon}>lime and coconut</a>, <a href="https://amzn.to/2UVWb2S" {...amazon}>lemon sherbet</a>, <a href="https://amzn.to/2uGjJyh" {...amazon}>Turkish delight</a> and even <a href="https://amzn.to/2UYH1tG" {...amazon}>Irn-Bru</a>.) Sloe gin fits right in as one of the more established flavours.</p>
+
+  <h2 id="what-is-sloe-gin-faqs">Sloe gin FAQs</h2>
+
+  <h3>What is the difference between gin and sloe gin?</h3>
+  <p>Gin is gin, but sloe gin is a gin liqueur. It’s made by mixing gin and sloes.</p>
+
+  <h3>What does sloe gin taste like?</h3>
+  <p>It depends on the brand. Most good sloe gins are sweet, while keeping the gin’s botanicals and juniper flavours.</p>
+
+  <h3>What is a good sloe gin?</h3>
+  <p>Since gin’s popularity exploded, so has the number of great sloe gins you can buy. So what is a good sloe gin? Great question. First, you need to decide what you’re looking for.</p>
+  <p>If you want a cheap sloe gin to try in a couple of cocktail recipes, consider Gordon’s or Greenalls. Gordon’s is rated very highly on Amazon for its price. One reviewer says: <em>“This bottle of Sloe Gin is remarkable value for money. There is no pretension; it is exactly as advertised; a wondrous colour and excellent on the tongue.”</em> Greenalls is also rated highly, if not quite as well. One reviewer says: <em>“Very good quality for the price, drink neat too.”</em></p>
+  <div class="picks">
+    <ProductPick product={{ ...gordons, label: 'Great value' }} />
+    <ProductPick product={greenalls} />
+  </div>
+  <p>If you want a sloe gin for cocktails AND for sipping neat when you fancy it, consider a couple of the slightly more expensive ones: Sipsmith and Ableforth’s Bathtub. They aren’t that much more expensive, and honestly, the reviews are just as good.</p>
+  <p>One reviewer says Sipsmith is <em>“a beautifully balanced gin, and a must-have in your home bar (or any bar, really)”</em>, and another describes Ableforth’s as <em>“Lovely flavour, smooth and a little syrupy. Similar to Sipsmith in quality but more unusual, so good when you are hosting.”</em></p>
+  <div class="picks">
+    <ProductPick product={sipsmith} />
+    <ProductPick product={ableforths} />
+  </div>
+
+  <h4>Our verdict</h4>
+  <p>With these four sloe gins considered, I don’t think you can beat Gordon’s. The price is hard to beat and the quality is very high. Great mixed into a cocktail or sipped neat, Gordon’s is the one to beat.</p>
+  <div class="picks picks--one"><ProductPick product={gordons} /></div>
+
+  <h3>Can you drink sloe gin by itself?</h3>
+  <p>Yes, you absolutely can. It’s sweet, and it tastes great either hot or chilled.</p>
+
+  <h2 id="sloe-gin-cocktails">Sloe gin cocktails</h2>
+  <p>Now let’s take a look at some tasty cocktails you can make with sloe gin.</p>
+  <ul class="cards cards--square">
+    {featured.map((r) => <RecipeCard recipe={r} />)}
+  </ul>
+
+  <div class="mini-recipe" id="charlie-chaplin">
+    <h3>The Charlie Chaplin</h3>
+    <h4>Ingredients</h4>
+    <ul>
+      <li>25ml / 0.8oz apricot brandy</li>
+      <li>25ml / 0.8oz sloe gin</li>
+      <li>25ml / 0.8oz lime juice</li>
+      <li>A slice of lime, to garnish</li>
+    </ul>
+    <h4>Method</h4>
+    <ol>
+      <li>Add ice, apricot brandy, sloe gin and lime juice to a coupe glass.</li>
+      <li>Garnish with a slice of lime.</li>
+    </ol>
+  </div>
+
+  <div class="mini-recipe">
+    <h3>Sloe Gin Negroni</h3>
+    <p>A fruitier twist on <a href="/cocktails/negroni/">the classic Negroni</a>.</p>
+    <h4>Ingredients</h4>
+    <ul>
+      <li>25ml / 0.8oz sloe gin</li>
+      <li>5ml / 0.2oz gin</li>
+      <li>25ml / 0.8oz Aperol</li>
+      <li>25ml / 0.8oz vermouth</li>
+      <li>A slice of orange, to garnish</li>
+    </ul>
+    <h4>Method</h4>
+    <ol>
+      <li>Add ice, sloe gin, gin, Aperol and vermouth to a coupe glass.</li>
+      <li>Garnish with a slice of orange.</li>
+    </ol>
+  </div>
+
+  <h2 id="summary">Summary</h2>
+  <ul>
+    <li>Sloe gin is a British red liqueur, made with gin and ripe sloes.</li>
+    <li>Sloes (<em>Prunus spinosa</em>) are small fruits related to the plum.</li>
+    <li>Sloes are rarely eaten, because they’re tart and astringent.</li>
+    <li>Gin is gin, but sloe gin is a gin liqueur.</li>
+    <li>Most good sloe gins are sweet, while keeping the gin’s botanicals and juniper flavours.</li>
+    <li>The best sloe gin for your money is Gordon’s.</li>
+    <li>Sloe gin can be used in cocktails or sipped on its own.</li>
+  </ul>
+
+  <section class="next" aria-labelledby="next-title">
+    <h2 id="next-title">Want more sloe gin cocktails?</h2>
+    <p>We have {withSloeGin} quick and easy cocktail recipes with sloe gin, from the Sloe Gin Fizz to the Alabama Slammer. Or, for more about the bottles in your cocktails, head to our <a href="/cocktail-ingredients/">cocktail ingredients</a> guides.</p>
+    <a class="btn btn--green" href="/search/?q=sloe+gin">See all {withSloeGin} sloe gin cocktails <Icon name="arrow" /></a>
+  </section>
+
+  <h2 id="further-reading">Further reading</h2>
+  <ul>
+    <li><a href="/gin-cocktails/">Quick and easy gin cocktails</a></li>
+    <li><a href="/winter-cocktail-recipes/">Winter cocktail recipes</a></li>
+  </ul>
+  <p class="sources">Sources:</p>
+  <ul class="sources">
+    <li><a href="https://en.wikipedia.org/wiki/Sloe_gin" rel="noopener">Sloe gin on Wikipedia</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Prunus_spinosa" rel="noopener">Prunus spinosa on Wikipedia</a></li>
+    <li><a href="https://sipsmith.com/exploring-the-history-of-sloe-gin/" rel="noopener">Sipsmith: exploring the history of sloe gin</a></li>
+    <li><a href="https://www.thekitchn.com/history-of-drink-what-exactly-154148" rel="noopener">The Kitchn: what exactly is sloe gin?</a></li>
+    <li><a href="https://www.thrillist.com/spirits/liqueur/how-sloe-gin-is-made" rel="noopener">Thrillist: how sloe gin is made</a></li>
+    <li><a href="https://www.theguardian.com/lifeandstyle/wordofmouth/2011/oct/12/how-to-make-sloe-gin" rel="noopener">The Guardian: how to make sloe gin</a></li>
+    <li><a href="https://1806.com.au/cocktail/charlie-chaplin" rel="noopener">1806: the Charlie Chaplin</a></li>
+    <li><a href="https://www.thedrinksbusiness.com/2018/09/sales-of-uk-gin-double-in-value-in-five-years-to-hit-2-2-billion/" rel="noopener">The Drinks Business: sales of UK gin double in value in five years</a></li>
+  </ul>
+</ArticleLayout>

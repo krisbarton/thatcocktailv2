@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import RecipeFilter from '../components/RecipeFilter.astro';
+import Icon from '../components/Icon.astro';
+import GuideSignup from '../components/GuideSignup.astro';
+import { organization, website, webPage } from '../data/schema';
+import { getCocktails, toCard, filterProps } from '../lib/cocktails';
+
+const path = '/search/';
+const title = 'Search Cocktail Recipes | ThatCocktail';
+const description = 'Search every ThatCocktail recipe by name, ingredient or glass, and find something to make with what you’ve got in.';
+
+// Every recipe is on the page so the search can find any of them, but only the newest few
+// show until something is typed. The homepage search box sends people here with ?q=.
+const LATEST = 9;
+const cocktails = await getCocktails();
+
+const schema = [organization, website, webPage({ path, type: 'SearchResultsPage', name: title, description })];
+---
+<BaseLayout title={title} description={description} schema={schema}>
+  <PageHero kicker="Find a cocktail" title="Search"
+    lead="Search every ThatCocktail recipe by name, ingredient or glass. Start typing and the results appear as you go.">
+    <Fragment slot="script">recipes</Fragment>
+  </PageHero>
+
+  <section class="section" aria-labelledby="list-title">
+    <div class="wrap" data-filter-scope>
+      <div class="list-head">
+        <h2 class="h2" id="list-title">
+          <span class="when-idle">Latest cocktail recipes</span><span class="when-searching">Search results</span>
+        </h2>
+        <p class="list-count" aria-live="polite" data-count>Latest {LATEST} of {cocktails.length} recipes</p>
+      </div>
+
+      <RecipeFilter cocktails={cocktails} action={path} placeholder="Try “gin”, “lime” or “Mojito”" limit={LATEST} autofocus />
+
+      <ul class="cards cards--square">
+        {cocktails.map((c, i) => <RecipeCard recipe={toCard(c)} {...filterProps(c)} hidden={i >= LATEST} />)}
+      </ul>
+      <p class="all"><a class="more" href="/cocktails/">Browse all {cocktails.length} cocktail recipes <Icon name="arrow" class="arrow" /></a></p>
+    </div>
+  </section>
+
+  <GuideSignup />
+</BaseLayout>
+
+<style>
+  .list-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;margin-bottom:22px}
+  .list-count{font-weight:600;color:var(--ink-soft)}
+  .when-searching{display:none}
+  [data-searching] .when-idle{display:none}
+  [data-searching] .when-searching{display:inline}
+  .all{margin-top:40px}
+  [data-searching] .all{display:none}
+</style>

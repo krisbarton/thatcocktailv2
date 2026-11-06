@@ -1,0 +1,74 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import ProductPick from '../components/ProductPick.astro';
+import Icon from '../components/Icon.astro';
+import { kit } from '../data/products';
+
+const toc = [
+  { href: '#cocktail-shaker', label: 'Cocktail shaker' },
+  { href: '#jigger', label: 'Jigger' },
+  { href: '#hawthorne-strainer', label: 'Hawthorne strainer' },
+  { href: '#bar-spoon', label: 'Bar spoon' },
+  { href: '#mixing-glass', label: 'Mixing glass' },
+  { href: '#lemon-squeezer', label: 'Lemon squeezer' },
+  { href: '#blender', label: 'Blender' },
+];
+---
+<ArticleLayout
+  title="Cocktail equipment"
+  seoTitle="Cocktail Equipment Recommendations | ThatCocktail"
+  description="To make quick, easy and delicious cocktails, you need the right cocktail equipment. Here are our top recommendations, from the cocktail shaker and jigger to the bar spoon and blender."
+  kicker="Recommendations"
+  lead="Making cocktails is more than pouring booze and mixers into a glass. If you want to make quick and easy cocktails that are also delicious, you need the right cocktail equipment. Here’s all the kit we use regularly."
+  published={new Date('2021-10-06T12:15:50Z')}
+  updated={new Date('2023-09-14T12:38:38Z')}
+  image={{ src: '/wp-content/uploads/2021/10/cocktail-equipment-recommendations.png', width: 500, height: 300, alt: 'A cocktail shaker on a bar' }}
+  crumbs={[{ name: 'Cocktail equipment', href: '/cocktail-equipment/' }]}
+  toc={toc}
+  facts={[{ icon: 'cocktail', strong: '7', text: 'bits of kit we use regularly' }]}
+  jump={{ label: 'Jump to the kit', href: '#cocktail-shaker' }}
+>
+  <p class="disclosure">Some of the links on this page are affiliate links. If you buy something through one, we earn a small commission at no extra cost to you.</p>
+
+  <h2 id="what-do-i-mean-by-cocktail-equipment">What do I mean by cocktail equipment?</h2>
+  <p>By cocktail equipment, I basically mean anything that helps me make cocktails faster and makes them taste better. That ranges from everyday household items to <a href="/cocktail-sets/">specialised cocktail sets</a>.</p>
+  <p>Believe me when I tell you: some of these are going to change your world. Let’s dive right in.</p>
+
+  <h2 id="cocktail-shaker">Cocktail shaker</h2>
+  <p>Cocktail shakers are essential to <a href="https://www.thespruceeats.com/reasons-to-own-a-cocktail-shaker-760743" rel="noopener">improving the taste of your cocktails</a>. They’ll take your cocktail-making game up a notch, so it’s important you get <a href="/cocktail-sets/">the best cocktail shaker</a>.</p>
+  <div class="picks picks--one"><ProductPick product={{ ...kit.shakerSet, label: 'Our top pick' }} /></div>
+
+  <h2 id="jigger">Jigger</h2>
+  <p>It’s important to get the mix of any cocktail right. The measurements are set for a reason: to give you a tried, tested and tasty drink. A jigger helps you get those measurements perfect. After all, it’s what the pros use.</p>
+  <div class="picks picks--one"><ProductPick product={{ ...kit.jigger, label: 'Our top pick' }} /></div>
+
+  <h2 id="hawthorne-strainer">Hawthorne strainer</h2>
+  <p>If you (or the person you’re buying for) don’t have a Hawthorne strainer as part of a cocktail shaker set, it’s a great, and incredibly useful, addition to your cocktail toolbox. The strainer holds back the ice (and any other bits you don’t want) as you pour your cocktail from the shaker into your glass.</p>
+  <div class="picks picks--one"><ProductPick product={{ ...kit.hawthorneStrainer, label: 'Our top pick' }} /></div>
+
+  <h2 id="bar-spoon">Bar spoon</h2>
+  <p>Bar spoons are great for cocktails you’re supposed to stir, rather than shake. Sure, you can probably stir your drink with any spoon, but bar spoons are the real deal. They’re long enough to reach the bottom of any glass, so you can stir properly. Their twisted spiral handle gives you a better grip. And they’re stainless steel, so they’re durable, won’t corrode and are easy to clean.</p>
+  <div class="picks picks--one"><ProductPick product={{ ...kit.barSpoon, label: 'Our top pick' }} /></div>
+
+  <h2 id="mixing-glass">Mixing glass</h2>
+  <p>If a cocktail recipe says to stir rather than shake, a mixing glass is the way to go. Why? Because it’s designed to make stirring and pouring easier. Also, it’s cooler.</p>
+  <div class="picks picks--one"><ProductPick product={{ ...kit.mixingGlass, label: 'Our top pick' }} /></div>
+
+  <h2 id="lemon-squeezer">Lemon squeezer</h2>
+  <p>This one may sound a little strange, but it saves us hours. So many cocktails want lemon or lime juice, and squeezing them by hand is a pain. You don’t get all the juice out either, which is wasteful (nothing annoys me more!). If you feel the same way, a lemon squeezer is exactly what you need.</p>
+  <div class="picks picks--one"><ProductPick product={{ ...kit.lemonSqueezer, label: 'Our top pick' }} /></div>
+
+  <h2 id="blender">Blender</h2>
+  <p>For the most part, we steer clear of blenders when it comes to making cocktails. Why? Because we specialise in quick and easy cocktails, and blenders don’t usually come into it. BUT if you want to make <a href="/cocktails/pina-colada/">a killer Piña Colada</a>, it has to be done.</p>
+  <div class="picks picks--one"><ProductPick product={{ ...kit.blender, label: 'Our top pick' }} /></div>
+
+  <section class="next" aria-labelledby="next-title">
+    <h2 id="next-title">Got the kit? Now for the booze</h2>
+    <p>Our alcohol recommendations list every brand we rate, from vodka and rum to bitters and absinthe. Or put your new kit straight to work with one of our <a href="/cocktails/">quick and easy cocktail recipes</a>.</p>
+    <a class="btn btn--green" href="/alcohol-recommendations/">See our alcohol recommendations <Icon name="arrow" /></a>
+  </section>
+</ArticleLayout>
+
+<style>
+  .disclosure{max-width:68ch;padding:14px 18px;border:1px solid var(--line);border-radius:14px;font-size:.92rem;color:var(--ink-soft)}
+</style>

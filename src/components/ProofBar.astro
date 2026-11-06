@@ -1,0 +1,14 @@
+---
+import Icon from './Icon.astro';
+import { stats } from '../data/site';
+---
+<section class="proof" aria-label="ThatCocktail in numbers">
+  <div class="wrap proof__inner">
+    <p class="proof__title">Trusted by cocktail connoisseurs since 2019</p>
+    <ul class="proof__list">
+      {stats.map((s) => (
+        <li><Icon name={s.icon} /><span><strong>{s.value}</strong> {s.label}</span></li>
+      ))}
+    </ul>
+  </div>
+</section>

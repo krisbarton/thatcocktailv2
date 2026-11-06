@@ -1,0 +1,46 @@
+---
+import Icon from './Icon.astro';
+import { mainNav } from '../data/site';
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href;
+---
+<header class="site-header">
+  <div class="wrap site-header__bar">
+    <a class="brand" href="/">
+      <img src="/images/thatcocktail-logo-400x74.png"
+           srcset="/images/thatcocktail-logo-220x40.png 220w, /images/thatcocktail-logo-400x74.png 400w"
+           sizes="190px" width="400" height="74" alt="ThatCocktail home">
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
+      <Icon name="menu" />
+      Menu
+    </button>
+    <nav class="site-nav" aria-label="Main">
+      <ul class="site-nav__list" id="site-menu">
+        {mainNav.map((item) => (
+          <li><a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a></li>
+        ))}
+        <li><a href="/search/" aria-current={isCurrent('/search/') ? 'page' : undefined}><Icon name="search" />Search</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+  const menu = document.getElementById('site-menu');
+  if (toggle && menu) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      menu.classList.toggle('is-open', open);
+    };
+    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>

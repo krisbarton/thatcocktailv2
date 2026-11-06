@@ -1,0 +1,25 @@
+---
+import CollectionLayout from '../layouts/CollectionLayout.astro';
+
+const path = '/savoury-cocktail-recipes/';
+const flavours = [
+  { name: 'Sweet cocktails', href: '/sweet-cocktail-recipes/' },
+  { name: 'Bitter cocktails', href: '/bitter-cocktail-recipes/' },
+  { name: 'Sour cocktails', href: '/sour-cocktail-recipes/' },
+];
+---
+<CollectionLayout
+  path={path}
+  collection="Savoury"
+  heading="Savoury"
+  title="Savoury Cocktails: Our Full List of Savoury Cocktail Recipes | ThatCocktail"
+  description="Our savoury cocktail recipes, including the Bloody Mary and the Dirty Martini, with measures in ml and oz."
+  lead="Not every cocktail has to be sweet. Here’s our full list of savoury cocktail recipes."
+  listLede="Every savoury ThatCocktail recipe, newest first."
+  parent={{ name: 'Flavour profiles', href: '/flavour-profiles/' }}
+  siblings={{
+    title: 'Other flavour profiles',
+    links: flavours,
+    more: { label: 'All flavour profiles', href: '/flavour-profiles/' },
+  }}
+/>

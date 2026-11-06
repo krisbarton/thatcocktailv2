@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SearchForm from '../components/SearchForm.astro';
+import SectionHead from '../components/SectionHead.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import LatestRecipes from '../components/LatestRecipes.astro';
+import { getCocktails, getPopular, searchText, toCard } from '../lib/cocktails';
+
+// The whole job of this page is to get people somewhere useful: a search, a few big sections,
+// then the popular and newest recipes.
+const popular = (await getPopular()).map(toCard);
+// What the search page searches, so the box is only filled in when it would find something.
+const searchTexts = (await getCocktails()).map(searchText);
+
+const shortcuts = [
+  { name: 'All cocktail recipes', href: '/cocktails/' },
+  { name: 'Cocktails by spirit', href: '/cocktails-by-spirit/' },
+  { name: 'Popular cocktails', href: '/popular-cocktail-recipes/' },
+  { name: 'Classic cocktails', href: '/classic-cocktails/' },
+  { name: 'Homepage', href: '/' },
+];
+---
+<BaseLayout title="Page Not Found | ThatCocktail" description="We couldn’t find that page. Search our cocktail recipes, or try one of our most popular and newest recipes." noindex>
+  <PageHero kicker="Error 404" title="This page has run" centred
+    lead="We couldn’t find the page you were looking for. It may have moved when we gave the site a refresh, or there might be a typo in the link. Search for a recipe, or try one of these instead.">
+    <Fragment slot="script">dry</Fragment>
+    <SearchForm id="not-found-search" />
+    <ul class="chips shortcuts" aria-label="Popular sections">
+      {shortcuts.map((s) => <li><a href={s.href}>{s.name}</a></li>)}
+    </ul>
+  </PageHero>
+
+  <section class="section section--mist" aria-labelledby="popular-title">
+    <div class="wrap">
+      <SectionHead id="popular-title" title="Most popular cocktail recipes"
+        lede="The recipes our readers come back to most."
+        more={{ label: 'All popular cocktail recipes', href: '/popular-cocktail-recipes/' }} />
+      <ul class="cards cards--square cards--three">
+        {popular.map((r) => <RecipeCard recipe={r} sizes="(min-width: 1000px) 370px, 45vw" />)}
+      </ul>
+    </div>
+  </section>
+
+  <LatestRecipes limit={4} />
+
+  <script type="application/json" id="search-texts" set:html={JSON.stringify(searchTexts)} />
+</BaseLayout>
+
+<script>
+  import { createSearch } from '../lib/cocktail-search';
+
+  // Old links are often recipes (/how-to-make-a-moscow-mule/, /cocktails/mojito-recipe/), so start
+  // the search with the words from the missing address, but only when the search page would find
+  // a recipe for them. Anything else (/wp-login.php, /how-to-make-a-bay-breeze/) leaves the box empty.
+  const input = document.querySelector<HTMLInputElement>('#not-found-search');
+  const last = location.pathname.split('/').filter(Boolean).pop() ?? '';
+  let words = '';
+  try {
+    words = decodeURIComponent(last)
+      .toLowerCase()
+      .replace(/\.(html?|php)$/, '')
+      .replace(/[-_+]+/g, ' ')
+      .replace(/\b(how to make|recipes?|cocktails?|ultimate|with|and|for|the|an?|of|to|in)\b/g, ' ')
+      .replace(/\b\d+\b/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  } catch {
+    // A malformed %-escape: nothing to suggest.
+  }
+  const recognised = () => {
+    if (!/^[a-z' ]{3,40}$/.test(words)) return false;
+    const texts: string[] = JSON.parse(document.getElementById('search-texts')?.textContent ?? '[]');
+    // The trailing space makes every word a finished word, so "mule" has to be a whole word
+    // somewhere rather than the start of one.
+    const matches = createSearch(texts)(`${words} `);
+    return texts.some(matches);
+  };
+  if (input && !input.value && recognised()) input.value = words;
+</script>
+
+<style>
+  .shortcuts{justify-content:center;margin-top:24px}
+</style>

@@ -1,0 +1,20 @@
+---
+/** Grenadine: from https://www.thatcocktail.com/snippets/grenadine/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product: Product = { name: 'Grenadine', img: '/wp-content/uploads/2019/06/grenadine.jpg', href: 'https://amzn.to/2L4um3M', us: { href: 'https://shrsl.com/36uwt', img: '/wp-content/uploads/2021/10/finestcallgrenadine__56853.1599537771.jpg' } };
+---
+<p><a href="https://amzn.to/2L4um3M" rel="sponsored noopener">Grenadine</a> is a non-alcoholic bar syrup that’s traditionally used to give a cocktail a red or pink tint and is made from pomegranate.</p>
+<ProductPick product={product} />
+<h4>Cocktails with Grenadine</h4>
+<ul class="chips">
+  <li><a href="/cocktails/rolling-thunder/">Rolling Thunder</a></li>
+  <li><a href="/cocktails/geez-louise/">Geez Louise</a></li>
+  <li><a href="/cocktails/red-apple/">Red Apple</a></li>
+  <li><a href="/cocktails/honolulu-hammer/">Honolulu Hammer</a></li>
+  <li><a href="/cocktails/ace/">Ace</a></li>
+  <li><a href="/cocktails/ringo/">Ringo</a></li>
+  <li><a href="/cocktails/passionate-kiss/">Passionate Kiss</a></li>
+  <li><a href="/cocktails/bahama-mama/">Bahama Mama</a></li>
+</ul>

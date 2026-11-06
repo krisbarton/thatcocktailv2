@@ -1,0 +1,161 @@
+---
+/**
+ * Layout for articles (guides, reviews, listicles) at the site root, e.g. /what-is-triple-sec/.
+ * Same look as a recipe page: neon hero with the byline and photo, then the article beside a
+ * sticky rail. Pass the article's sections as `toc` (Astro can't read headings out of a slot).
+ * Styles for the bits articles use (summary box, product picks, mini recipes) are in article.css.
+ *
+ * After the article comes the author box, then `related`: three to five articles on the same
+ * topic, per Change #1 in reverse-silo-seo-plan.md. Pass a `kicker` other than an article type,
+ * e.g. "Recommendations", for list pages that use the same look.
+ */
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Icon from '../components/Icon.astro';
+import SectionHead from '../components/SectionHead.astro';
+import ArticleCards from '../components/ArticleCards.astro';
+import GuideSignup from '../components/GuideSignup.astro';
+import GuideDialog from '../components/GuideDialog.astro';
+import { SITE, kris, media, freeGuide } from '../data/site';
+import { organization, website, krisPerson, breadcrumbs, ids } from '../data/schema';
+import '../styles/recipe.css';
+import '../styles/article.css';
+
+type Article = { title: string; href: string; img: string; width: number; height: number; alt: string; desc: string };
+
+interface Props {
+  /** The h1. */
+  title: string;
+  /** The <title>, when it should differ from the h1. */
+  seoTitle?: string;
+  description: string;
+  kicker?: string;
+  lead: string;
+  published: Date;
+  updated: Date;
+  image: { src: string; width: number; height: number; alt: string };
+  /** The trail between Home and this page. */
+  crumbs: { name: string; href: string }[];
+  toc: { href: string; label: string }[];
+  /** Up to four facts at a glance under the byline. */
+  facts?: { icon: 'clock' | 'glass' | 'cocktail' | 'sparkle' | 'globe' | 'book'; strong: string; text?: string }[];
+  /** The hero button, e.g. to the cocktails section. */
+  jump?: { label: string; href: string };
+  /** Leave out when there's nothing on the same topic yet. */
+  related?: { title: string; lede?: string; articles: Article[]; more?: { label: string; href: string } };
+}
+const { title, seoTitle = `${title} | ${SITE.name}`, description, kicker, lead, published, updated, image, crumbs, toc, facts, jump, related } = Astro.props;
+const path = Astro.url.pathname;
+const url = new URL(path, SITE.url).href;
+const ukDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const isoDate = (date: Date) => date.toISOString().slice(0, 10);
+const img = media(image.src);
+
+const schema = [
+  organization,
+  website,
+  krisPerson,
+  {
+    '@type': 'Article',
+    '@id': `${url}#article`,
+    headline: title,
+    description,
+    image: [img],
+    author: { '@id': ids.kris },
+    publisher: { '@id': ids.org },
+    datePublished: published.toISOString(),
+    dateModified: updated.toISOString(),
+    mainEntityOfPage: url,
+    breadcrumb: { '@id': `${url}#breadcrumb` },
+  },
+  breadcrumbs(path, crumbs.map((c) => ({ name: c.name, path: c.href }))),
+];
+---
+<BaseLayout title={seoTitle} description={description} ogType="article" ogImage={{ src: img, width: image.width, height: image.height, alt: image.alt }} schema={schema}>
+  <article>
+    <header class="r-hero">
+      <div class="wrap">
+        <Breadcrumbs items={crumbs} />
+
+        <div class="r-hero__grid">
+          <div>
+            {kicker && <p class="kicker a-hero__kicker">{kicker}</p>}
+            <h1 class="neon-title a-hero__title">{title}</h1>
+            <p class="r-hero__lead">{lead}</p>
+
+            <div class="byline">
+              <span class="byline__who">
+                <img src={media('/wp-content/uploads/2020/11/kris-cocktail-96x96.jpg')} width="96" height="96" alt="">
+                <span>By <a href={kris.url}>{kris.name}</a> · Updated <time datetime={isoDate(updated)}>{ukDate(updated)}</time></span>
+              </span>
+            </div>
+
+            {facts && (
+              <ul class="r-facts" aria-label="At a glance">
+                {facts.map((f) => <li><Icon name={f.icon} /><span><strong>{f.strong}</strong>{f.text && ` ${f.text}`}</span></li>)}
+              </ul>
+            )}
+
+            {jump && (
+              <div class="r-hero__actions">
+                <a class="btn btn--green" href={jump.href}>{jump.label}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+              </div>
+            )}
+          </div>
+
+          <figure class="r-hero__media a-hero__media">
+            <img src={img} width={image.width} height={image.height} alt={image.alt} fetchpriority="high" decoding="async">
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap r-body">
+      <aside class="r-aside">
+        <div class="r-aside__inner">
+          <nav class="toc" aria-label="On this page">
+            <p class="kicker">On this page</p>
+            <ol>
+              {toc.map((t) => <li><a href={t.href}>{t.label}</a></li>)}
+            </ol>
+          </nav>
+          <a class="btn toc__cta toc__all" href="/cocktails/">View all recipes <Icon name="arrow" /></a>
+          <a class="toc__cta toc__guide" href="#free-guide" aria-haspopup="dialog" data-guide-dialog>
+            <img src={media(freeGuide.cover)} width="875" height="1221" alt="" loading="lazy" decoding="async">
+            <span><span class="toc__guide-kicker">Free guide</span> Get my FREE guide</span>
+            <Icon name="arrow" />
+          </a>
+        </div>
+      </aside>
+
+      <div class="r-main">
+        <div class="r-article">
+          <slot />
+        </div>
+
+        <section class="author" aria-labelledby="author-title">
+          <img class="author__photo" src={media(kris.photo)} width="300" height="300" alt="Kris Barton, founder of ThatCocktail, enjoying a cocktail" loading="lazy" decoding="async">
+          <div>
+            <p class="kicker">About the author</p>
+            <h2 class="author__name" id="author-title">{kris.name}</h2>
+            <p class="author__bio">Kris has been making, and sometimes inventing, cocktails for more than 20 years, and founded ThatCocktail in 2019 to share quick and easy recipes you can make at home.</p>
+            <a class="more" href={kris.url}>More from Kris <Icon name="arrow" class="arrow" /></a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </article>
+
+  {related && (
+    <section class="section section--mist" aria-labelledby="related-title">
+      <div class="wrap">
+        <SectionHead id="related-title" title={related.title} lede={related.lede} more={related.more} />
+        <ArticleCards articles={related.articles} />
+      </div>
+    </section>
+  )}
+
+  <GuideSignup />
+  <GuideDialog />
+</BaseLayout>

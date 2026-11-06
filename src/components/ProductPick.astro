@@ -1,0 +1,57 @@
+---
+/**
+ * An "Our top pick" product box (the .pick styles in global.css) with a Buy now link.
+ * Pass `us` for a US alternative: the box swaps to it for visitors whose time zone is in the US,
+ * as the WordPress theme did with its country lookup. Everyone else, and anyone without
+ * JavaScript, gets the UK link.
+ */
+import { media } from '../data/site';
+import type { Product } from '../data/alcohol';
+
+interface Props {
+  product: Product;
+  /** Heading level for the product name, so it fits the page outline. */
+  as?: 'p' | 'h3' | 'h4';
+}
+const { product: p, as: Name = 'p' } = Astro.props;
+const us = p.us && { href: p.us.href, name: p.us.name ?? p.name, img: media(p.us.img ?? p.img) };
+---
+<aside class="pick" aria-label={`${p.label ?? 'Our top pick'}: ${p.name}`}
+       data-us-href={us?.href} data-us-name={us?.name} data-us-img={us?.img}>
+  <span class="pick__label">{p.label ?? 'Our top pick'}</span>
+  <img class="pick__img" src={media(p.img)} width="300" height="300" alt={p.name} loading="lazy" decoding="async">
+  <div>
+    <Name class="pick__name">{p.name}</Name>
+    {p.href ? (
+      <>
+        <a class="btn btn--green btn--sm" href={p.href} target="_blank" rel="sponsored noopener">Buy now</a>
+        <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+      </>
+    ) : (
+      <p class="pick__why">Not available to buy through us right now.</p>
+    )}
+  </div>
+</aside>
+
+<script>
+  // US time zones (and the old US/* aliases). The time zone is a good enough stand-in for the
+  // country here: the worst case is someone travelling gets the other shop.
+  const zone = Intl.DateTimeFormat().resolvedOptions().timeZone ?? '';
+  const inUS = /^(US\/|America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Juneau|Sitka|Nome|Yakutat|Metlakatla|Adak|Boise|Detroit|Menominee|Indiana\/|Kentucky\/|North_Dakota\/)|Pacific\/Honolulu)/.test(zone);
+
+  if (inUS) {
+    document.querySelectorAll<HTMLElement>('.pick[data-us-href]').forEach((pick) => {
+      const { usHref, usName, usImg } = pick.dataset;
+      const link = pick.querySelector<HTMLAnchorElement>('a.btn');
+      const name = pick.querySelector<HTMLElement>('.pick__name');
+      const img = pick.querySelector<HTMLImageElement>('.pick__img');
+      if (link && usHref) link.href = usHref;
+      if (name && usName && name.textContent !== usName) {
+        name.textContent = usName;
+        pick.setAttribute('aria-label', pick.getAttribute('aria-label')!.replace(/: .*$/, `: ${usName}`));
+        if (img) img.alt = usName;
+      }
+      if (img && usImg && img.src !== usImg) img.src = usImg;
+    });
+  }
+</script>

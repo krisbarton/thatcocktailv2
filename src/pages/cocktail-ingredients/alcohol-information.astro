@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import ArticleCards from '../../components/ArticleCards.astro';
+import CtaBox from '../../components/CtaBox.astro';
+import GuideSignup from '../../components/GuideSignup.astro';
+import { SITE, media } from '../../data/site';
+import { ingredientGuides } from '../../data/recipes';
+import { organization, website, webPage, breadcrumbs } from '../../data/schema';
+
+const path = '/cocktail-ingredients/alcohol-information/';
+const title = 'Alcohol Information: All You Need to Know About the Booze in Your Cocktails | ThatCocktail';
+const description = 'Ever wondered what that obscure cocktail ingredient is? You’re not alone. Here are all of our alcohol information guides, from triple sec to sloe gin.';
+
+const crumbs = [
+  { name: 'Cocktail ingredients', href: '/cocktail-ingredients/' },
+  { name: 'Alcohol information', href: path },
+];
+
+const schema = [
+  organization,
+  website,
+  webPage({
+    path,
+    type: 'CollectionPage',
+    name: title,
+    description,
+    extra: {
+      breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: ingredientGuides.length,
+        itemListElement: ingredientGuides.map((g, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: new URL(g.href, SITE.url).href,
+          name: g.title,
+        })),
+      },
+    },
+  }),
+  breadcrumbs(path, crumbs.map((c) => ({ name: c.name, path: c.href }))),
+];
+---
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={{ src: media('/wp-content/uploads/2021/10/Alcohol-Information.png'), width: 500, height: 300, alt: 'Alcohol Information: all you need to know about the booze in your cocktails' }}
+  schema={schema}
+>
+  <PageHero crumbs={crumbs} title="Alcohol"
+    lead="Have you ever looked at a cocktail recipe and not recognised some of the ingredients? Is it a mixer? Is it alcohol? WHAT IS IT? Here’s an alcohol information bomb for you.">
+    <Fragment slot="script">information</Fragment>
+  </PageHero>
+
+  <section class="section" aria-label="About these guides">
+    <div class="wrap">
+      <div class="prose">
+        <p>I do this all the time when looking at cocktail menus, and sometimes it puts me off trying a new cocktail. Will I like it? How strong will it be? Will its flavour overpower the rest of the ingredients?</p>
+        <p>Just a disclaimer: these guides don’t cover what alcohol is in general. They’re about specific types of alcohol that may not be that common. You’ve probably heard of a lot of these brands, but how much do you actually know about them?</p>
+        <p>Yeah, <a href="/what-is-blue-curacao/">blue curaçao</a> has probably been in every blue cocktail you’ve ever had, but what is it actually made of? There’s a guide below that covers that. You get the idea.</p>
+        <p>If you want to know more about alcohol in general, <a href="https://en.wikipedia.org/wiki/Alcoholic_drink" rel="noopener">Wikipedia has a really great entry about it</a>. Otherwise, let’s dive into our guides, and there are more to come!</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="guides-title">
+    <div class="wrap">
+      <SectionHead id="guides-title" title="Alcohol information guides"
+        lede="What’s in the bottle, what it tastes like and how to use it in cocktails." />
+      <ArticleCards articles={ingredientGuides} />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="buy-title">
+    <div class="wrap">
+      <CtaBox id="buy-title" title="Ready to buy a bottle?"
+        lede="Once you know what you’re after, our alcohol recommendations list the brands we rate, from Archers peach schnapps to Cointreau."
+        primary={{ label: 'See our alcohol recommendations', href: '/alcohol-recommendations/' }}
+        secondary={{ label: 'Alcohol reviews', href: '/cocktail-ingredients/alcohol-reviews/' }} />
+    </div>
+  </section>
+
+  <GuideSignup />
+</BaseLayout>
+

@@ -1,0 +1,21 @@
+---
+/**
+ * Breadcrumb trail for the black page heroes. "Home" is added first; the last item is the
+ * current page and isn't linked. Pair it with breadcrumbs() from src/data/schema.ts so the
+ * BreadcrumbList schema matches what's shown.
+ */
+interface Props {
+  items: { name: string; href: string }[];
+}
+const { items } = Astro.props;
+const trail = [{ name: 'Home', href: '/' }, ...items];
+---
+<nav class="crumbs" aria-label="Breadcrumb">
+  <ol>
+    {trail.map((item, i) => (
+      i === trail.length - 1
+        ? <li aria-current="page">{item.name}</li>
+        : <li><a href={item.href}>{item.name}</a></li>
+    ))}
+  </ol>
+</nav>

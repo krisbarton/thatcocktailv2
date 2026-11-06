@@ -1,0 +1,111 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import ProductPick from '../components/ProductPick.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import Icon from '../components/Icon.astro';
+import type { Product } from '../data/alcohol';
+import { ingredientGuides, spirits } from '../data/recipes';
+import { getCocktails, toCard, usesIngredient } from '../lib/cocktails';
+
+const cocktails = await getCocktails();
+const bySlug = new Map(cocktails.map((c) => [c.id, c]));
+const featured = ['mai-tai', 'zombie', 'bahama-mama', 'old-cuban'].map((slug) => {
+  const c = bySlug.get(slug);
+  if (!c) throw new Error(`what-is-gold-rum: no recipe called ${slug}`);
+  return toCard(c);
+});
+// Counted the same way as /rum-cocktails/, so the numbers match.
+const hub = spirits.find((s) => s.href === '/rum-cocktails/')!;
+const withRum = cocktails.filter((c) => usesIngredient(c, hub.match!)).length;
+
+const mountGay: Product = { name: 'Mount Gay Golden Rum', img: '/wp-content/uploads/2023/09/mout-gay-rum-e1694706254118.jpg', href: 'https://amzn.to/3PlTaDO' };
+
+const toc = [
+  { href: '#how-does-gold-rum-get-its-colour', label: 'How does gold rum get its colour?' },
+  { href: '#what-flavour-does-gold-rum-have', label: 'What does gold rum taste like?' },
+  { href: '#what-is-gold-rum-used-for', label: 'What is gold rum used for?' },
+  { href: '#gold-rum-vs-dark-rum', label: 'Gold rum vs dark rum' },
+  { href: '#gold-rum-vs-spiced-rum', label: 'Gold rum vs spiced rum' },
+  { href: '#which-gold-rum-should-i-use', label: 'Which gold rum should I use?' },
+  { href: '#summary', label: 'Summary' },
+];
+
+const related = ['/what-is-blue-curacao/', '/what-is-triple-sec/', '/what-is-sloe-gin/'].map((href) => ingredientGuides.find((g) => g.href === href)!);
+---
+<ArticleLayout
+  title="What is gold rum?"
+  seoTitle="What is Gold Rum? Everything You Need to Know | ThatCocktail"
+  description="Gold rum, also called amber rum, is a medium-bodied rum that’s usually aged. Here’s how it gets its colour, what it tastes like, how it compares with dark and spiced rum, and the cocktails to make with it."
+  kicker="Alcohol information"
+  lead="Gold rum, AKA amber rum, is a medium-bodied rum that’s generally aged. Sounds both dangerous and delicious, right? It is! Let’s dive into a little more detail."
+  published={new Date('2023-11-20T15:14:52Z')}
+  updated={new Date('2023-11-20T15:14:56Z')}
+  image={{ src: '/wp-content/uploads/2023/09/what-is-Aged-Gold-Rum.png', width: 500, height: 500, alt: 'A bottle of Bacardi 8 aged gold rum' }}
+  crumbs={[
+    { name: 'Cocktail ingredients', href: '/cocktail-ingredients/' },
+    { name: 'Alcohol information', href: '/cocktail-ingredients/alcohol-information/' },
+    { name: 'What is gold rum?', href: '/what-is-gold-rum/' },
+  ]}
+  toc={toc}
+  facts={[
+    { icon: 'cocktail', strong: 'Medium-bodied', text: 'rum' },
+    { icon: 'clock', strong: 'Aged', text: 'in oak' },
+    { icon: 'sparkle', strong: 'AKA', text: 'amber rum' },
+  ]}
+  jump={{ label: 'Jump to the cocktails', href: '#what-is-gold-rum-used-for' }}
+  related={{
+    title: 'More alcohol guides',
+    lede: 'Other bottles you’ll find in our cocktail recipes, explained.',
+    articles: related,
+    more: { label: 'All alcohol information', href: '/cocktail-ingredients/alcohol-information/' },
+  }}
+>
+  <div class="in-short">
+    <p class="kicker">In short</p>
+    <p><strong>Gold rum, also called amber rum, is a medium-bodied rum that’s generally aged.</strong> It gets its colour from wooden barrels, or sometimes from caramel.</p>
+  </div>
+
+  <h2 id="how-does-gold-rum-get-its-colour">How does gold rum get its colour?</h2>
+  <p>Gold rum gets its colour from ageing in wooden barrels, usually charred white oak barrels at that. At least, that’s the traditional way. Some gold rums get their colour from added caramel.</p>
+
+  <h2 id="what-flavour-does-gold-rum-have">What does gold rum taste like?</h2>
+  <p>Gold rum tends to have more flavour and a stronger taste than white rum. It’s usually considered a midway point between lighter and darker rums. If the gold rum was coloured with caramel, you can expect a sweeter taste.</p>
+
+  <h2 id="what-is-gold-rum-used-for">What is gold rum used for?</h2>
+  <p>Gold rum typically has tonnes of flavour. It can be mixed into a cocktail, served with a mixer, or even just drunk on the rocks. It all works! Trust me, I’ve sampled it a lot.</p>
+  <p>Cocktail-wise, probably the most popular cocktail with gold rum has to be <a href="/cocktails/mai-tai/">the Mai Tai</a>, which mixes gold rum with orange curaçao, lime juice and orgeat syrup to make something delicious and refreshing. Here are a few more to try:</p>
+  <ul class="cards cards--square">
+    {featured.map((r) => <RecipeCard recipe={r} />)}
+  </ul>
+
+  <h2 id="gold-rum-vs-dark-rum">Gold rum vs dark rum</h2>
+  <p>The difference between gold and dark rum basically comes down to how they’re matured. All rums start out as light rums and are then aged in different kinds of casks.</p>
+  <p>For example, <a href="/best-white-rum/#what-is-white-rum">white rums are aged in stainless steel tanks so they stay perfectly clear</a>. Gold rum is aged in plain oak barrels, whereas dark rum is aged in darker oak barrels for longer.</p>
+  <p>TL;DR: the difference is how long the rum is aged and what it’s aged in.</p>
+
+  <h2 id="gold-rum-vs-spiced-rum">Gold rum vs spiced rum</h2>
+  <p>Despite generally being darker, spiced rum is often based on light rum. It’s darker because of the herbs, spices and sometimes caramel used to make it.</p>
+
+  <h2 id="which-gold-rum-should-i-use">Which gold rum should I use?</h2>
+  <p>For gold rum, we recommend Mount Gay:</p>
+  <div class="picks picks--one"><ProductPick product={mountGay} /></div>
+
+  <h2 id="summary">Summary</h2>
+  <p>So, what is gold rum? Gold rum is different from other rums because of how it’s aged, and sometimes what goes into it. It’s usually aged in charred white oak barrels, or coloured with caramel, to get its golden colour.</p>
+
+  <section class="next" aria-labelledby="next-title">
+    <h2 id="next-title">Want more rum cocktails?</h2>
+    <p>We have {withRum} quick and easy rum cocktails, from the Mai Tai to the Strawberry Daiquiri, sorted by white, dark and spiced rum.</p>
+    <a class="btn btn--green" href="/rum-cocktails/">See all {withRum} rum cocktails <Icon name="arrow" /></a>
+  </section>
+
+  <h2 id="further-reading">Further reading</h2>
+  <ul>
+    <li><a href="/cocktails/mai-tai/">The Mai Tai recipe</a></li>
+    <li><a href="/best-white-rum/">The best white rum for cocktails</a></li>
+  </ul>
+  <p class="sources">Sources:</p>
+  <ul class="sources">
+    <li><a href="https://en.wikipedia.org/wiki/Rum#Categorization" rel="noopener">Rum categories on Wikipedia</a></li>
+  </ul>
+</ArticleLayout>

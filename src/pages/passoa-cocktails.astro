@@ -1,0 +1,77 @@
+---
+import SpiritLayout from '../layouts/SpiritLayout.astro';
+import { media } from '../data/site';
+---
+<SpiritLayout
+  spirit="Passoa"
+  filter
+  title="Passoa Cocktails: Fruity Passion Fruit Cocktail Recipes | ThatCocktail"
+  description="Passoa cocktails are fruity, exotic and always delicious: the very definition of a summer cocktail. Here’s every Passoa cocktail on ThatCocktail, including the Pornstar Martini."
+  lead="Passoa cocktails are just the best: fruity, exotic and always delicious. For me, they’re the very definition of a summer cocktail."
+  ogImage={{ src: media('/wp-content/uploads/2022/07/Passoa-Cocktails.png'), width: 500, height: 300, alt: 'Passoa Cocktails title card' }}
+>
+  <h2>What is Passoa?</h2>
+  <p><strong>Passoa is a passion fruit liqueur made in France, with an alcoholic strength of between 14.9% and 20%.</strong></p>
+  <p>It was created in 1985 by the Rémy Cointreau group, launched in Europe in 1986 and went worldwide in 1994. <a href="/what-is-passoa/">You can read more about Passoa here.</a></p>
+
+  <aside class="pick" aria-label="Our Passoa pick">
+    <span class="pick__label">Our top pick</span>
+    <img class="pick__img" src={media('/wp-content/uploads/2019/06/passoa.jpg')} width="199" height="300" alt="Bottle of Passoa passion fruit liqueur" loading="lazy" decoding="async">
+    <div>
+      <p class="pick__name">Passoa</p>
+      <p class="pick__why">The passion fruit liqueur behind every recipe on this page.</p>
+      <a class="btn btn--green btn--sm" href="https://amzn.to/2oKtXKq" target="_blank" rel="sponsored noopener">Buy now</a>
+      <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+    </div>
+  </aside>
+
+  <h2>What’s the most popular Passoa cocktail?</h2>
+  <figure>
+    <img src={media('/wp-content/uploads/2019/10/pornstar-martini-cocktail-1.jpg')} width="500" height="666" alt="Pornstar Martini topped with half a passion fruit, beside a bottle of Bollinger and a shot of champagne" loading="lazy" decoding="async">
+  </figure>
+  <p>The most popular cocktail that uses Passoa right now has to be the <a href="/cocktails/pornstar-martini/">Pornstar Martini</a>, or Passion Fruit Martini, depending on where you go and how family-friendly the venue is.</p>
+  <p>It combines Passoa with luxurious vanilla vodka, passion fruit juice and lime juice to create something truly remarkable.</p>
+
+  <h2>What equipment you’ll need to make Passoa cocktails</h2>
+  <p>To make these delicious Passoa cocktails, you’re going to need the following cocktail equipment.</p>
+
+  <h3>A cocktail shaker</h3>
+  <p><a href="/cocktail-equipment/">Cocktail shakers improve the taste of cocktails</a>. It’s a fact. There’s a reason the famous British spy James Bond says <strong><em>“shaken, not stirred”</em></strong>, and that reason is: it tastes better.</p>
+  <p>If you don’t already have a <a href="/cocktail-equipment/#cocktail-shaker">cocktail shaker set</a>, you might want to check out <a href="/cocktail-sets/">our detailed cocktail shaker comparison</a>. But to cut a long story short, here’s the one we recommend:</p>
+  <aside class="pick" aria-label="Our cocktail shaker pick">
+    <span class="pick__label">Our top pick</span>
+    <img class="pick__img" src={media('/wp-content/uploads/2020/11/cocktail-set-autumndeer.png')} width="300" height="280" alt="Autumndeer cocktail shaker set with jigger, strainer and bar spoon" loading="lazy" decoding="async">
+    <div>
+      <p class="pick__name">Autumndeer Cocktail Shaker Set</p>
+      <p class="pick__why">The cocktail shaker set we recommend.</p>
+      <a class="btn btn--green btn--sm" href="https://amzn.to/2U5A3Sl" target="_blank" rel="sponsored noopener">Buy now</a>
+      <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+    </div>
+  </aside>
+
+  <h3>Cocktail glasses</h3>
+  <p>These cocktails taste great, but let’s make them <em>look</em> great too. In my experience, the right glass for the right cocktail always makes it more enjoyable, and for a lot of Passoa cocktails, the right glass is a <a href="/cocktail-glassware/#cocktail-glasses">cocktail glass</a>. We recommend:</p>
+  <aside class="pick" aria-label="Our cocktail glass pick">
+    <span class="pick__label">Our top pick</span>
+    <img class="pick__img" src={media('/wp-content/uploads/2019/09/cocktail-glasses-1.jpg')} width="300" height="300" alt="Set of martini glasses" loading="lazy" decoding="async">
+    <div>
+      <p class="pick__name">Martini Glasses</p>
+      <p class="pick__why">The cocktail glasses we recommend.</p>
+      <a class="btn btn--green btn--sm" href="https://amzn.to/2ZS7cG6" target="_blank" rel="sponsored noopener">Buy now</a>
+      <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+    </div>
+  </aside>
+
+  <h3>Highball glasses</h3>
+  <p><a href="/cocktail-glassware/#highball-glasses">Highball glasses</a> are the most common glasses in the cocktail world. You can put most cocktails in one, from the <a href="/cocktails/long-island-iced-tea/">Long Island Iced Tea</a> to a Bay Breeze.</p>
+  <aside class="pick" aria-label="Our highball glass pick">
+    <span class="pick__label">Our top pick</span>
+    <img class="pick__img" src={media('/wp-content/uploads/2019/09/highball-glasses.jpg')} width="300" height="143" alt="Set of highball glasses" loading="lazy" decoding="async">
+    <div>
+      <p class="pick__name">Highball Glasses</p>
+      <p class="pick__why">The highball glasses we recommend.</p>
+      <a class="btn btn--green btn--sm" href="https://amzn.to/3nx7z22" target="_blank" rel="sponsored noopener">Buy now</a>
+      <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+    </div>
+  </aside>
+</SpiritLayout>

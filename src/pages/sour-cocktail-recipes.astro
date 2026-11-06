@@ -1,0 +1,25 @@
+---
+import CollectionLayout from '../layouts/CollectionLayout.astro';
+
+const path = '/sour-cocktail-recipes/';
+const flavours = [
+  { name: 'Sweet cocktails', href: '/sweet-cocktail-recipes/' },
+  { name: 'Bitter cocktails', href: '/bitter-cocktail-recipes/' },
+  { name: 'Savoury cocktails', href: '/savoury-cocktail-recipes/' },
+];
+---
+<CollectionLayout
+  path={path}
+  collection="Sour"
+  heading="Sour"
+  title="Sour Cocktails: Our Full List of Sour Cocktail Recipes | ThatCocktail"
+  description="Our full list of sour cocktail recipes, from the Whiskey Sour to the Amaretto Sour, with measures in ml and oz."
+  lead="Sharp, zingy and refreshing. Here’s our full list of sour cocktail recipes."
+  listLede="Every sour ThatCocktail recipe, newest first."
+  parent={{ name: 'Flavour profiles', href: '/flavour-profiles/' }}
+  siblings={{
+    title: 'Other flavour profiles',
+    links: flavours,
+    more: { label: 'All flavour profiles', href: '/flavour-profiles/' },
+  }}
+/>

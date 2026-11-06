@@ -1,0 +1,12 @@
+---
+/** Demerara Rum: from https://www.thatcocktail.com/snippets/demerara-rum/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product: Product = { name: 'O.V.D Demerara Rum', img: '/wp-content/uploads/2023/11/demerara-rum-e1700730866980.jpg', href: 'https://link.amazon/B0beAlMKL' };
+---
+<p>Demerara Rum is made by fermenting molasses, which results in sweeter, rounder, and usually darker rum.</p>
+<p>All Demerara Rum is distilled in Guyana by <a href="https://www.newworlder.com/guide-to-guyana-demerara-rum/" rel="noopener">the last remaining Guyanese distiller, Demerara Distillers Limited</a> – aka DDL.</p>
+<p>The rum is produced on the banks of the Demerara River using the sugarcane grown nearby.</p>
+<p>For Demerara Rum, we recommend:</p>
+<ProductPick product={product} />

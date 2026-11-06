@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import RecipeCard from '../../components/RecipeCard.astro';
+import RecipeFilter from '../../components/RecipeFilter.astro';
+import GuideSignup from '../../components/GuideSignup.astro';
+import { SITE } from '../../data/site';
+import { organization, website, webPage, breadcrumbs } from '../../data/schema';
+import { getCocktails, toCard, cocktailUrl, filterProps } from '../../lib/cocktails';
+
+const path = '/cocktails/';
+const title = 'Cocktail Recipes: Quick & Easy Cocktails to Make at Home | ThatCocktail';
+const description = 'Every ThatCocktail recipe in one place, newest first. Simple steps, measures in ml and oz, and most take about two minutes to make.';
+
+const cocktails = await getCocktails();
+
+const schema = [
+  organization,
+  website,
+  webPage({
+    path,
+    type: 'CollectionPage',
+    name: title,
+    description,
+    extra: {
+      breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: cocktails.length,
+        itemListElement: cocktails.map((c, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: new URL(cocktailUrl(c), SITE.url).href,
+          name: c.data.title,
+        })),
+      },
+    },
+  }),
+  breadcrumbs(path, [{ name: 'Cocktails', path }]),
+];
+---
+<BaseLayout title={title} description={description} schema={schema}>
+  <PageHero kicker="All our cocktails" title="Cocktail"
+    lead="Every ThatCocktail recipe in one place, newest first. Each one lists exact measures in ml and oz, the glass to use and a few simple steps.">
+    <Fragment slot="script">recipes</Fragment>
+  </PageHero>
+
+  <section class="section" aria-labelledby="list-title">
+    <div class="wrap" data-filter-scope>
+      <div class="list-head">
+        <h2 class="h2" id="list-title">Latest cocktail recipes</h2>
+        <p class="list-count" aria-live="polite" data-count>{cocktails.length} recipes</p>
+      </div>
+
+      <RecipeFilter cocktails={cocktails} action={path} placeholder="Try “gin”, “lime” or “Mojito”" />
+
+      <ul class="cards cards--square">
+        {cocktails.map((c) => <RecipeCard recipe={toCard(c)} {...filterProps(c)} />)}
+      </ul>
+    </div>
+  </section>
+
+  <GuideSignup />
+</BaseLayout>
+
+<style>
+  .list-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;margin-bottom:22px}
+  .list-count{font-weight:600;color:var(--ink-soft)}
+</style>

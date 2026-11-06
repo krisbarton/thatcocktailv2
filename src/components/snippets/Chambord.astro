@@ -1,0 +1,11 @@
+---
+/** Chambord: from https://www.thatcocktail.com/snippets/chambord/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product: Product = { name: 'Chambord', img: '/wp-content/uploads/2022/03/chambord.jpg', href: 'https://amzn.to/3wbJUdu', us: { href: 'https://shrsl.com/3ffio' } };
+---
+<p>Chambord is a fruit-based liqueur. It was created in 1982 and is made from red and black raspberries, Madagascan vanilla, Moroccan citrus peel, honey, and Cognac.</p>
+<p>It’s a lovely liqueur that’s particularly good poured over ice cream.</p>
+<p>And I think that’s one of the reasons some people prefer to use Chambord over Creme de Cassis: they prefer the flavour of raspberry over blackcurrant, but also it’s sweeter.</p>
+<ProductPick product={product} />

@@ -1,0 +1,75 @@
+/*
+  Articles (ArticleLayout). The hero, rail, prose and author box come from recipe.css;
+  these are the extra blocks articles use inside .r-article.
+*/
+
+/* Hero: the h1 is a question, not "Name recipe", so it's a little smaller, and the photo keeps its shape. */
+.a-hero__kicker{margin-bottom:14px}
+.a-hero__title{font-size:clamp(2.5rem,5.6vw,4.4rem);line-height:.98;text-wrap:balance}
+.r-hero__media.a-hero__media img{aspect-ratio:auto;height:auto}
+
+/* "In short": the answer up front. */
+.r-article .in-short{max-width:68ch;padding:20px 22px;border:1px solid var(--cyan);border-radius:16px;background:var(--cyan-wash)}
+.r-article .in-short .kicker{color:var(--teal-ink)}
+.r-article .in-short p{margin-top:8px;font-size:1.12rem;color:#0a3f4a}
+.r-article .in-short strong{color:#000}
+
+/* Product picks (ProductPick), two to a row. */
+.r-article .picks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 22px;margin-top:34px;max-width:none}
+.r-article .picks .pick{margin:0!important;max-width:none}
+.r-article .picks--one{grid-template-columns:minmax(0,1fr);max-width:480px}
+.r-article .pick p{max-width:none}
+/* .r-article img (recipe.css) makes every image full width; keep the bottle shots small. */
+.r-article .pick .pick__img{width:96px;height:140px;object-fit:contain;border-radius:0}
+
+/* Recipe cards (RecipeCard) inside an article: undo the prose list, text and image styles from recipe.css. */
+.r-article ul.cards{margin-top:26px;padding-left:0;list-style:none}
+.r-article .cards .card{max-width:none}
+.r-article .card .card__title{margin-top:0;font:700 1.22rem/1.12 var(--font-display);color:#000}
+.r-article .card .card__title a{font-weight:inherit}
+.r-article .card .card__meta{max-width:none;font-size:.875rem;font-weight:600;line-height:1.5;color:var(--pink-ink)}
+.r-article .card .card__ingr{max-width:none;font-size:.875rem;line-height:1.45;color:var(--ink-soft)}
+.r-article .card .card__media img{height:100%;border-radius:0}
+
+/* A recipe that only lives in the article, with no page of its own. */
+.r-article .mini-recipe{max-width:68ch;margin-top:26px;padding:22px 24px;border:1px solid var(--line);border-radius:var(--radius)}
+.r-article .mini-recipe h3{margin-top:0}
+.r-article .mini-recipe h4{margin-top:16px;font:700 1rem/1.2 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--pink-ink)}
+.r-article .mini-recipe ul,.r-article .mini-recipe ol{margin-top:8px}
+.r-article ol{padding-left:1.3em;list-style:decimal}
+.r-article ol li::marker{font-weight:700}
+
+.r-article blockquote{max-width:64ch;margin-top:20px;padding:6px 0 6px 22px;border-left:4px solid var(--pink-deep);font-size:1.12rem;font-style:italic;color:#333}
+.r-article blockquote p{font-size:inherit}
+
+/* Closing call to action: the cluster's collection page (Change #4 in reverse-silo-seo-plan.md). */
+.r-article .next{max-width:68ch;margin-top:clamp(44px,5vw,60px);padding:24px 26px;border-radius:var(--radius);background:var(--black);color:#fff}
+.r-article .next h2{margin:0;font-size:clamp(1.5rem,2.6vw,1.9rem);color:var(--cyan)}
+.r-article .next p{color:var(--on-black)}
+.r-article .next a{color:var(--cyan)}
+.r-article .next .btn{margin-top:18px;color:var(--green-ink)}
+.r-article .next .btn:hover{color:#fff}
+
+/* Comparison tables in reviews. They scroll sideways on narrow screens rather than squash. */
+.r-article .table-wrap{max-width:68ch;margin-top:20px;overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+.r-article table{width:100%;border-collapse:collapse;font-size:.98rem}
+.r-article caption{padding:12px 16px;text-align:left;font-size:.85rem;color:var(--ink-soft);caption-side:bottom;border-top:1px solid var(--line)}
+.r-article th,.r-article td{padding:11px 16px;text-align:left;vertical-align:top}
+.r-article thead th{background:var(--mist);font-weight:700;color:#000;white-space:nowrap}
+.r-article tbody tr+tr td{border-top:1px solid var(--line)}
+.r-article td:first-child{width:3.5em;font:800 1rem/1.5 var(--font-display);color:var(--pink-ink)}
+.r-article tbody tr:first-child td{background:var(--cyan-wash)}
+
+/* A photo inside the article. */
+.r-article .a-figure{max-width:640px;margin-top:24px}
+.r-article .a-figure img{display:block}
+
+.r-article .sources{font-size:.95rem}
+.r-article .sources li{font-size:.95rem;color:var(--ink-soft)}
+
+.r-article + .author{margin-top:clamp(44px,5vw,60px)}
+
+@media (max-width:699px){
+  .r-article .picks{grid-template-columns:minmax(0,1fr)}
+  .r-article .pick .pick__img{width:70px;height:110px}
+}

@@ -1,0 +1,22 @@
+---
+/**
+ * A YouTube video in a neon frame, from youtube-nocookie.com so it sets no cookies until it's
+ * played. Used on recipe pages and collection pages.
+ */
+interface Props {
+  /** The YouTube video id, e.g. QfZCAWgHiFg. */
+  id: string;
+  title: string;
+}
+const { id, title } = Astro.props;
+---
+<div class="video">
+  <iframe src={`https://www.youtube-nocookie.com/embed/${id}?rel=0`} title={title}
+          loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
+<style>
+  .video{position:relative;margin-top:20px;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#000;box-shadow:0 0 0 2px var(--cyan),0 0 0 8px rgba(81,229,255,.12)}
+  .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+</style>

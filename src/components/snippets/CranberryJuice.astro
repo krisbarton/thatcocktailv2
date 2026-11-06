@@ -1,0 +1,18 @@
+---
+/** Cranberry Juice: from https://www.thatcocktail.com/snippets/cranberry-juice/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product: Product = { name: 'Cranberry Juice', img: '/wp-content/uploads/2022/06/cranberry-juice-e1654852148815.jpg', href: 'https://amzn.to/3mARhoU' };
+---
+<p>As you’d expect, Cranberry Juice is made out of Cranberries – but it also contains sugar and other fruit juices.</p>
+<p>The Cranberry is a fruit native to North America and is recognised for its bright red colour, tart taste, and its sheer versatility.</p>
+<p>Cranberries can be used to make a whole host of things:</p>
+<ul>
+<li>Cranberry Juice</li>
+<li>Cranberry Sauce</li>
+<li>Frozen Cranberries</li>
+<li>Various dietary supplements that contain Cranberry extract.</li>
+</ul>
+<p>For Cranberry Juice, we recommend:</p>
+<ProductPick product={product} />

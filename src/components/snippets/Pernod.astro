@@ -1,0 +1,9 @@
+---
+/** Pernod: from https://www.thatcocktail.com/snippets/pernod/ */
+import ProductPick from '../ProductPick.astro';
+import { alcoholPick } from '../../data/alcohol';
+---
+<p>Pernod is a type of Absinthe that can be traced all the way back to the 1790s.</p>
+<p>It’s made by mixing wormwood, fennel, melissa, and anise in a neutral spirit (usually wine) in a copper alembic where the mixture is distilled to produce a transparent liquor.</p>
+<p>For Pernod, we recommend:</p>
+<ProductPick product={alcoholPick('pernod')} />

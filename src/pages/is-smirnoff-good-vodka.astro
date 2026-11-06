@@ -1,0 +1,190 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import ProductPick from '../components/ProductPick.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import Icon from '../components/Icon.astro';
+import { alcoholPick } from '../data/alcohol';
+import { media } from '../data/site';
+import { alcoholReviews, spirits } from '../data/recipes';
+import { getCocktails, toCard, usesIngredient } from '../lib/cocktails';
+
+const cocktails = await getCocktails();
+const bySlug = new Map(cocktails.map((c) => [c.id, c]));
+const featured = ['moscow-mule', 'cosmopolitan', 'woo-woo', 'kamikaze'].map((slug) => {
+  const c = bySlug.get(slug);
+  if (!c) throw new Error(`is-smirnoff-good-vodka: no recipe called ${slug}`);
+  return toCard(c);
+});
+// Counted the same way as /vodka-cocktails/, so the numbers match.
+const vodka = spirits.find((s) => s.href === '/vodka-cocktails/')!;
+const withVodka = cocktails.filter((c) => usesIngredient(c, vodka.match!)).length;
+
+// Same Smirnoff as /alcohol-recommendations/, so it keeps the US link.
+const smirnoff = alcoholPick('vodka');
+const amazon = { target: '_blank', rel: 'sponsored noopener' };
+
+const toc = [
+  { href: '#who-are-smirnoff', label: 'Who are Smirnoff?' },
+  { href: '#what-are-you-going-to-use-smirnoff-vodka-for', label: 'What will you use it for?' },
+  { href: '#why-is-smirnoff-vodka-so-cheap', label: 'Why is Smirnoff so cheap?' },
+  { href: '#is-there-a-difference-between-cheap-and-expensive-vodka', label: 'Cheap vs expensive vodka' },
+  { href: '#what-is-vodka-made-from', label: 'What is vodka made from?' },
+  { href: '#is-smirnoff-good-vodka', label: 'Is Smirnoff good vodka?' },
+  { href: '#cocktails-with-vodka', label: 'Cocktails with vodka' },
+];
+
+const related = alcoholReviews.filter((a) => a.href !== '/is-smirnoff-good-vodka/');
+---
+<ArticleLayout
+  title="Is Smirnoff good vodka?"
+  seoTitle="Is Smirnoff Good Vodka? Here’s Our Honest Review | ThatCocktail"
+  description="Smirnoff is in every shop and it’s cheap, but is Smirnoff good vodka? Here’s our honest review: its history, why it’s so cheap, and whether it’s good for cocktails."
+  kicker="Alcohol review"
+  lead="Smirnoff vodka is everywhere. In literally every shop where you can buy booze. And you can buy it for a really good price too. But is Smirnoff good vodka? Should you buy it? Here’s our honest review."
+  published={new Date('2021-07-14T11:01:13Z')}
+  updated={new Date('2023-10-09T09:29:56Z')}
+  image={{ src: '/wp-content/uploads/2021/07/is-smirnoff-good-vodka.png', width: 500, height: 300, alt: 'A bottle of Smirnoff vodka behind a bar' }}
+  crumbs={[
+    { name: 'Cocktail ingredients', href: '/cocktail-ingredients/' },
+    { name: 'Alcohol reviews', href: '/cocktail-ingredients/alcohol-reviews/' },
+    { name: 'Is Smirnoff good vodka?', href: '/is-smirnoff-good-vodka/' },
+  ]}
+  toc={toc}
+  facts={[
+    { icon: 'sparkle', strong: 'Yes', text: 'it’s good' },
+    { icon: 'book', strong: '1864', text: 'founded' },
+    { icon: 'globe', strong: 'No. 21', text: 'recipe' },
+  ]}
+  jump={{ label: 'Jump to the verdict', href: '#is-smirnoff-good-vodka' }}
+  related={{
+    title: 'More alcohol reviews',
+    lede: 'Which brand to buy, and whether the one you’ve got is any good.',
+    articles: related,
+    more: { label: 'All alcohol reviews', href: '/cocktail-ingredients/alcohol-reviews/' },
+  }}
+>
+  <div class="in-short">
+    <p class="kicker">To cut a long story short</p>
+    <p><strong>Is Smirnoff good vodka? Yes, it is.</strong> Here’s why:</p>
+  </div>
+  <ul>
+    <li>It’s a premium vodka, and <strong><em>by premium we mean it contains aromatic impurities that curb the burn of the pure grain alcohol and make for a smoother ride</em></strong>.</li>
+    <li>It’s a well-established brand that’s instantly recognisable worldwide.</li>
+    <li>You can get it at a good price, and you always know what you’re getting when you buy a bottle.</li>
+    <li>Despite the name, it’s not actually made in Russia. It’s made all over Europe, and there was a time when the Smirnoff family was persecuted by the Russian government (<a href="#outlawed-and-communism">see the history below</a>).</li>
+  </ul>
+  <div class="picks picks--one"><ProductPick product={smirnoff} /></div>
+  <p>Now let’s get into a little more detail about why we know Smirnoff is good vodka.</p>
+
+  <h2 id="who-are-smirnoff">Who are Smirnoff?</h2>
+  <p>If you’re reading this, you’ve heard of Smirnoff. I bet you can picture the logo, and the font of the lettering in it, right now. Am I right?</p>
+  <p>That’s because Smirnoff is one of the most iconic brands on the planet, and it’s been around since 1864. To put that date in context, that’s before the Royal Albert Hall was built. Or before the Oxford English Dictionary. Or better yet, before Greenwich Mean Time was a thing.</p>
+  <p>ANYWAY. Smirnoff traces its origins to a distillery set up by P. A. Smirnoff in Moscow. P. A. stood out from his competitors by filtering his vodka through charcoal columns five times, more than anybody else was doing at the time.</p>
+  <figure class="a-figure">
+    <img src={media('/wp-content/uploads/2021/03/smirnoff-vodka-1024x683.jpg')} width="1024" height="683" alt="A bottle of Smirnoff vodka" loading="lazy" decoding="async">
+  </figure>
+
+  <h3>Table Wine No. 21</h3>
+  <p>Smirnoff’s success skyrocketed under the name “Table Wine No. 21”, and it was drunk by royalty and peasants alike. So even back then, the vodka was both affordable and decent quality.</p>
+  <p>It’s from “Table Wine No. 21” that Smirnoff’s Recipe No. 21 got its name. But table wine? They classified this as a table wine? WTF? Imagine downing a wine glass full of vodka like a nice rosé on a hot summer’s day. Would be brilliant, wouldn’t it?</p>
+
+  <h3 id="outlawed-and-communism">Outlawed and communism</h3>
+  <p>In 1914, Smirnoff took a big hit: prohibition came to Russia, which meant booze was outlawed. Interesting. I didn’t realise this happened in Russia too. I thought it was just the US. You learn something every day.</p>
+  <p>By now, P. A.’s third son, Vladimir, had taken over the family business. But in 1919, things got political when Vladimir joined the anti-Bolshevik White Army and helped refugees escape through southern Russia.</p>
+  <p>Vladimir was captured. And tortured. And then sentenced to the firing squad. But before the execution could take place, the White Army freed him, and Vladimir escaped Russia.</p>
+
+  <h3>Starting fresh</h3>
+  <p>Vladimir tried to restart the vodka business in Poland and France, but was hampered by laws and bankruptcy. In 1933, a Russian ex-pat living in New York, Rudolph Kunett, bought the rights to make and sell Smirnoff in North America.</p>
+  <p>In 1941, Smirnoff took off in America when the brand’s US team met a bar owner in California and created the famous <a href="/cocktails/moscow-mule/">Moscow Mule</a>. Trust me, you’re gonna love it.</p>
+  <p>Smirnoff became a household name. Why? I can’t say for sure, but I suspect it all goes back to Table Wine No. 21: it’s good-quality vodka at a great price.</p>
+  <p>So we know the history of Smirnoff, but here’s what we don’t know for certain yet: <strong><em>is Smirnoff good vodka?</em></strong></p>
+
+  <h2 id="what-are-you-going-to-use-smirnoff-vodka-for">What are you going to use Smirnoff vodka for?</h2>
+  <p>“Which vodka do you think I should buy?” A young (but of legal age, honest) me asked the guy behind the counter in Bargain Booze. (For those of you who don’t know, Bargain Booze is exactly what it sounds like: a place to buy cheap alcohol.)</p>
+  <p>The guy glared at me for a while and finally said, “Belvedere is good. The Spice Girls drink it.”</p>
+  <p>I looked at him, dumbfounded. Two thoughts struck me. Firstly, why did he think mentioning the Spice Girls would sway my decision? Secondly, what did I think he was going to say? He was obviously going to pick the most expensive one there, or whichever they had the most stock of. His recommendation was probably based on what was best for the shop, not me.</p>
+  <p>Also, what did I care? I didn’t need the vodka that tasted the best. I had no intention of sipping it straight or smashing vodka shots. I was buying it to make Moscow Mules. For me, the vodka was just the alcoholic base, something to give the cocktail a little kick. I wanted the taste to come from the ginger beer and lime.</p>
+  <p>At the same time, I didn’t want some cheap and cheerful vodka that would burn my innards out either. You know, the stuff from behind the counter of a suspect corner shop with a biohazard symbol on it? Yeah, I didn’t need that in my life. I just wanted something I could trust, at a decent price.</p>
+  <p>Looking at the shelves, one choice leapt out at me: Smirnoff. I grabbed a litre bottle and plonked it down on the counter. The guy sighed and shook his head in a “why did you even ask me” kind of way. But I didn’t care. I was going to make Moscow Mules and have a good time. And I wasn’t going to spend my entire paper round money doing it either.</p>
+
+  <h3>What’s your point, Baby Spice?</h3>
+  <p>My point is, on that occasion I didn’t really care about the whole <em>is Smirnoff good vodka?</em> question. What I really cared about was:</p>
+  <ul>
+    <li>Buying vodka.</li>
+    <li>Buying a brand I recognised.</li>
+    <li>Having enough money left over for a Big Mac on the way home.</li>
+  </ul>
+  <p>If I was drinking it neat, or really cared that much about the taste, it would’ve been a different story. I might’ve tried a more expensive brand. But as a vodka novice, would I really have tasted the difference, neat or in a cocktail? I have my doubts.</p>
+  <p>That said, Smirnoff is a great brand. It’s been around forever, <em>and there’s a reason for that</em>: <strong><em>Smirnoff is a good vodka.</em></strong></p>
+
+  <h2 id="why-is-smirnoff-vodka-so-cheap">Why is Smirnoff vodka so cheap?</h2>
+  <p>Smirnoff being so cheap has nothing to do with its taste. It’s because it’s mass-produced. Smirnoff is a big company that’s been around a long time and can make vodka in big quantities, cheaply.</p>
+  <p>So you might ask: <em>if they can make it so cheaply, why don’t they sell it for the same price as the more expensive brands?</em> Essentially, it boils down to supply and demand. For example:</p>
+  <ul>
+    <li><strong>Demand:</strong> 100 people want to buy vodka.</li>
+    <li><strong>Supply:</strong> Smirnoff makes 200 bottles.</li>
+  </ul>
+  <p>Supply is higher than demand, so the price is lower. Smirnoff doesn’t need a massive profit on each bottle, because it sells a lot of bottles.</p>
+  <p>Some of the more expensive brands have higher production costs, and market their vodka so that supply and demand are the other way round:</p>
+  <ul>
+    <li><strong>Demand:</strong> 200 people want to buy their vodka.</li>
+    <li><strong>Supply:</strong> 100 bottles are made.</li>
+  </ul>
+  <p>Because more people want the vodka than there are bottles, they can charge a higher price. The vodka is seen as rare, and people will pay extra.</p>
+
+  <h2 id="is-there-a-difference-between-cheap-and-expensive-vodka">Is there a difference between cheap and expensive vodka?</h2>
+  <p>Cheap and expensive vodka is a strange one. Believe it or not, cheap vodka has fewer impurities than expensive vodka. Here’s why: cheap vodka is literally just pure grain alcohol mixed with water, and that stuff will burn as it slides down your throat.</p>
+  <p>Premium vodka, on the other hand, contains aromatic impurities that curb the burn of the pure grain alcohol and make for a smoother ride. That’s also what makes its flavour more neutral, and a perfect base for lots of cocktails.</p>
+
+  <h2 id="what-is-vodka-made-from">What is vodka made from?</h2>
+  <p>Basically, vodka is pure grain alcohol and water. If a vodka is bottled at 80 proof, that’s 40% alcohol and 60% water.</p>
+
+  <h2 id="is-smirnoff-good-vodka">Is Smirnoff good vodka?</h2>
+  <p>So, with all that information to digest, I guess you wanna know the answer to the million-dollar question: is Smirnoff good vodka? The short answer is: <strong>yes</strong>.</p>
+  <div class="picks picks--one"><ProductPick product={{ ...smirnoff, label: 'Our verdict' }} /></div>
+  <p>The long answer is:</p>
+  <ul>
+    <li>It’s a premium vodka.</li>
+    <li>It’s a well-established brand that’s instantly recognisable worldwide.</li>
+    <li>You can get it at a good price, and you always know what you’re getting.</li>
+    <li>It makes a killer <a href="/cocktails/moscow-mule/">Moscow Mule</a>.</li>
+  </ul>
+  <p>But I guess the essence of our review is: <em>what do you want to use Smirnoff for?</em> If you want a vodka to sip neat, you’ll want a craft vodka that doesn’t add aromatics to make it smoother and more neutral. You won’t want Smirnoff for that. Smirnoff is a premium vodka that’s smooth AF.</p>
+  <p>So the question becomes: is Smirnoff good vodka for cocktails? There are no ifs or buts about this one. The answer is absolutely <strong>YES!</strong> Smirnoff is great vodka for cocktails.</p>
+
+  <h3>And we can back that up</h3>
+  <p>In <a href="/best-vodka-for-cocktails/">the best vodka for cocktails</a>, I compared 12 of the most popular vodka brands, and ran four tests:</p>
+  <ol>
+    <li>Which vodka is the best value for money.</li>
+    <li>Which vodka has the best reputation.</li>
+    <li>Which vodka sells best on Amazon.</li>
+    <li>Which vodka has the best Amazon reviews.</li>
+  </ol>
+  <p>When all was said and done, Smirnoff came out on top… and it deserved to. <strong>It’s a great vodka.</strong></p>
+
+  <h2 id="cocktails-with-vodka">Cocktails with vodka</h2>
+  <p>So now that we’ve answered the “is Smirnoff good vodka?” question, I bet you’re thirsty. Wanna make some Smirnoff cocktails? Great! Here are a few to get you started:</p>
+  <ul class="cards cards--square">
+    {featured.map((r) => <RecipeCard recipe={r} />)}
+  </ul>
+
+  <section class="next" aria-labelledby="next-title">
+    <h2 id="next-title">Want more vodka cocktails?</h2>
+    <p>We have {withVodka} quick and easy vodka cocktails, from the Moscow Mule to the Pornstar Martini.</p>
+    <a class="btn btn--green" href="/vodka-cocktails/">See all {withVodka} vodka cocktails <Icon name="arrow" /></a>
+  </section>
+
+  <h2 id="further-reading">Further reading</h2>
+  <ul>
+    <li><a href="/best-vodka-for-cocktails/">The best vodka for cocktails: everything you need to know</a></li>
+    <li><a href="/cocktails/moscow-mule/">The ultimate Moscow Mule recipe</a></li>
+    <li><a href="/vodka-cocktails/">Quick and easy vodka cocktails</a></li>
+  </ul>
+  <p class="sources">Sources:</p>
+  <ul class="sources">
+    <li><a href="https://cooking.stackexchange.com/questions/24435/is-there-any-difference-between-cheap-and-expensive-vodka" rel="noopener">Seasoned Advice: is there any difference between cheap and expensive vodka?</a></li>
+    <li><a href="https://www.thespruceeats.com/great-brands-of-inexpensive-vodka-759244" rel="noopener">The Spruce Eats: great brands of inexpensive vodka</a></li>
+    <li><a href="https://www.quora.com/What-makes-Smirnoff-vodka-so-cheap" rel="noopener">Quora: what makes Smirnoff vodka so cheap?</a></li>
+    <li><a href="https://www.reddit.com/r/vodka/comments/8gpy7b/cmv_smirnoff_is_the_best_vodka_for_your_money/" rel="noopener">Reddit: is Smirnoff the best vodka for your money?</a></li>
+  </ul>
+</ArticleLayout>

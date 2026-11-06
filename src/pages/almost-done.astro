@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SubscribeSteps from '../components/SubscribeSteps.astro';
+import ProofBar from '../components/ProofBar.astro';
+import LatestRecipes from '../components/LatestRecipes.astro';
+import Icon from '../components/Icon.astro';
+
+// Where the subscribe form sends people. Not indexed, and kept out of the sitemap.
+const title = 'Almost Done! Confirm Your Subscription | ThatCocktail';
+const description = 'Soon, you’ll get an email to confirm that you want to receive emails from us. Just click the Confirm My Subscription button and you’re all signed up!';
+
+const tips = [
+  { icon: 'inbox', title: 'Check your inbox', text: 'Soon, you’ll get an email to confirm that you want to receive emails from us. When you do, just click the Confirm My Subscription button and you’re all signed up!' },
+  { icon: 'clock', title: 'Give it a couple of minutes', text: 'Emails can take a couple of minutes to reach you, but sometimes it’s a good idea to check your spam folder just in case.' },
+  { icon: 'mail', title: 'Why the extra step?', text: 'We do this just to make absolutely sure you want to hear from us, because we REALLY don’t want to spam you!' },
+] as const;
+---
+<BaseLayout title={title} description={description} noindex>
+  <PageHero kicker="Almost done" title="You’re almost" centred
+    lead="Thanks for choosing to subscribe to the ThatCocktail mailing list! There’s just one more step.">
+    <Fragment slot="script">there!</Fragment>
+    <SubscribeSteps current={2} />
+  </PageHero>
+
+  <section class="section section--wash" aria-labelledby="next-title">
+    <div class="wrap">
+      <h2 class="sr-only" id="next-title">What happens next</h2>
+      <ul class="tips">
+        {tips.map((t) => (
+          <li class="tip">
+            <span class="tip__icon"><Icon name={t.icon} /></span>
+            <h3 class="tip__title">{t.title}</h3>
+            <p class="tip__text">{t.text}</p>
+          </li>
+        ))}
+      </ul>
+      <p class="tips__help">Still nothing after 10 minutes? <a href="/contact-us/">Let us know</a> and we’ll sort it out.</p>
+    </div>
+  </section>
+
+  <ProofBar />
+
+  <LatestRecipes id="meantime-title" title="In the meantime…" lede="…why don’t you check out our latest cocktail recipes?" />
+</BaseLayout>
+
+<style>
+  .tips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .tip{padding:24px;background:#fff;border:1px solid var(--cyan);border-radius:var(--radius);box-shadow:0 18px 30px -26px rgba(0,111,132,.6)}
+  .tip__icon{display:grid;place-items:center;width:48px;height:48px;margin-bottom:14px;border-radius:14px;background:var(--black);color:var(--cyan);box-shadow:0 0 0 4px rgba(81,229,255,.18)}
+  .tip__icon :global(svg){width:24px;height:24px}
+  .tip__title{font:800 1.35rem/1.1 var(--font-display);color:#000}
+  .tip__text{margin-top:8px;color:#333}
+  .tips__help{margin-top:24px;text-align:center;color:var(--ink-soft)}
+  .tips__help a{font-weight:700}
+
+  @media (max-width:899px){
+    .tips{grid-template-columns:minmax(0,1fr)}
+  }
+</style>

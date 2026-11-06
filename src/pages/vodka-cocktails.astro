@@ -1,0 +1,26 @@
+---
+import SpiritLayout from '../layouts/SpiritLayout.astro';
+import { media } from '../data/site';
+---
+<SpiritLayout
+  spirit="Vodka"
+  title="Vodka Cocktails: Every Vodka Cocktail Recipe | ThatCocktail"
+  description="Every vodka cocktail recipe on ThatCocktail, from the Espresso Martini to the Moscow Mule, with measures in ml and oz. Plus the vodka we recommend for cocktails."
+  lead="If you’re looking for vodka cocktails, you’re in the right place. Here’s every vodka cocktail recipe we’ve got. Let’s get mixing!"
+  ogImage={{ src: media('/wp-content/uploads/2021/10/Vodka-Cocktails.png'), width: 500, height: 300, alt: 'Vodka Cocktails title card with a bottle of Smirnoff on a bar' }}
+>
+  <h2>What’s the best vodka for cocktails?</h2>
+  <p>If you already have a bottle of vodka in, use that. If you’re buying a new one for cocktails, we recommend Smirnoff.</p>
+  <p>We compared 12 of the most popular vodka brands in our guide to the <a href="/best-vodka-for-cocktails/">best vodka for cocktails</a>, and once we’d crunched the numbers, Smirnoff was the clear winner.</p>
+
+  <aside class="pick" aria-label="Our vodka pick">
+    <span class="pick__label">Our top pick</span>
+    <img class="pick__img" src={media('/wp-content/uploads/2019/06/smirnoff.jpg')} width="80" height="300" alt="Bottle of Smirnoff No. 21 vodka" loading="lazy" decoding="async">
+    <div>
+      <p class="pick__name">Smirnoff Vodka</p>
+      <p class="pick__why">The best vodka for cocktails in our comparison of 12 brands.</p>
+      <a class="btn btn--green btn--sm" href="https://amzn.to/3buMXzt" target="_blank" rel="sponsored noopener">Buy now</a>
+      <p class="pick__note">If you buy through this link, we earn a commission at no extra cost to you.</p>
+    </div>
+  </aside>
+</SpiritLayout>

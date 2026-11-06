@@ -1,0 +1,15 @@
+---
+/** Tequila: from https://www.thatcocktail.com/snippets/tequila/ */
+import ProductPick from '../ProductPick.astro';
+import { alcoholPick } from '../../data/alcohol';
+---
+<p>Tequila is made from the fermented juice of the blue agave plant primarily in the city of Tequila, in the Mexican state of Jalisco.</p>
+<p>In order for Tequila to be official (and to actually be called a Tequila), it must be made in specific regions of Mexico and follow strict regulations.</p>
+<h4>Different Types of Tequila</h4>
+<p>There are 5 main types of Tequila:</p>
+<p><strong>Blanco (Silver)</strong> – Clear, usually unaged with a strong agave flavour.</p>
+<p><strong>Reposado</strong> – Aged in oak barrels for 2 to 12 months, giving it a smoother flavour with hints of oak and vanilla.</p>
+<p><strong>Añejo</strong> – Aged 1 to 3 years, offering richer, more complex flavours.</p>
+<p><strong>Extra Añejo</strong> – Aged over 3 years, with deep, refined flavours, often compared to fine cognacs or whiskies.</p>
+<p><strong>Joven (Gold)</strong> – A mix of Blanco and aged tequilas, sometimes with added colouring or flavouring.</p>
+<ProductPick product={alcoholPick('tequila')} />

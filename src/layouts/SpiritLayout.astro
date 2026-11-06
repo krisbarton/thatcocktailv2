@@ -1,0 +1,188 @@
+---
+/**
+ * A spirit hub, e.g. /vodka-cocktails/. Lists every recipe that uses the spirit (matched by
+ * its `match` pattern in src/data/recipes.ts), newest first. The page's own write-up, such as
+ * which bottle to buy, goes in the default slot and appears above the list.
+ *
+ * Pass `groups` to split the list by type instead (e.g. white, dark and spiced rum), with an
+ * "On this page" rail. Each group's write-up goes in a slot named after its id. A group
+ * without `match` collects every recipe that isn't in another group.
+ *
+ * Lists of FILTER_MIN or more recipes (or any list, with `filter`) get the search box and
+ * collection buttons (RecipeFilter), which search across every group.
+ */
+import BaseLayout from './BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHead from '../components/SectionHead.astro';
+import RecipeCard from '../components/RecipeCard.astro';
+import RecipeFilter from '../components/RecipeFilter.astro';
+import GuideSignup from '../components/GuideSignup.astro';
+import { SITE } from '../data/site';
+import { spirits } from '../data/recipes';
+import { organization, website, webPage, breadcrumbs } from '../data/schema';
+import { getCocktails, toCard, cocktailUrl, usesIngredient, filterProps, FILTER_MIN, type Cocktail } from '../lib/cocktails';
+import '../styles/toc.css';
+
+interface Group {
+  id: string;
+  /** e.g. "White rum". The section is titled "White rum cocktails". */
+  name: string;
+  /** Matched against ingredient names. Leave out for a catch-all group. */
+  match?: RegExp;
+  /** Replaces the default "N recipes use white rum." line. */
+  lede?: string;
+}
+
+interface Props {
+  /** The spirit's `name` in src/data/recipes.ts, e.g. "Vodka". */
+  spirit: string;
+  title: string;
+  description: string;
+  lead: string;
+  ogImage?: { src: string; width: number; height: number; alt: string };
+  groups?: Group[];
+  /** Show the search box and collection buttons even when there are fewer than FILTER_MIN recipes. */
+  filter?: boolean;
+}
+const { spirit: name, title, description, lead, ogImage, groups, filter } = Astro.props;
+
+const spirit = spirits.find((s) => s.name === name);
+if (!spirit) throw new Error(`No spirit called "${name}" in src/data/recipes.ts`);
+const path = spirit.href;
+const label = `${spirit.name} cocktails`;
+
+const cocktails = (await getCocktails()).filter((c) => usesIngredient(c, spirit.match));
+const others = spirits.filter((s) => s !== spirit);
+const crumbs = [
+  { name: 'Cocktails by spirit', href: '/cocktails-by-spirit/' },
+  { name: label, href: path },
+];
+
+const matched = groups?.filter((g) => g.match) ?? [];
+const sections = await Promise.all(
+  (groups ?? []).map(async (g) => {
+    const list = g.match
+      ? cocktails.filter((c) => usesIngredient(c, g.match!))
+      : cocktails.filter((c) => !matched.some((m) => usesIngredient(c, m.match!)));
+    return {
+      ...g,
+      list,
+      lede: g.lede ?? `${list.length} of our recipes use ${g.name.toLowerCase()}.`,
+      intro: Astro.slots.has(g.id) ? await Astro.slots.render(g.id) : null,
+    };
+  }),
+);
+const listHref = sections.length ? `#${sections[0].id}` : '#list';
+
+// Long lists get the search box and collection buttons from /cocktails/.
+const filterable = filter || cocktails.length >= FILTER_MIN;
+// "vodka cocktail", but brand names keep their capital (a `noun` such as "Passoa").
+const one = `${spirit.noun && /[A-Z]/.test(spirit.noun) ? spirit.name : spirit.name.toLowerCase()} cocktail`;
+const filterLabel = `Find ${/^[aeiou]/.test(one) ? 'an' : 'a'} ${one}`;
+const cardProps = (c: Cocktail) => ({ recipe: toCard(c), ...(filterable ? filterProps(c) : {}) });
+
+const schema = [
+  organization,
+  website,
+  webPage({
+    path,
+    type: 'CollectionPage',
+    name: title,
+    description,
+    extra: {
+      breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: cocktails.length,
+        itemListElement: cocktails.map((c, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: new URL(cocktailUrl(c), SITE.url).href,
+          name: c.data.title,
+        })),
+      },
+    },
+  }),
+  breadcrumbs(path, crumbs.map((c) => ({ name: c.name, path: c.href }))),
+];
+---
+<BaseLayout title={title} description={description} ogImage={ogImage} schema={schema}>
+  <PageHero crumbs={crumbs} title={spirit.name} lead={lead}>
+    <Fragment slot="script">cocktails</Fragment>
+    <p class="hero-cta"><a class="btn btn--green" href={listHref}>See all {cocktails.length} recipes</a></p>
+  </PageHero>
+
+  {sections.length > 0 ? (
+    <div class="wrap r-body">
+      <aside class="r-aside">
+        <div class="r-aside__inner">
+          <nav class="toc" aria-label="On this page">
+            <p class="kicker">On this page</p>
+            <ol>
+              {sections.map((g) => (
+                <li><a href={`#${g.id}`}>{g.name} <span class="toc__count">{g.list.length}<span class="sr-only"> recipes</span></span></a></li>
+              ))}
+            </ol>
+          </nav>
+          <a class="btn btn--green toc__cta" href="/cocktails-by-spirit/">All cocktails by spirit</a>
+        </div>
+      </aside>
+
+      <div class="r-main" data-filter-scope>
+        {Astro.slots.has('default') && <div class="prose"><slot /></div>}
+        {filterable && <div class="group__filter"><RecipeFilter cocktails={cocktails} action={path} label={filterLabel} status /></div>}
+        {sections.map((g) => (
+          <section class="r-section" id={g.id} aria-labelledby={`${g.id}-title`} data-filter-section>
+            <SectionHead id={`${g.id}-title`} title={`${g.name} cocktails`} lede={g.lede} />
+            {g.intro && <div class="prose group__intro" set:html={g.intro} />}
+            <ul class="cards cards--square">
+              {g.list.map((c) => <RecipeCard {...cardProps(c)} />)}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </div>
+  ) : (
+    <>
+      {Astro.slots.has('default') && (
+        <section class="section">
+          <div class="wrap">
+            <div class="prose">
+              <slot />
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section class="section section--mist" id="list" aria-labelledby="list-title">
+        <div class="wrap" data-filter-scope>
+          <SectionHead id="list-title" title={`All ${cocktails.length} ${one}s`}
+            lede={`Every ThatCocktail recipe that uses ${spirit.noun ?? spirit.name.toLowerCase()}, newest first.`} />
+          {filterable && <RecipeFilter cocktails={cocktails} action={path} label={filterLabel} status />}
+          <ul class="cards cards--square">
+            {cocktails.map((c) => <RecipeCard {...cardProps(c)} />)}
+          </ul>
+        </div>
+      </section>
+    </>
+  )}
+
+  <section class:list={['section', { 'section--mist': sections.length > 0 }]} aria-labelledby="others-title">
+    <div class="wrap">
+      <SectionHead id="others-title" title="Cocktails with other spirits"
+        more={{ label: 'All cocktails by spirit', href: '/cocktails-by-spirit/' }} />
+      <ul class="chips">
+        {others.map((s) => <li><a href={s.href}>{s.name} cocktails</a></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <GuideSignup />
+</BaseLayout>
+
+<style>
+  .hero-cta{margin-top:28px}
+  .group__intro{margin-bottom:clamp(32px,4vw,44px)}
+  .group__filter{margin-top:clamp(32px,4vw,44px)}
+  .group__filter:first-child{margin-top:0}
+</style>

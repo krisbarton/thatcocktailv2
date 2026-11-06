@@ -1,0 +1,117 @@
+---
+import type { MarkdownHeading } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { SITE } from '../data/site';
+import { organization, website, webPage, breadcrumbs } from '../data/schema';
+
+/** Layout for the Markdown pages in src/pages (privacy, cookies, terms). */
+interface Props {
+  frontmatter: {
+    title: string;
+    description: string;
+    kicker?: string;
+    effective?: string;
+  };
+  headings: MarkdownHeading[];
+}
+
+const { frontmatter, headings } = Astro.props;
+const { title, description, kicker = 'Legal', effective } = frontmatter;
+const path = Astro.url.pathname;
+
+// Last word of the title goes in the neon script, e.g. "Privacy" + "policy".
+const words = title.split(' ');
+const scriptWord = words.pop()!.toLowerCase();
+const titleStart = words.join(' ');
+
+const toc = headings.filter((h) => h.depth === 2);
+
+const legalPages = [
+  { label: 'Privacy policy', href: '/privacy-policy/' },
+  { label: 'Cookie policy', href: '/cookie-policy/' },
+  { label: 'Terms of service', href: '/terms-of-service/' },
+].filter((p) => p.href !== path);
+
+const schema = [
+  organization,
+  website,
+  webPage({ path, name: `${title} | ${SITE.name}`, description, extra: { breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` } } }),
+  breadcrumbs(path, [{ name: title, path }]),
+];
+---
+<BaseLayout title={`${title} | ${SITE.name}`} description={description} schema={schema}>
+  <PageHero kicker={kicker} title={titleStart} compact
+    lead={effective ? `Effective date: ${effective}` : undefined}>
+    <Fragment slot="script">{scriptWord}</Fragment>
+  </PageHero>
+
+  <section class="section legal">
+    <div class:list={['wrap legal__grid', { 'legal__grid--toc': toc.length > 2 }]}>
+      {toc.length > 2 && (
+        <nav class="toc" aria-labelledby="toc-title">
+          <h2 class="kicker toc__title" id="toc-title">On this page</h2>
+          <ol class="toc__list">
+            {toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+          </ol>
+        </nav>
+      )}
+
+      <div class="legal__body">
+        <article class="prose">
+          <slot />
+        </article>
+
+        <aside class="legal__help" aria-labelledby="legal-help-title">
+          <span class="legal__help-icon"><Icon name="chat" /></span>
+          <div>
+            <h2 class="legal__help-title" id="legal-help-title">Questions about this page?</h2>
+            <p>Email <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or see all the ways to <a href="/contact-us/">contact us</a>.</p>
+          </div>
+        </aside>
+
+        <div class="legal__more">
+          <p class="kicker">More legal stuff</p>
+          <ul class="chips">
+            {legalPages.map((p) => <li><a href={p.href}>{p.label}</a></li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal__grid{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(32px,5vw,64px);align-items:start}
+  .legal__grid--toc{grid-template-columns:minmax(0,280px) minmax(0,1fr)}
+
+  .toc{position:sticky;top:24px;max-height:calc(100vh - 48px);overflow:auto;padding:20px;background:var(--cyan-wash);border:1px solid var(--cyan);border-radius:var(--radius)}
+  .toc__title{margin-bottom:12px}
+  .toc__list{margin:0;padding:0;list-style:none;counter-reset:none}
+  .toc__list li + li{margin-top:2px}
+  .toc__list a{display:block;padding:6px 8px;border-radius:8px;font-size:.92rem;line-height:1.35;font-weight:600;color:#0a3f4a;text-decoration:none}
+  .toc__list a:hover{background:#fff;color:var(--pink-ink)}
+
+  .legal__body{min-width:0}
+
+  .legal__help{display:flex;gap:16px;align-items:flex-start;max-width:72ch;margin-top:48px;padding:22px;border-radius:var(--radius);background:var(--black);color:var(--on-black)}
+  .legal__help a{color:var(--cyan);font-weight:600}
+  .legal__help :global(:focus-visible){outline-color:var(--cyan)}
+  .legal__help-icon{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:radial-gradient(60px at 50% -40%,var(--mag-hi) 0%,var(--mag-lo) 100%);color:#fff}
+  .legal__help-icon :global(svg){width:22px;height:22px}
+  .legal__help-title{margin-bottom:4px;font:800 1.25rem/1.15 var(--font-display);color:var(--cyan)}
+
+  .legal__more{margin-top:32px}
+  .legal__more .kicker{margin-bottom:12px}
+
+  @media (max-width:899px){
+    .legal__grid--toc{grid-template-columns:minmax(0,1fr)}
+    .toc{position:static;max-height:none}
+    .toc__list{columns:2;column-gap:16px}
+    .toc__list li{break-inside:avoid}
+  }
+  @media (max-width:599px){
+    .toc__list{columns:1}
+  }
+</style>

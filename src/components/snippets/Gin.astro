@@ -1,0 +1,9 @@
+---
+/** Gin: from https://www.thatcocktail.com/snippets/gin/ */
+import ProductPick from '../ProductPick.astro';
+import { alcoholPick } from '../../data/alcohol';
+---
+<p>Gin is a distilled alcohol drink made from Juniper Berries and is one of the most popular alcoholic beverages in the world.</p>
+<p>Its popularity is growing year on year, with sales in the UK rising beyond <strong>£3 billion per year.</strong></p>
+<p>For Gin, we recommend:</p>
+<ProductPick product={alcoholPick('gin')} />

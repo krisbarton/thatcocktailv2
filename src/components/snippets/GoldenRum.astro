@@ -1,0 +1,18 @@
+---
+/** Golden Rum: from https://www.thatcocktail.com/snippets/golden-rum/ */
+import ProductPick from '../ProductPick.astro';
+import type { Product } from '../../data/alcohol';
+
+const product: Product = { name: 'Mount Gay Golden Rum', img: '/wp-content/uploads/2023/09/mout-gay-rum-e1694706254118.jpg', href: 'https://amzn.to/3PlTaDO' };
+---
+<p>Golden Rum (aka Amber Rum) is a medium-bodied, aged rum that gets its dark colour from aging in wooden barrels.</p>
+<p>Golden Rums tend to have more flavour and are stronger tasting than their lighter counterparts.</p>
+<p>For Golden Rum, we recommend:</p>
+<ProductPick product={product} />
+<h4>Cocktails with Golden Rum</h4>
+<ul class="chips">
+  <li><a href="/cocktails/bahama-mama/">Bahama Mama</a></li>
+  <li><a href="/cocktails/zombie/">Zombie</a></li>
+  <li><a href="/cocktails/old-cuban/">Old Cuban</a></li>
+  <li><a href="/cocktails/mai-tai/">Mai Tai</a></li>
+</ul>

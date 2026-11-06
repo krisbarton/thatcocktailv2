@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import FavouriteCard from '../../components/FavouriteCard.astro';
+import LatestRecipes from '../../components/LatestRecipes.astro';
+import Icon from '../../components/Icon.astro';
+import { SITE, kris, media } from '../../data/site';
+import { organization, website, krisPerson, webPage, breadcrumbs, ids } from '../../data/schema';
+
+const path = kris.url;
+const title = 'Kris Barton, Founder of ThatCocktail | ThatCocktail';
+const description = 'Kris Barton founded ThatCocktail in 2019 and has been making (and sometimes creating) cocktails for more than 20 years. His favourite is the Moscow Mule.';
+
+const schema = [
+  organization,
+  website,
+  {
+    ...krisPerson,
+    knowsAbout: ['Cocktails', 'Mixology', 'Home bartending'],
+    mainEntityOfPage: { '@id': `${SITE.url}${path}#webpage` },
+  },
+  webPage({
+    path,
+    type: 'ProfilePage',
+    name: title,
+    description,
+    extra: {
+      mainEntity: { '@id': ids.kris },
+      primaryImageOfPage: { '@type': 'ImageObject', url: media(kris.photoLarge) },
+      breadcrumb: { '@id': `${SITE.url}${path}#breadcrumb` },
+    },
+  }),
+  breadcrumbs(path, [{ name: 'About us', path: '/about/' }, { name: kris.name, path }]),
+];
+---
+<BaseLayout
+  title={title}
+  description={description}
+  ogType="profile"
+  ogImage={{ src: media(kris.photoLarge), width: 1080, height: 1080, alt: 'Kris Barton, founder of ThatCocktail, enjoying a cocktail' }}
+  schema={schema}
+>
+  <PageHero kicker="Author · Founder of ThatCocktail" title="Kris"
+    lead="Founder of ThatCocktail. Kris has been making (and sometimes creating) cocktails for over 20 years, and shares the quick and easy ones here." asideFirst>
+    <Fragment slot="script">Barton</Fragment>
+    <ul class="facts author-facts">
+      {kris.facts.map((f) => <li>{f}</li>)}
+    </ul>
+    <div class="author-actions">
+      <a class="btn btn--green" href={`mailto:${SITE.email}`}><Icon name="mail" />Email Kris</a>
+      <a class="btn btn--ghost" href="/about/">About ThatCocktail</a>
+    </div>
+    <img slot="aside" class="portrait author-photo"
+         src={media(kris.photo)}
+         srcset={`${media(kris.photo)} 300w, ${media(kris.photoLarge)} 1080w`}
+         sizes="(min-width: 900px) 340px, 240px" width="300" height="300"
+         alt="Kris Barton, founder of ThatCocktail, enjoying a cocktail" decoding="async">
+  </PageHero>
+
+  <section class="section" aria-labelledby="bio-title">
+    <div class="wrap bio">
+      <div>
+        <p class="kicker">Kris’s story</p>
+        <h2 class="h2 bio__title" id="bio-title">From blue curaçao and milk to ThatCocktail</h2>
+        <div class="prose">
+          <p>Kris Barton is a web developer by day and a mixologist by night or weekends or holidays or… basically whenever he can! (But he’s not got a problem or anything. Honest…)</p>
+          <p>Kris began making cocktails in his teens, first producing a rather unfortunate mix of <a href="/what-is-blue-curacao/">blue curaçao</a> and milk, with disastrous results. His next mix of Malibu and passion fruit Sunny Delight went over much better… almost too well (there were some <em>very</em> sore heads the next morning).</p>
+          <p>Since then, Kris has got better at making cocktails, but he’s got much, much better at drinking them.</p>
+          <p>In 2019 he launched ThatCocktail to share simplified, quick and easy cocktail recipes, each with a little extra detail about the drink, the ingredients and the equipment you need to make bar-quality cocktails at home.</p>
+          <p>His favourite cocktail is the <a href={kris.favourite.href}>{kris.favourite.name}</a>, with the <a href={kris.runnerUp.href}>{kris.runnerUp.name}</a> a <em>close</em> second.</p>
+        </div>
+      </div>
+      <FavouriteCard kicker="Kris’s number one" />
+    </div>
+  </section>
+
+  <LatestRecipes mist id="kris-latest-title" title="Latest recipes from Kris" lede="The newest cocktails Kris has added to ThatCocktail." />
+</BaseLayout>
+
+<style>
+  .author-facts{margin-top:24px}
+  .author-actions{margin-top:28px;display:flex;flex-wrap:wrap;gap:14px 16px}
+  .author-photo{max-width:340px;margin-left:auto}
+
+  .bio{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr);gap:clamp(36px,6vw,80px);align-items:start}
+  .bio .kicker{margin-bottom:12px}
+  .bio__title{margin-bottom:22px}
+
+  @media (max-width:899px){
+    .author-photo{margin-left:0;max-width:240px}
+    .bio{grid-template-columns:minmax(0,1fr)}
+  }
+  @media (max-width:599px){
+    .author-actions .btn{flex:1 1 100%}
+  }
+</style>

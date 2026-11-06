@@ -1,0 +1,190 @@
+/*
+  Cocktail recipe pages (/cocktails/[slug]/), ported from cocktail-page-redesign/mint-julep.html
+  and cocktail-page-redesign/recipe-card/recipe-card.css.
+  Global rather than scoped, because the Markdown body and the set:html method steps can't take Astro's scope attribute.
+*/
+@import "./toc.css";
+
+:root{--star:#ffc83d}
+[id]{scroll-margin-top:20px}
+
+/* ---------- Recipe hero ---------- */
+.r-hero{
+  color:#fff;padding-block:clamp(24px,3.5vw,44px) clamp(44px,6vw,80px);
+  background:
+    radial-gradient(55% 70% at 100% 0%,rgba(236,54,141,.22),transparent 65%),
+    radial-gradient(45% 60% at 0% 100%,rgba(81,229,255,.13),transparent 65%),
+    var(--black);
+}
+.r-hero :focus-visible{outline-color:var(--cyan)}
+.r-hero__grid{margin-top:clamp(20px,3vw,36px);display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(32px,5vw,72px);align-items:center}
+.r-hero__title{font-size:clamp(2.8rem,6.4vw,5rem);line-height:.95}
+.r-hero__lead{margin-top:22px;max-width:52ch;font-size:clamp(1.05rem,1.4vw,1.2rem);line-height:1.6;color:var(--on-black)}
+
+.byline{margin-top:22px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;font-size:.92rem;color:var(--on-black-soft)}
+.byline__who{display:flex;align-items:center;gap:10px}
+.byline__who img{width:40px;height:40px;border-radius:50%;border:2px solid var(--pink)}
+.byline__who a{color:#fff;font-weight:700;text-decoration:none}
+.byline__who a:hover{text-decoration:underline;text-underline-offset:3px}
+
+.r-facts{margin-top:24px;display:inline-flex;flex-wrap:wrap;border:1px solid #2b2b2b;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.02)}
+.r-facts li{display:flex;align-items:center;gap:8px;padding:12px 16px;font-size:.92rem;color:var(--on-black)}
+.r-facts li+li{border-left:1px solid #2b2b2b}
+.r-facts svg{width:18px;height:18px;flex:none;color:var(--cyan)}
+.r-facts strong{font:800 1.12rem/1 var(--font-display);color:#fff}
+.r-hero__actions{margin-top:26px;display:flex;flex-wrap:wrap;gap:14px 16px}
+.r-tags{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px}
+.r-tags a{display:inline-flex;padding:6px 12px;border-radius:999px;border:1px solid #363636;color:var(--on-black);font-size:.85rem;font-weight:600;text-decoration:none;transition:border-color .15s,color .15s}
+.r-tags a:hover{border-color:var(--pink);color:#fff}
+.r-hero__media{justify-self:end;width:100%;max-width:450px}
+.r-hero__media .neon-ph{border-radius:24px;border:2px solid var(--cyan);box-shadow:0 0 0 6px rgba(81,229,255,.12),0 30px 60px -30px rgba(81,229,255,.55)}
+.r-hero__media img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:24px;border:2px solid var(--cyan);box-shadow:0 0 0 6px rgba(81,229,255,.12),0 30px 60px -30px rgba(81,229,255,.55)}
+
+/* ---------- Article layout (the two-column rail is in toc.css) ---------- */
+.r-main>*+*{margin-top:clamp(52px,6vw,76px)}
+.r-main>.silo-link{margin-top:24px}
+.r-h2,.r-article h2{font:800 clamp(1.85rem,3.3vw,2.45rem)/1.05 var(--font-display);letter-spacing:-.015em;color:#000;text-wrap:balance}
+.r-article h3{margin-top:36px;font:700 1.5rem/1.15 var(--font-display);color:#000}
+.r-article>*+*{margin-top:14px}
+.r-article h2:not(:first-child){margin-top:clamp(44px,5vw,60px)}
+.r-article :is(p,li){max-width:68ch;font-size:1.05rem;line-height:1.7;color:#222}
+.r-article ul{padding-left:1.3em;list-style:disc}
+.r-article li::marker{color:var(--pink)}
+.r-article a{font-weight:600}
+.r-article p:has(>img){max-width:640px}
+.r-article img{width:100%;height:auto;border-radius:16px}
+
+
+/* Video */
+
+.silo-link{font-size:1.08rem}
+.silo-link a{font-weight:700}
+
+/* ---------- Recipe card ---------- */
+section.cocktail{
+  --pad:26px;
+  display:grid;grid-template-columns:196px minmax(0,1fr);align-items:stretch;
+  border:2px solid var(--cyan);border-radius:22px;overflow:hidden;
+  background:#fff;color:var(--ink);
+  box-shadow:0 0 0 6px rgba(81,229,255,.12),0 30px 60px -40px rgba(0,111,132,.5);
+}
+.cocktail :is(h2,h3,p,ul,ol,li,dl,dd){margin:0}
+.cocktail :is(ul,ol){padding:0;list-style:none}
+
+/* Black header band: image and heading paint the same black so they read as one block */
+.cocktail__image,.cocktail__heading{background:#000;color:#fff}
+.cocktail__image{display:flex;align-items:center;padding:24px 22px 24px 24px}
+.cocktail__img{width:150px;height:150px;border-radius:16px;object-fit:cover;overflow:hidden}
+.cocktail__heading{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:24px 24px 24px 0}
+.cocktail__heading :focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+.cocktail__heading--kicker{font:700 .78rem/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--pink)}
+.cocktail__heading h2{margin-top:8px;font:800 clamp(2rem,3.4vw,2.6rem)/1 var(--font-display);letter-spacing:-.015em;color:var(--cyan);text-shadow:0 0 22px rgba(81,229,255,.3)}
+
+.cocktail__social{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.cocktail__social>*{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid #333;border-radius:10px;background:#141414;color:#fff;font:600 .88rem/1.6 var(--font-body);text-decoration:none;cursor:pointer;transition:background-color .15s,border-color .15s}
+.cocktail__social svg{width:16px;height:16px;flex:none;color:var(--cyan)}
+.cocktail__social>:hover{background:var(--pink-deep);border-color:var(--pink-deep)}
+.cocktail__social>:hover svg{color:#fff}
+
+.cocktail__content{grid-column:1/-1;padding:0 var(--pad) var(--pad)}
+
+/* At-a-glance strip: the 1px gap draws the dividers at any column count */
+.cocktail__info{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin:0 calc(-1 * var(--pad));background:#c6f1fb;border-bottom:1px solid #bdeefa}
+.cocktail__info--6{grid-template-columns:repeat(6,minmax(0,1fr))}
+.cocktail__info>div{padding:14px 16px;background:var(--cyan-wash)}
+.cocktail__info dt{margin-bottom:7px;font:700 .7rem/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:#0a5866}
+.cocktail__info dd{font:800 1.12rem/1.1 var(--font-display);color:#000;font-variant-numeric:tabular-nums}
+
+.cocktail__ingredients h3,.cocktail__method h3{font:800 1.55rem/1 var(--font-display);color:#000}
+
+/* Ingredients: heading and scaler share a row, the note and checklist wrap underneath */
+.cocktail__ingredients{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;margin-top:26px}
+.cocktail__ingredients--note,.cocktail__ingredients ul{flex:1 0 100%}
+.cocktail__scale{display:inline-flex;align-items:center;gap:4px;font-size:.85rem;color:var(--ink-soft)}
+.cocktail__scale--options{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px}
+.cocktail__scale button{min-width:38px;padding:6px 10px;border:0;border-radius:999px;background:none;color:var(--ink);font:700 1rem/1.6 var(--font-body);cursor:pointer}
+.cocktail__scale button[aria-pressed="true"]{background:#000;color:var(--cyan)}
+.cocktail__ingredients--note{font-size:.88rem;color:var(--ink-soft)}
+
+.cocktail__ingredients ul{border-top:1px solid var(--line)}
+.cocktail__ingredients li{border-bottom:1px dashed #d2d2d2}
+.cocktail__ingredients label{display:flex;align-items:flex-start;gap:12px;padding:12px 4px;font-size:1.03rem;cursor:pointer}
+.cocktail__ingredients input{appearance:none;-webkit-appearance:none;flex:none;display:grid;place-items:center;width:22px;height:22px;margin:2px 0 0;border:2px solid #b3b3b3;border-radius:6px;background:#fff;cursor:pointer}
+.cocktail__ingredients input:checked{background:var(--green);border-color:var(--green-shade)}
+.cocktail__ingredients input:checked::after{content:"";width:6px;height:11px;border:solid var(--green-ink);border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+.cocktail__ingredients--qty{font-weight:800;color:#000;font-variant-numeric:tabular-nums}
+.cocktail__ingredients label:has(input:checked),
+.cocktail__ingredients label:has(input:checked) .cocktail__ingredients--qty{color:#8a8a8a;text-decoration:line-through}
+
+/* Method: numbered pink discs */
+.cocktail__method{margin-top:30px}
+.cocktail__method ol{margin-top:10px;counter-reset:step}
+.cocktail__method li{counter-increment:step;display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;align-items:start;padding:14px 0;border-bottom:1px solid var(--line);font-size:1.03rem;line-height:1.6}
+.cocktail__method li::before{content:counter(step);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--pink-deep);color:#fff;font:800 1rem/1 var(--font-display)}
+.cocktail__method a{font-weight:600}
+.cocktail__alt{margin-top:20px;padding:6px 18px 4px;border:1px dashed var(--cyan);border-radius:14px;background:var(--cyan-wash)}
+.cocktail__alt h4{margin:12px 0 0;font:700 1.12rem/1.2 var(--font-display);color:#0a3f4a}
+.cocktail__alt ol{margin-top:4px}
+.cocktail__alt li:last-child{border-bottom:0}
+.cocktail__alt li::before{background:var(--teal-ink)}
+
+
+/* ---------- Author ---------- */
+.author{display:grid;grid-template-columns:120px minmax(0,1fr);gap:24px;align-items:center;padding:24px;border-radius:20px;background:var(--mist)}
+.author__photo{width:120px;height:120px;border-radius:18px;object-fit:cover;box-shadow:8px 8px 0 0 var(--cyan)}
+.author__name{margin-top:6px;font:800 1.6rem/1.1 var(--font-display);color:#000}
+.author__bio{margin-top:8px;max-width:62ch;color:#333}
+.author .more{margin-top:10px}
+
+/* ---------- Related cocktails: black neon cards ---------- */
+.neon-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.neon-card{position:relative;display:flex;flex-direction:column;gap:10px;min-height:200px;padding:22px;border-radius:18px;color:#fff;background:radial-gradient(120% 110% at 100% 0%,rgba(236,54,141,.26),transparent 55%),var(--black);box-shadow:0 0 0 1px #1f1f1f;transition:transform .15s ease,box-shadow .15s ease}
+.neon-card:hover{transform:translateY(-3px);box-shadow:0 0 0 2px var(--cyan),0 0 28px rgba(81,229,255,.35)}
+.neon-card :focus-visible{outline:none}
+.neon-card:focus-within{box-shadow:0 0 0 3px var(--cyan)}
+.neon-card__kicker{font:700 .72rem/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--pink)}
+.neon-card__name{font:800 1.65rem/1.02 var(--font-display);color:var(--cyan);text-shadow:0 0 18px rgba(81,229,255,.35)}
+.neon-card__name a{color:inherit;text-decoration:none}
+.neon-card__name a::after{content:"";position:absolute;inset:0;border-radius:inherit}
+.neon-card__spec{font-size:.92rem;line-height:1.5;color:var(--on-black)}
+.neon-card__meta{margin-top:auto;display:flex;align-items:center;justify-content:space-between;font-size:.85rem;color:var(--on-black-soft)}
+.neon-card__meta svg{width:20px;height:20px;color:var(--cyan);transition:transform .15s}
+.neon-card:hover .neon-card__meta svg{transform:translateX(3px)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1099px){
+  .neon-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cocktail__info,.cocktail__info--6{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:899px){
+  .r-hero__grid{grid-template-columns:minmax(0,1fr)}
+  .r-hero__media{justify-self:start;max-width:520px}
+}
+@media (max-width:699px){
+  section.cocktail{grid-template-columns:minmax(0,1fr)}
+  .cocktail__image{padding:24px 24px 0}
+  .cocktail__img{width:96px;height:96px}
+  .cocktail__heading{padding:16px 24px 24px}
+}
+@media (max-width:599px){
+  section.cocktail{--pad:18px}
+  .cocktail__info,.cocktail__info--6{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cocktail__info>div:last-child:nth-child(odd){grid-column:1/-1}
+  .r-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  .r-facts li:nth-child(3){border-left:0}
+  .r-facts li:nth-child(n+3){border-top:1px solid #2b2b2b}
+  .neon-grid{grid-template-columns:minmax(0,1fr)}
+  .neon-card{min-height:0}
+  .author{grid-template-columns:minmax(0,1fr)}
+}
+
+/* ---------- Print: the Print button adds .print-recipe to <html> so only the card prints ---------- */
+@media print{
+  .print-recipe body *{visibility:hidden}
+  .print-recipe section.cocktail,.print-recipe section.cocktail *{visibility:visible}
+  .print-recipe section.cocktail{position:absolute;left:0;top:0;width:100%}
+  .cocktail__social,.cocktail__scale{display:none!important}
+  section.cocktail{border:1px solid #000;box-shadow:none}
+  .cocktail__image,.cocktail__heading{background:#fff;color:#000}
+  .cocktail__heading h2{color:#000;text-shadow:none}
+}
